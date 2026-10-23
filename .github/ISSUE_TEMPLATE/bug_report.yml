@@ -1,0 +1,63 @@
+name: Reportar un error
+description: Describe un fallo reproducible sin incluir datos personales ni secretos.
+title: '[Bug]: '
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        No incluyas contraseñas, tokens, cookies, datos de estudiantes ni capturas con información personal.
+        Para vulnerabilidades de seguridad usa el reporte privado indicado en SECURITY.md.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Resumen
+      description: ¿Qué ocurre y dónde?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Pasos para reproducir
+      placeholder: |
+        1. Entrar a...
+        2. Seleccionar...
+        3. Ver el error...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Resultado esperado
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Resultado actual
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Versión o commit
+      placeholder: v1.0.0 / hash
+  - type: dropdown
+    id: area
+    attributes:
+      label: Área
+      options:
+        - Catálogo y checkout
+        - PayPal y pagos
+        - Aula virtual
+        - Administración y CRM
+        - Autenticación y permisos
+        - Base de datos
+        - Otro
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidencia
+      description: Logs o capturas sin secretos ni datos personales.

@@ -1,0 +1,15 @@
+:root{
+  --wa-ink:#0A0A0A; --wa-graphite:#18181B; --wa-line-dark:#27272A;
+  --wa-slate:#52525B; --wa-mist:#E4E4E7; --wa-paper:#F4F4F5; --wa-white:#FFFFFF;
+  --wa-luz:#E0A82E; --wa-luz-600:#B77D06; --wa-luz-800:#8A5A00;
+  --wa-success:#1B7F4B; --wa-warning:#B45309; --wa-error:#B42318; --wa-info:#1D4ED8;
+  --wa-font-display:"Poppins",system-ui,sans-serif;
+  --wa-font-body:"Figtree",system-ui,sans-serif;
+  --wa-font-scripture:"Lora",Georgia,serif;
+  --wa-radius:12px; --wa-radius-lg:20px;
+}
+/* Fuentes: <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&family=Figtree:wght@400;500;600&family=Lora:ital@0;1&display=swap" rel="stylesheet"> */
+:root{--bg:var(--wa-white);--surface:var(--wa-paper);--text:var(--wa-ink);--text-2:var(--wa-slate);--border:var(--wa-mist);--accent:var(--wa-luz-600);--link:var(--wa-luz-800)}
+@media (prefers-color-scheme:dark){:root{--bg:var(--wa-ink);--surface:var(--wa-graphite);--text:#FAFAFA;--text-2:#A1A1AA;--border:var(--wa-line-dark);--accent:var(--wa-luz);--link:var(--wa-luz)}}
+body{background:var(--bg);color:var(--text);font:400 16px/1.6 var(--wa-font-body)}
+h1,h2,h3{font-family:var(--wa-font-display);font-weight:500;letter-spacing:-.02em;line-height:1.15}

@@ -1,0 +1,60 @@
+{
+  "name": "wisdom-academy-platform",
+  "version": "1.0.0",
+  "description": "Plataforma educativa integral y bilingüe (español/inglés) de Wisdom Academy para educación básica, apoyo homeschool, cursos y talleres.",
+  "private": true,
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "overrides": {
+    "postcss": "^8.5.31"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "init:drive": "tsx scripts/init-google-drive-folders.ts",
+    "init:courses-drive": "tsx scripts/init-courses-workshops-drive.ts",
+    "import:n2n-semester-1": "tsx scripts/import-n2n-semester-1.ts",
+    "test:phase1": "tsx scripts/test-phase-1.ts",
+    "test:courses": "node --import tsx --import ./tests/platform/setup-env.mjs --test tests/courses/*.test.ts",
+    "test:curriculum": "tsx scripts/test-curriculum.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "npm run typecheck && npm run check:secrets",
+    "test": "npm run test:resources && npm run test:platform && npm run test:courses",
+    "test:resources": "node --import tsx --test tests/educational-resources/*.test.ts",
+    "test:platform": "node --import tsx --import ./tests/platform/setup-env.mjs --test tests/platform/*.test.ts",
+    "test:payments": "node --import tsx --import ./tests/platform/setup-env.mjs --test tests/platform/payments*.test.ts",
+    "test:e2e": "playwright test",
+    "check:secrets": "tsx scripts/check-secrets.ts",
+    "provision:owner": "tsx scripts/provision-owner.ts",
+    "provision:academic-year": "tsx scripts/provision-academic-year.ts",
+    "db:backup": "tsx scripts/backup-database.ts",
+    "db:restore": "tsx scripts/restore-database.ts",
+    "check:deploy": "tsx scripts/check-deployment.ts",
+    "resources:audit": "tsx scripts/audit-educational-resources.ts"
+  },
+  "dependencies": {
+    "@carbon/grid": "^11.23.0",
+    "@radix-ui/react-accordion": "^1.3.1",
+    "@radix-ui/react-dialog": "^1.3.1",
+    "@radix-ui/react-tabs": "^1.2.1",
+    "dotenv": "^16.4.7",
+    "google-auth-library": "^9.15.1",
+    "googleapis": "^144.0.0",
+    "js-yaml": "^4.1.0",
+    "next": "15.5.28",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.17.19",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "sharp": "^0.35.5",
+    "tsx": "^4.19.3",
+    "typescript": "^5.7.3"
+  }
+}

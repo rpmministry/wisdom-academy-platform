@@ -1,0 +1,1984 @@
+[
+  {
+    "examNumber": 1,
+    "title": "Examen oficial 1 — Alcanzando Su Destino",
+    "subject": "Alcanzando Su Destino",
+    "kind": "midterm",
+    "sourceFile": "N2N_Exams-ST-00.pdf",
+    "sourceFileId": "1bS8f6C5IEI1POX3_3yPklHGgfXhvLh9h",
+    "bookFile": "38-RYD-5 Sesiones.pdf",
+    "bookFileId": "1h3l6QCzyPZ55dSsFR5O4uXBfv2vKUkxg",
+    "questionCount": 15,
+    "questions": [
+      {
+        "number": 1,
+        "type": "true_false",
+        "prompt": "Dios sólo nos conduce a la victoria, Él nunca nos conduce a la derrota.",
+        "options": [
+          {
+            "id": "true",
+            "label": "Verdadero"
+          },
+          {
+            "id": "false",
+            "label": "Falso"
+          }
+        ],
+        "correctKey": "false",
+        "sourceRef": "Examen oficial N2N — Alcanzando Su Destino, pregunta 1"
+      },
+      {
+        "number": 2,
+        "type": "true_false",
+        "prompt": "Los Israelitas fueron derrotados por los Benjamitas por no obedecer a Dios.",
+        "options": [
+          {
+            "id": "true",
+            "label": "Verdadero"
+          },
+          {
+            "id": "false",
+            "label": "Falso"
+          }
+        ],
+        "correctKey": "false",
+        "sourceRef": "Examen oficial N2N — Alcanzando Su Destino, pregunta 2"
+      },
+      {
+        "number": 3,
+        "type": "true_false",
+        "prompt": "Los Israelitas fueron derrotados cinco veces.",
+        "options": [
+          {
+            "id": "true",
+            "label": "Verdadero"
+          },
+          {
+            "id": "false",
+            "label": "Falso"
+          }
+        ],
+        "correctKey": "false",
+        "sourceRef": "Examen oficial N2N — Alcanzando Su Destino, pregunta 3"
+      },
+      {
+        "number": 4,
+        "type": "true_false",
+        "prompt": "Cuanto más importante su destino, más grandes son los obstáculos en el camino.",
+        "options": [
+          {
+            "id": "true",
+            "label": "Verdadero"
+          },
+          {
+            "id": "false",
+            "label": "Falso"
+          }
+        ],
+        "correctKey": "true",
+        "sourceRef": "Examen oficial N2N — Alcanzando Su Destino, pregunta 4"
+      },
+      {
+        "number": 5,
+        "type": "true_false",
+        "prompt": "Una de las tácticas de Satanás es decirnos que todo lo negativo mejorará.",
+        "options": [
+          {
+            "id": "true",
+            "label": "Verdadero"
+          },
+          {
+            "id": "false",
+            "label": "Falso"
+          }
+        ],
+        "correctKey": "false",
+        "sourceRef": "Examen oficial N2N — Alcanzando Su Destino, pregunta 5"
+      },
+      {
+        "number": 6,
+        "type": "multiple_choice",
+        "prompt": "La tribu que cometió un pecado grave en Jueces 20 fue:",
+        "options": [
+          {
+            "id": "A",
+            "label": "La tribu de Israel."
+          },
+          {
+            "id": "B",
+            "label": "La tribu de los Filisteos."
+          },
+          {
+            "id": "C",
+            "label": "La tribu de Judá."
+          },
+          {
+            "id": "D",
+            "label": "La tribu de Benjamín."
+          }
+        ],
+        "correctKey": "D",
+        "sourceRef": "Examen oficial N2N — Alcanzando Su Destino, pregunta 6"
+      },
+      {
+        "number": 7,
+        "type": "multiple_choice",
+        "prompt": "Antes de ir a la batalla, la tribu de Israel:",
+        "options": [
+          {
+            "id": "A",
+            "label": "Decidió por votación qué hacer."
+          },
+          {
+            "id": "B",
+            "label": "Le preguntó a Dios qué hacer."
+          },
+          {
+            "id": "C",
+            "label": "No le preguntó a nadie qué hacer."
+          },
+          {
+            "id": "D",
+            "label": "Se aconsejó con los Filisteos."
+          }
+        ],
+        "correctKey": "B",
+        "sourceRef": "Examen oficial N2N — Alcanzando Su Destino, pregunta 7"
+      },
+      {
+        "number": 8,
+        "type": "multiple_choice",
+        "prompt": "¿Cuántas veces fueron los Israelitas derrotados?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Una vez."
+          },
+          {
+            "id": "B",
+            "label": "Dos veces."
+          },
+          {
+            "id": "C",
+            "label": "Tres veces."
+          },
+          {
+            "id": "D",
+            "label": "Más de cinco veces."
+          }
+        ],
+        "correctKey": "B",
+        "sourceRef": "Examen oficial N2N — Alcanzando Su Destino, pregunta 8"
+      },
+      {
+        "number": 9,
+        "type": "multiple_choice",
+        "prompt": "¿Cuántas veces fueron los Benjamitas derrotados?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Una vez."
+          },
+          {
+            "id": "B",
+            "label": "Dos veces."
+          },
+          {
+            "id": "C",
+            "label": "Tres veces."
+          },
+          {
+            "id": "D",
+            "label": "Más de cinco veces."
+          }
+        ],
+        "correctKey": "A",
+        "sourceRef": "Examen oficial N2N — Alcanzando Su Destino, pregunta 9"
+      },
+      {
+        "number": 10,
+        "type": "multiple_choice",
+        "prompt": "¿Cómo los Israelitas finalmente lograron derrotar a los de la tribu de Benjamín?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Gritando por séptima vez que fueron a luchar."
+          },
+          {
+            "id": "B",
+            "label": "Enviando primero a Judá a la batalla."
+          },
+          {
+            "id": "C",
+            "label": "Tendiendo una emboscada."
+          },
+          {
+            "id": "D",
+            "label": "Usando carros de hierro."
+          }
+        ],
+        "correctKey": "C",
+        "sourceRef": "Examen oficial N2N — Alcanzando Su Destino, pregunta 10"
+      },
+      {
+        "number": 11,
+        "type": "multiple_choice",
+        "prompt": "Cuando experimentamos oposición, demuestra que:",
+        "options": [
+          {
+            "id": "A",
+            "label": "Estamos fuera de la voluntad de Dios."
+          },
+          {
+            "id": "B",
+            "label": "Tenemos un enemigo trabajando en contra de nosotros."
+          },
+          {
+            "id": "C",
+            "label": "Debemos renunciar y buscar otra cosa que hacer."
+          },
+          {
+            "id": "D",
+            "label": "No estamos preparados espiritualmente."
+          }
+        ],
+        "correctKey": "B",
+        "sourceRef": "Examen oficial N2N — Alcanzando Su Destino, pregunta 11"
+      },
+      {
+        "number": 12,
+        "type": "multiple_choice",
+        "prompt": "Victoria permanente:",
+        "options": [
+          {
+            "id": "A",
+            "label": "Nunca es posible."
+          },
+          {
+            "id": "B",
+            "label": "Muchas veces se obtiene fácilmente."
+          },
+          {
+            "id": "C",
+            "label": "Muchas veces viene después de la derrota temporal."
+          },
+          {
+            "id": "D",
+            "label": "Viene por ser siempre correcta."
+          }
+        ],
+        "correctKey": "C",
+        "sourceRef": "Examen oficial N2N — Alcanzando Su Destino, pregunta 12"
+      },
+      {
+        "number": 13,
+        "type": "multiple_choice",
+        "prompt": "Alcanzar su destino pleno:",
+        "options": [
+          {
+            "id": "A",
+            "label": "Será siempre fácil."
+          },
+          {
+            "id": "B",
+            "label": "Será siempre imposible sin Dios."
+          },
+          {
+            "id": "C",
+            "label": "Es sólo una cuestión de esperar que Dios se lo traiga."
+          },
+          {
+            "id": "D",
+            "label": "Requiere mucha fe y poca paciencia."
+          }
+        ],
+        "correctKey": "B",
+        "sourceRef": "Examen oficial N2N — Alcanzando Su Destino, pregunta 13"
+      },
+      {
+        "number": 14,
+        "type": "multiple_choice",
+        "prompt": "De camino a alcanzar su destino, ¿qué es improbable suceder?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Haber gigantes en el camino."
+          },
+          {
+            "id": "B",
+            "label": "Una tentación de creer en mentiras."
+          },
+          {
+            "id": "C",
+            "label": "Moverse de victoria a victoria sin cualquier obstáculo."
+          },
+          {
+            "id": "D",
+            "label": "Un deseo de auto-compadecerse."
+          }
+        ],
+        "correctKey": "C",
+        "sourceRef": "Examen oficial N2N — Alcanzando Su Destino, pregunta 14"
+      },
+      {
+        "number": 15,
+        "type": "multiple_choice",
+        "prompt": "Su victoria está garantizada si:",
+        "options": [
+          {
+            "id": "A",
+            "label": "Usted ayuna y ora cada día."
+          },
+          {
+            "id": "B",
+            "label": "Le dan buenos consejos."
+          },
+          {
+            "id": "C",
+            "label": "Usted lleva una vida moralmente buena."
+          },
+          {
+            "id": "D",
+            "label": "Se rehúsa a renunciar su fe, y sigue intentando."
+          }
+        ],
+        "correctKey": "D",
+        "sourceRef": "Examen oficial N2N — Alcanzando Su Destino, pregunta 15"
+      }
+    ]
+  },
+  {
+    "examNumber": 2,
+    "title": "Examen oficial 2 — El Matrimonio y la Familia",
+    "subject": "El Matrimonio y la Familia",
+    "kind": "midterm",
+    "sourceFile": "N2N_Exams-ST-00.pdf",
+    "sourceFileId": "1bS8f6C5IEI1POX3_3yPklHGgfXhvLh9h",
+    "bookFile": "N2-MF-00.pdf",
+    "bookFileId": "1F9OQKBv-ot4jxMsE5jJzzcFl6wKmp6E7",
+    "questionCount": 20,
+    "questions": [
+      {
+        "number": 1,
+        "type": "true_false",
+        "prompt": "El matrimonio se da cuando dos personas imperfectas inician una relación de pacto para cuidadosamente buscar la perfección bajo el Señorío de Cristo.",
+        "options": [
+          {
+            "id": "true",
+            "label": "Verdadero"
+          },
+          {
+            "id": "false",
+            "label": "Falso"
+          }
+        ],
+        "correctKey": "false",
+        "sourceRef": "Examen oficial N2N — El Matrimonio y la Familia, pregunta 1"
+      },
+      {
+        "number": 2,
+        "type": "true_false",
+        "prompt": "Solamente el hombre representa la imagen de Dios en el matrimonio Cristiano.",
+        "options": [
+          {
+            "id": "true",
+            "label": "Verdadero"
+          },
+          {
+            "id": "false",
+            "label": "Falso"
+          }
+        ],
+        "correctKey": "false",
+        "sourceRef": "Examen oficial N2N — El Matrimonio y la Familia, pregunta 2"
+      },
+      {
+        "number": 3,
+        "type": "true_false",
+        "prompt": "En el Antiguo Testamento Dios compara la infidelidad espiritual con el adulterio.",
+        "options": [
+          {
+            "id": "true",
+            "label": "Verdadero"
+          },
+          {
+            "id": "false",
+            "label": "Falso"
+          }
+        ],
+        "correctKey": "true",
+        "sourceRef": "Examen oficial N2N — El Matrimonio y la Familia, pregunta 3"
+      },
+      {
+        "number": 4,
+        "type": "true_false",
+        "prompt": "Una persona es abusada y explotada cuando se le estima por quién es.",
+        "options": [
+          {
+            "id": "true",
+            "label": "Verdadero"
+          },
+          {
+            "id": "false",
+            "label": "Falso"
+          }
+        ],
+        "correctKey": "false",
+        "sourceRef": "Examen oficial N2N — El Matrimonio y la Familia, pregunta 4"
+      },
+      {
+        "number": 5,
+        "type": "true_false",
+        "prompt": "El matrimonio no puede revelar el misterio de la fidelidad del pacto de Dios.",
+        "options": [
+          {
+            "id": "true",
+            "label": "Verdadero"
+          },
+          {
+            "id": "false",
+            "label": "Falso"
+          }
+        ],
+        "correctKey": "false",
+        "sourceRef": "Examen oficial N2N — El Matrimonio y la Familia, pregunta 5"
+      },
+      {
+        "number": 6,
+        "type": "multiple_choice",
+        "prompt": "¿Cuál de los siguientes enseña el principio del Padre?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Dios no es un Padre abusivo."
+          },
+          {
+            "id": "B",
+            "label": "Dios no es un Padre ausente."
+          },
+          {
+            "id": "C",
+            "label": "Dios no es un Padre acusador."
+          },
+          {
+            "id": "D",
+            "label": "Todas las anteriores."
+          }
+        ],
+        "correctKey": "D",
+        "sourceRef": "Examen oficial N2N — El Matrimonio y la Familia, pregunta 6"
+      },
+      {
+        "number": 7,
+        "type": "multiple_choice",
+        "prompt": "El amor ágape se puede definir lo más precisamente como:",
+        "options": [
+          {
+            "id": "A",
+            "label": "Amar a alguien por completo."
+          },
+          {
+            "id": "B",
+            "label": "Dar amor y disciplina."
+          },
+          {
+            "id": "C",
+            "label": "Dar con sacrificio."
+          },
+          {
+            "id": "D",
+            "label": "Amor paciente."
+          }
+        ],
+        "correctKey": "C",
+        "sourceRef": "Examen oficial N2N — El Matrimonio y la Familia, pregunta 7"
+      },
+      {
+        "number": 8,
+        "type": "multiple_choice",
+        "prompt": "El amor fileo se puede definir lo más precisamente como:",
+        "options": [
+          {
+            "id": "A",
+            "label": "El verdadero amor fundamental."
+          },
+          {
+            "id": "B",
+            "label": "El amor hacia nuestros enemigos."
+          },
+          {
+            "id": "C",
+            "label": "El amor hacia nuestros hijos."
+          },
+          {
+            "id": "D",
+            "label": "El repartir y auto-revelación (amor de amistad)."
+          }
+        ],
+        "correctKey": "D",
+        "sourceRef": "Examen oficial N2N — El Matrimonio y la Familia, pregunta 8"
+      },
+      {
+        "number": 9,
+        "type": "multiple_choice",
+        "prompt": "¿De qué manera sostiene el amor ágape en el pacto del matrimonio?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Cuando se decide a ser paciente."
+          },
+          {
+            "id": "B",
+            "label": "Cuando se decide a ser amable."
+          },
+          {
+            "id": "C",
+            "label": "Cuando se decide a perdonar."
+          },
+          {
+            "id": "D",
+            "label": "Todas las anteriores"
+          }
+        ],
+        "correctKey": "D",
+        "sourceRef": "Examen oficial N2N — El Matrimonio y la Familia, pregunta 9"
+      },
+      {
+        "number": 10,
+        "type": "multiple_choice",
+        "prompt": "¿Cuál de las declaraciones abajo mejor define el perdón Bíblico?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Olvidar el dolor."
+          },
+          {
+            "id": "B",
+            "label": "Evitar al otro."
+          },
+          {
+            "id": "C",
+            "label": "Cancelar una deuda y ofrecer la gracia divina."
+          },
+          {
+            "id": "D",
+            "label": "Hablar con un Pastor sobre una falta."
+          }
+        ],
+        "correctKey": "C",
+        "sourceRef": "Examen oficial N2N — El Matrimonio y la Familia, pregunta 10"
+      },
+      {
+        "number": 11,
+        "type": "multiple_choice",
+        "prompt": "Indicamos en esta sesión que personas espiritualmente sanas tienen relaciones sanas. ¿Qué engaño tenía relación con este principio?",
+        "options": [
+          {
+            "id": "A",
+            "label": "No soy completo(a) si no estoy casado(a)."
+          },
+          {
+            "id": "B",
+            "label": "Puedo servir a Dios más eficazmente si estoy casado."
+          },
+          {
+            "id": "C",
+            "label": "El matrimonio me traerá la sanidad para todas mis heridas."
+          },
+          {
+            "id": "D",
+            "label": "Ninguna de las alternativas."
+          }
+        ],
+        "correctKey": "C",
+        "sourceRef": "Examen oficial N2N — El Matrimonio y la Familia, pregunta 11"
+      },
+      {
+        "number": 12,
+        "type": "multiple_choice",
+        "prompt": "¿De qué manera se puede iniciar una relación?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Se la inicia al construir una amistad."
+          },
+          {
+            "id": "B",
+            "label": "Se la inicia por atracción física."
+          },
+          {
+            "id": "C",
+            "label": "Se la inicia con una Palabra de Dios."
+          },
+          {
+            "id": "D",
+            "label": "Todas las anteriores"
+          }
+        ],
+        "correctKey": "D",
+        "sourceRef": "Examen oficial N2N — El Matrimonio y la Familia, pregunta 12"
+      },
+      {
+        "number": 13,
+        "type": "multiple_choice",
+        "prompt": "Hablamos sobre cuatro cuestiones importantes. La primera fue: ¿Es la llamada de Dios lo mismo en ambas vidas? ¿Cuál de las siguientes frases se relaciona con esta cuestión?",
+        "options": [
+          {
+            "id": "A",
+            "label": "¿Está la otra persona animándome en Cristo?"
+          },
+          {
+            "id": "B",
+            "label": "¿Está Usted lleno de paz?"
+          },
+          {
+            "id": "C",
+            "label": "¿La decisión de casarme le pone a Jesús y a Su servicio en primer lugar en mi vida?"
+          },
+          {
+            "id": "D",
+            "label": "Todas las anteriores"
+          }
+        ],
+        "correctKey": "C",
+        "sourceRef": "Examen oficial N2N — El Matrimonio y la Familia, pregunta 13"
+      },
+      {
+        "number": 14,
+        "type": "multiple_choice",
+        "prompt": "En la sesión seis hablamos sobre los maridos que aman a sus mujeres a través de la purificación. ¿Cuál de las siguientes declaraciones define ese proceso?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Perdonar el pecado de nuestras mujeres."
+          },
+          {
+            "id": "B",
+            "label": "Animar a nuestras mujeres a diario."
+          },
+          {
+            "id": "C",
+            "label": "Leer la Biblia a nuestras mujeres."
+          },
+          {
+            "id": "D",
+            "label": "Ninguna de las alternativas."
+          }
+        ],
+        "correctKey": "D",
+        "sourceRef": "Examen oficial N2N — El Matrimonio y la Familia, pregunta 14"
+      },
+      {
+        "number": 15,
+        "type": "multiple_choice",
+        "prompt": "Hablamos en la sesión seis sobre el don de la seguridad. ¿Cuál de los siguientes mejor describe ese don?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Hablar con nuestras mujeres de tal manera que las transmitamos estima, honor y respeto."
+          },
+          {
+            "id": "B",
+            "label": "Sacrificar derechos y privilegios por nuestras mujeres."
+          },
+          {
+            "id": "C",
+            "label": "Conceder paciencia extrema a nuestras mujeres."
+          },
+          {
+            "id": "D",
+            "label": "Ninguna de las alternativas."
+          }
+        ],
+        "correctKey": "A",
+        "sourceRef": "Examen oficial N2N — El Matrimonio y la Familia, pregunta 15"
+      },
+      {
+        "number": 16,
+        "type": "multiple_choice",
+        "prompt": "¿Cuál de estas no es parte de la dote de seis partes que cada mujer aporta al matrimonio?",
+        "options": [
+          {
+            "id": "A",
+            "label": "El impartimiento de ayuda."
+          },
+          {
+            "id": "B",
+            "label": "El impartimiento de servidumbre."
+          },
+          {
+            "id": "C",
+            "label": "El impartimiento de fuerza."
+          },
+          {
+            "id": "D",
+            "label": "El impartimiento de confianza."
+          }
+        ],
+        "correctKey": "B",
+        "sourceRef": "Examen oficial N2N — El Matrimonio y la Familia, pregunta 16"
+      },
+      {
+        "number": 17,
+        "type": "multiple_choice",
+        "prompt": "¿Cuál de estas tampoco es parte de la dote de seis partes que cada mujer aporta al matrimonio?",
+        "options": [
+          {
+            "id": "A",
+            "label": "El impartimiento de sabiduría."
+          },
+          {
+            "id": "B",
+            "label": "El impartimiento de consuelo."
+          },
+          {
+            "id": "C",
+            "label": "El impartimiento de seguridad."
+          },
+          {
+            "id": "D",
+            "label": "El impartimiento de integridad."
+          }
+        ],
+        "correctKey": "D",
+        "sourceRef": "Examen oficial N2N — El Matrimonio y la Familia, pregunta 17"
+      },
+      {
+        "number": 18,
+        "type": "multiple_choice",
+        "prompt": "¿Cuál de estos no es parte de los frutos que una excelente esposa provee?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Paciencia."
+          },
+          {
+            "id": "B",
+            "label": "Paz y descanso."
+          },
+          {
+            "id": "C",
+            "label": "Aumento."
+          },
+          {
+            "id": "D",
+            "label": "Bendición."
+          }
+        ],
+        "correctKey": "A",
+        "sourceRef": "Examen oficial N2N — El Matrimonio y la Familia, pregunta 18"
+      },
+      {
+        "number": 19,
+        "type": "multiple_choice",
+        "prompt": "¿Cuál de estos no es una de las maneras discutidas sobre cómo enterarse de la sexualidad?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Con los padres y la familia."
+          },
+          {
+            "id": "B",
+            "label": "Con los compañeros y amigos."
+          },
+          {
+            "id": "C",
+            "label": "A través de la cultura."
+          },
+          {
+            "id": "D",
+            "label": "A través de libros que leemos sobre el tema."
+          }
+        ],
+        "correctKey": "D",
+        "sourceRef": "Examen oficial N2N — El Matrimonio y la Familia, pregunta 19"
+      },
+      {
+        "number": 20,
+        "type": "multiple_choice",
+        "prompt": "¿Cuál de estas NO es una de las cuatro perspectivas Bíblicas presentadas con respecto al sexo?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Dios ha concebido el sexo."
+          },
+          {
+            "id": "B",
+            "label": "Dios originalmente lo concibió con el propósito de engendrar a niños y nada más."
+          },
+          {
+            "id": "C",
+            "label": "Dios defiende el sexo en Su Palabra."
+          },
+          {
+            "id": "D",
+            "label": "El sexo se vuelve depravado cuando se lo lleva fuera del matrimonio."
+          }
+        ],
+        "correctKey": "B",
+        "sourceRef": "Examen oficial N2N — El Matrimonio y la Familia, pregunta 20"
+      }
+    ]
+  },
+  {
+    "examNumber": 3,
+    "title": "Examen oficial 3 — La Vida Cristiana Victoriosa",
+    "subject": "La Vida Cristiana Victoriosa",
+    "kind": "midterm",
+    "sourceFile": "N2N_Exams-ST-00.pdf",
+    "sourceFileId": "1bS8f6C5IEI1POX3_3yPklHGgfXhvLh9h",
+    "bookFile": "N3-VC-00.pdf",
+    "bookFileId": "13B5P61RZunXGegSTYeVbQdEomoo90SjT",
+    "questionCount": 10,
+    "questions": [
+      {
+        "number": 1,
+        "type": "true_false",
+        "prompt": "No es un pecado ser tentado.",
+        "options": [
+          {
+            "id": "true",
+            "label": "Verdadero"
+          },
+          {
+            "id": "false",
+            "label": "Falso"
+          }
+        ],
+        "correctKey": "true",
+        "sourceRef": "Examen oficial N2N — La Vida Cristiana Victoriosa, pregunta 1"
+      },
+      {
+        "number": 2,
+        "type": "true_false",
+        "prompt": "Si trabajamos lo suficientemente fuerte en ser espirituales, no seremos tentados más.",
+        "options": [
+          {
+            "id": "true",
+            "label": "Verdadero"
+          },
+          {
+            "id": "false",
+            "label": "Falso"
+          }
+        ],
+        "correctKey": "false",
+        "sourceRef": "Examen oficial N2N — La Vida Cristiana Victoriosa, pregunta 2"
+      },
+      {
+        "number": 3,
+        "type": "true_false",
+        "prompt": "Si quiere vencer al pecado, solo necesita usar su propia fuerza de voluntad.",
+        "options": [
+          {
+            "id": "true",
+            "label": "Verdadero"
+          },
+          {
+            "id": "false",
+            "label": "Falso"
+          }
+        ],
+        "correctKey": "false",
+        "sourceRef": "Examen oficial N2N — La Vida Cristiana Victoriosa, pregunta 3"
+      },
+      {
+        "number": 4,
+        "type": "true_false",
+        "prompt": "El Rey David hizo un pacto con sus ojos de no pecar.",
+        "options": [
+          {
+            "id": "true",
+            "label": "Verdadero"
+          },
+          {
+            "id": "false",
+            "label": "Falso"
+          }
+        ],
+        "correctKey": "false",
+        "sourceRef": "Examen oficial N2N — La Vida Cristiana Victoriosa, pregunta 4"
+      },
+      {
+        "number": 5,
+        "type": "true_false",
+        "prompt": "Dios nos da momentos especiales de gracia en nuestras vidas para vencer al pecado.",
+        "options": [
+          {
+            "id": "true",
+            "label": "Verdadero"
+          },
+          {
+            "id": "false",
+            "label": "Falso"
+          }
+        ],
+        "correctKey": "true",
+        "sourceRef": "Examen oficial N2N — La Vida Cristiana Victoriosa, pregunta 5"
+      },
+      {
+        "number": 6,
+        "type": "multiple_choice",
+        "prompt": "Cual no es uno de los cuatro niveles en el patrón de la tentación.",
+        "options": [
+          {
+            "id": "A",
+            "label": "Deseo es incitado."
+          },
+          {
+            "id": "B",
+            "label": "Deseo es considerado."
+          },
+          {
+            "id": "C",
+            "label": "Deseo es ignorado."
+          },
+          {
+            "id": "D",
+            "label": "Cedemos al deseo."
+          }
+        ],
+        "correctKey": "C",
+        "sourceRef": "Examen oficial N2N — La Vida Cristiana Victoriosa, pregunta 6"
+      },
+      {
+        "number": 7,
+        "type": "multiple_choice",
+        "prompt": "¿Por qué es tan importante “permanecer en la vid”?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Nunca fuimos destinados a vivir la vida cristiana en nuestra propia fuerza."
+          },
+          {
+            "id": "B",
+            "label": "Mientras permanecemos, recibimos Fuerza y Deseo de vencer."
+          },
+          {
+            "id": "C",
+            "label": "El Espíritu Santo le dará fuerza."
+          },
+          {
+            "id": "D",
+            "label": "Todo lo anterior."
+          }
+        ],
+        "correctKey": "D",
+        "sourceRef": "Examen oficial N2N — La Vida Cristiana Victoriosa, pregunta 7"
+      },
+      {
+        "number": 8,
+        "type": "multiple_choice",
+        "prompt": "¿Cómo nos ayuda escuchar al Espíritu Santo a vencer la tentación?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Él nos va a dar sentimientos agradables."
+          },
+          {
+            "id": "B",
+            "label": "Él nos va a dar claves para la victoria."
+          },
+          {
+            "id": "C",
+            "label": "Él nos ayudará a no pensar en lo absoluto."
+          },
+          {
+            "id": "D",
+            "label": "Ninguna de las anteriores."
+          }
+        ],
+        "correctKey": "B",
+        "sourceRef": "Examen oficial N2N — La Vida Cristiana Victoriosa, pregunta 8"
+      },
+      {
+        "number": 9,
+        "type": "multiple_choice",
+        "prompt": "¿Cuál de estos es uno de los pasos prácticos para vencer la tentación?",
+        "options": [
+          {
+            "id": "A",
+            "label": "No abrir puertas a ella."
+          },
+          {
+            "id": "B",
+            "label": "Evitar sitios y momentos de tentación."
+          },
+          {
+            "id": "C",
+            "label": "Hacer un pacto con sus ojos y oídos."
+          },
+          {
+            "id": "D",
+            "label": "Todo lo anterior."
+          }
+        ],
+        "correctKey": "D",
+        "sourceRef": "Examen oficial N2N — La Vida Cristiana Victoriosa, pregunta 9"
+      },
+      {
+        "number": 10,
+        "type": "multiple_choice",
+        "prompt": "Que significa “llevar tu pecado a la luz”.",
+        "options": [
+          {
+            "id": "A",
+            "label": "Considera lo que la escritura dice sobre ello."
+          },
+          {
+            "id": "B",
+            "label": "Confiesa su pecado a Dios."
+          },
+          {
+            "id": "C",
+            "label": "Confiesa su pecado a un cristiano maduro y de confianza."
+          },
+          {
+            "id": "D",
+            "label": "Ninguna de las anteriores."
+          }
+        ],
+        "correctKey": "C",
+        "sourceRef": "Examen oficial N2N — La Vida Cristiana Victoriosa, pregunta 10"
+      }
+    ]
+  },
+  {
+    "examNumber": 4,
+    "title": "Examen oficial 4 — Libre por el Decreto Divino",
+    "subject": "Libre por el Decreto Divino",
+    "kind": "final",
+    "sourceFile": "N2N_Exams-ST-00.pdf",
+    "sourceFileId": "1bS8f6C5IEI1POX3_3yPklHGgfXhvLh9h",
+    "bookFile": "N4-FD-00.pdf",
+    "bookFileId": "1GhQfdJkh2sEpMPWo6F0Ec2uP_O8koubj",
+    "questionCount": 20,
+    "questions": [
+      {
+        "number": 1,
+        "type": "true_false",
+        "prompt": "El enfoque de Romanos está en ganar el cielo a través de buenas obras.",
+        "options": [
+          {
+            "id": "true",
+            "label": "Verdadero"
+          },
+          {
+            "id": "false",
+            "label": "Falso"
+          }
+        ],
+        "correctKey": "false",
+        "sourceRef": "Examen oficial N2N — Libre por el Decreto Divino, pregunta 1"
+      },
+      {
+        "number": 2,
+        "type": "true_false",
+        "prompt": "A más revelación, más responsabilidades.",
+        "options": [
+          {
+            "id": "true",
+            "label": "Verdadero"
+          },
+          {
+            "id": "false",
+            "label": "Falso"
+          }
+        ],
+        "correctKey": "true",
+        "sourceRef": "Examen oficial N2N — Libre por el Decreto Divino, pregunta 2"
+      },
+      {
+        "number": 3,
+        "type": "true_false",
+        "prompt": "A Abraham le llamaban el Padre de la Fe.",
+        "options": [
+          {
+            "id": "true",
+            "label": "Verdadero"
+          },
+          {
+            "id": "false",
+            "label": "Falso"
+          }
+        ],
+        "correctKey": "true",
+        "sourceRef": "Examen oficial N2N — Libre por el Decreto Divino, pregunta 3"
+      },
+      {
+        "number": 4,
+        "type": "true_false",
+        "prompt": "La santificación es un evento instantáneo.",
+        "options": [
+          {
+            "id": "true",
+            "label": "Verdadero"
+          },
+          {
+            "id": "false",
+            "label": "Falso"
+          }
+        ],
+        "correctKey": "false",
+        "sourceRef": "Examen oficial N2N — Libre por el Decreto Divino, pregunta 4"
+      },
+      {
+        "number": 5,
+        "type": "true_false",
+        "prompt": "Los dones y el llamado de Dios pueden ser quitados.",
+        "options": [
+          {
+            "id": "true",
+            "label": "Verdadero"
+          },
+          {
+            "id": "false",
+            "label": "Falso"
+          }
+        ],
+        "correctKey": "false",
+        "sourceRef": "Examen oficial N2N — Libre por el Decreto Divino, pregunta 5"
+      },
+      {
+        "number": 6,
+        "type": "multiple_choice",
+        "prompt": "¿Quién está en la corte cuándo el juicio comienza?",
+        "options": [
+          {
+            "id": "A",
+            "label": "El predicador, el Profesor y los Alumnos."
+          },
+          {
+            "id": "B",
+            "label": "El Servidor, el Salvador y los Santos."
+          },
+          {
+            "id": "C",
+            "label": "Los Fariseos, los Saduceos y un Juez."
+          },
+          {
+            "id": "D",
+            "label": "El Levita, el Hitita y el Canaanita."
+          }
+        ],
+        "correctKey": "B",
+        "sourceRef": "Examen oficial N2N — Libre por el Decreto Divino, pregunta 6"
+      },
+      {
+        "number": 7,
+        "type": "multiple_choice",
+        "prompt": "¿Quién NO fue traído a la corte durante el argumento final del abogado acusador?",
+        "options": [
+          {
+            "id": "A",
+            "label": "El Médico."
+          },
+          {
+            "id": "B",
+            "label": "El Científico."
+          },
+          {
+            "id": "C",
+            "label": "El Historiador."
+          },
+          {
+            "id": "D",
+            "label": "El segundo Juez."
+          }
+        ],
+        "correctKey": "B",
+        "sourceRef": "Examen oficial N2N — Libre por el Decreto Divino, pregunta 7"
+      },
+      {
+        "number": 8,
+        "type": "multiple_choice",
+        "prompt": "¿Cómo son las promesas de Dios?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Sí y no."
+          },
+          {
+            "id": "B",
+            "label": "Sí y tal vez."
+          },
+          {
+            "id": "C",
+            "label": "Sí o espere hasta más tarde."
+          },
+          {
+            "id": "D",
+            "label": "Sí y amén."
+          }
+        ],
+        "correctKey": "D",
+        "sourceRef": "Examen oficial N2N — Libre por el Decreto Divino, pregunta 8"
+      },
+      {
+        "number": 9,
+        "type": "multiple_choice",
+        "prompt": "¿Por qué vino el Espíritu de Dios?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Para condenar a la gente."
+          },
+          {
+            "id": "B",
+            "label": "Para desalentar a la gente."
+          },
+          {
+            "id": "C",
+            "label": "Para dar vida."
+          },
+          {
+            "id": "D",
+            "label": "Para dar dinero."
+          }
+        ],
+        "correctKey": "C",
+        "sourceRef": "Examen oficial N2N — Libre por el Decreto Divino, pregunta 9"
+      },
+      {
+        "number": 10,
+        "type": "multiple_choice",
+        "prompt": "¿Cuántos fueron salvados cuando el Espíritu Santo descendió a Pentecostés?",
+        "options": [
+          {
+            "id": "A",
+            "label": "1,000"
+          },
+          {
+            "id": "B",
+            "label": "2,000"
+          },
+          {
+            "id": "C",
+            "label": "3,000"
+          },
+          {
+            "id": "D",
+            "label": "4,000"
+          }
+        ],
+        "correctKey": "C",
+        "sourceRef": "Examen oficial N2N — Libre por el Decreto Divino, pregunta 10"
+      },
+      {
+        "number": 11,
+        "type": "multiple_choice",
+        "prompt": "¿Cuál es una de las razones por la cual Dios le ha llamado para vivir en paz con las autoridades?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Ellos tienen el poder de aumentar sus impuestos."
+          },
+          {
+            "id": "B",
+            "label": "Ellos son más inteligentes que cualquier otra persona."
+          },
+          {
+            "id": "C",
+            "label": "Ellos tienen el poder de quitarle la vida."
+          },
+          {
+            "id": "D",
+            "label": "Ellos son los más ricos de la tierra."
+          }
+        ],
+        "correctKey": "C",
+        "sourceRef": "Examen oficial N2N — Libre por el Decreto Divino, pregunta 11"
+      },
+      {
+        "number": 12,
+        "type": "multiple_choice",
+        "prompt": "¿De quién se debe revestir Usted?",
+        "options": [
+          {
+            "id": "A",
+            "label": "De los apósteles."
+          },
+          {
+            "id": "B",
+            "label": "De los Fariseos."
+          },
+          {
+            "id": "C",
+            "label": "De los Saduceos."
+          },
+          {
+            "id": "D",
+            "label": "Del Señor Jesús Cristo."
+          }
+        ],
+        "correctKey": "D",
+        "sourceRef": "Examen oficial N2N — Libre por el Decreto Divino, pregunta 12"
+      },
+      {
+        "number": 13,
+        "type": "multiple_choice",
+        "prompt": "¿Por qué Pablo no se avergüenza del Evangelio?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Es lo mejor que existe."
+          },
+          {
+            "id": "B",
+            "label": "Lo motiva a comportarse bien."
+          },
+          {
+            "id": "C",
+            "label": "Es el poder de Dios para la salvación de todo aquel que cree."
+          },
+          {
+            "id": "D",
+            "label": "Esto mantiene su cabeza en las nubes."
+          }
+        ],
+        "correctKey": "C",
+        "sourceRef": "Examen oficial N2N — Libre por el Decreto Divino, pregunta 13"
+      },
+      {
+        "number": 14,
+        "type": "multiple_choice",
+        "prompt": "¿Quién es la semilla espiritual de Abraham?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Moisés"
+          },
+          {
+            "id": "B",
+            "label": "Isaac"
+          },
+          {
+            "id": "C",
+            "label": "Jacob"
+          },
+          {
+            "id": "D",
+            "label": "Jesús"
+          }
+        ],
+        "correctKey": "D",
+        "sourceRef": "Examen oficial N2N — Libre por el Decreto Divino, pregunta 14"
+      },
+      {
+        "number": 15,
+        "type": "multiple_choice",
+        "prompt": "¿De qué es señal la disciplina de Dios en nuestras vidas?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Su grandeza."
+          },
+          {
+            "id": "B",
+            "label": "La adoración."
+          },
+          {
+            "id": "C",
+            "label": "Nuestra condición de hijos."
+          },
+          {
+            "id": "D",
+            "label": "El discipulado."
+          }
+        ],
+        "correctKey": "C",
+        "sourceRef": "Examen oficial N2N — Libre por el Decreto Divino, pregunta 15"
+      },
+      {
+        "number": 16,
+        "type": "multiple_choice",
+        "prompt": "¿Cuál de estas NO es una de las bendiciones que vienen con la justificación?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Nos convertimos en personas ricas."
+          },
+          {
+            "id": "B",
+            "label": "Tenemos paz con Dios."
+          },
+          {
+            "id": "C",
+            "label": "Tenemos acceso a través de la fe."
+          },
+          {
+            "id": "D",
+            "label": "Dios empieza a trabajar con el fin de aumentar nuestra capacidad."
+          }
+        ],
+        "correctKey": "A",
+        "sourceRef": "Examen oficial N2N — Libre por el Decreto Divino, pregunta 16"
+      },
+      {
+        "number": 17,
+        "type": "multiple_choice",
+        "prompt": "¿Cuál es el don de Dios?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Un regalo a cada cumpleaños."
+          },
+          {
+            "id": "B",
+            "label": "La vida eterna en nuestro Señor Jesucristo."
+          },
+          {
+            "id": "C",
+            "label": "La sabiduría más allá de cualquier medida."
+          },
+          {
+            "id": "D",
+            "label": "Una bonita voz para cantar."
+          }
+        ],
+        "correctKey": "B",
+        "sourceRef": "Examen oficial N2N — Libre por el Decreto Divino, pregunta 17"
+      },
+      {
+        "number": 18,
+        "type": "multiple_choice",
+        "prompt": "Los tres tipos de “pecadores” descritos en Romanos capítulos 2 y 3 son:",
+        "options": [
+          {
+            "id": "A",
+            "label": "El pecador feliz, el pecador triste, y el pecador paciente."
+          },
+          {
+            "id": "B",
+            "label": "El pecador cruel, el pecador servicial, y el pecador enfadado."
+          },
+          {
+            "id": "C",
+            "label": "El pecador bueno, el pecador religioso, y el pecador descarado."
+          },
+          {
+            "id": "D",
+            "label": "El pecador romano, el pecador griego, y el pecador italiano."
+          }
+        ],
+        "correctKey": "C",
+        "sourceRef": "Examen oficial N2N — Libre por el Decreto Divino, pregunta 18"
+      },
+      {
+        "number": 19,
+        "type": "multiple_choice",
+        "prompt": "El libro de Romanos fue escrito:",
+        "options": [
+          {
+            "id": "A",
+            "label": "Unos 25 años después de la Resurrección de Jesús."
+          },
+          {
+            "id": "B",
+            "label": "Unos 50 años después de la Resurrección de Jesús."
+          },
+          {
+            "id": "C",
+            "label": "Unos 75 años después de la Resurrección de Jesús."
+          },
+          {
+            "id": "D",
+            "label": "Unos 90 años después de la Resurrección de Jesús."
+          }
+        ],
+        "correctKey": "A",
+        "sourceRef": "Examen oficial N2N — Libre por el Decreto Divino, pregunta 19"
+      },
+      {
+        "number": 20,
+        "type": "multiple_choice",
+        "prompt": "La última sección principal del libro de Romanos se puede comparar con:",
+        "options": [
+          {
+            "id": "A",
+            "label": "Las raíces de un árbol."
+          },
+          {
+            "id": "B",
+            "label": "El tronco de un árbol."
+          },
+          {
+            "id": "C",
+            "label": "Las ramas de un árbol."
+          },
+          {
+            "id": "D",
+            "label": "El fruto de un árbol."
+          }
+        ],
+        "correctKey": "D",
+        "sourceRef": "Examen oficial N2N — Libre por el Decreto Divino, pregunta 20"
+      }
+    ]
+  },
+  {
+    "examNumber": 5,
+    "title": "Examen oficial 5 — El Sufrimiento y La Pérdida",
+    "subject": "El Sufrimiento y La Pérdida",
+    "kind": "final",
+    "sourceFile": "N2N_Exams-ST-00.pdf",
+    "sourceFileId": "1bS8f6C5IEI1POX3_3yPklHGgfXhvLh9h",
+    "bookFile": "N5-SL-00.pdf",
+    "bookFileId": "1waw-0PnwrG32LVy9B6IpQeaK9wl08u68",
+    "questionCount": 20,
+    "questions": [
+      {
+        "number": 1,
+        "type": "true_false",
+        "prompt": "“Aunque ande en valle de sombra de muerte“ (Salmo 23: 4) habla sólo de la reconfortante presencia de Dios en la hora de nuestra muerte física.",
+        "options": [
+          {
+            "id": "true",
+            "label": "Verdadero"
+          },
+          {
+            "id": "false",
+            "label": "Falso"
+          }
+        ],
+        "correctKey": "false",
+        "sourceRef": "Examen oficial N2N — El Sufrimiento y La Pérdida, pregunta 1"
+      },
+      {
+        "number": 2,
+        "type": "true_false",
+        "prompt": "Hay dos tipos de sufrimiento que podemos experimentar en el Reino de Dios.",
+        "options": [
+          {
+            "id": "true",
+            "label": "Verdadero"
+          },
+          {
+            "id": "false",
+            "label": "Falso"
+          }
+        ],
+        "correctKey": "true",
+        "sourceRef": "Examen oficial N2N — El Sufrimiento y La Pérdida, pregunta 2"
+      },
+      {
+        "number": 3,
+        "type": "true_false",
+        "prompt": "La experiencia completa de Gracia incluye el perdón y el sufrimiento.",
+        "options": [
+          {
+            "id": "true",
+            "label": "Verdadero"
+          },
+          {
+            "id": "false",
+            "label": "Falso"
+          }
+        ],
+        "correctKey": "true",
+        "sourceRef": "Examen oficial N2N — El Sufrimiento y La Pérdida, pregunta 3"
+      },
+      {
+        "number": 4,
+        "type": "true_false",
+        "prompt": "La sanidad y fruto en la vida se experimentan cuando confiamos en Dios con nuestras preguntas “por qué”.",
+        "options": [
+          {
+            "id": "true",
+            "label": "Verdadero"
+          },
+          {
+            "id": "false",
+            "label": "Falso"
+          }
+        ],
+        "correctKey": "true",
+        "sourceRef": "Examen oficial N2N — El Sufrimiento y La Pérdida, pregunta 4"
+      },
+      {
+        "number": 5,
+        "type": "true_false",
+        "prompt": "Jesús lloró (Juan 11: 35) a causa de la incredulidad en los corazones de María y Marta.",
+        "options": [
+          {
+            "id": "true",
+            "label": "Verdadero"
+          },
+          {
+            "id": "false",
+            "label": "Falso"
+          }
+        ],
+        "correctKey": "false",
+        "sourceRef": "Examen oficial N2N — El Sufrimiento y La Pérdida, pregunta 5"
+      },
+      {
+        "number": 6,
+        "type": "true_false",
+        "prompt": "Nuevas bendiciones son sustituto de Dios de lo que se ha perdido.",
+        "options": [
+          {
+            "id": "true",
+            "label": "Verdadero"
+          },
+          {
+            "id": "false",
+            "label": "Falso"
+          }
+        ],
+        "correctKey": "false",
+        "sourceRef": "Examen oficial N2N — El Sufrimiento y La Pérdida, pregunta 6"
+      },
+      {
+        "number": 7,
+        "type": "multiple_choice",
+        "prompt": "¿Cuál de las siguientes afirmaciones describe la experiencia del sufrimiento rebelde?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Sufrimiento rebelde es lo que sucede cuando voy en contra de los principios de la palabra de Dios y me rebelo contra Dios Altísimo."
+          },
+          {
+            "id": "B",
+            "label": "Sufrimiento rebelde siempre es el resultado del pecado y desobediencia."
+          },
+          {
+            "id": "C",
+            "label": "Sufrimiento rebelde es sufrir las consecuencias de experimentar las consecuencias de “escoger nuestro propio camino.”"
+          },
+          {
+            "id": "D",
+            "label": "Todo lo anterior."
+          }
+        ],
+        "correctKey": "D",
+        "sourceRef": "Examen oficial N2N — El Sufrimiento y La Pérdida, pregunta 7"
+      },
+      {
+        "number": 8,
+        "type": "multiple_choice",
+        "prompt": "Cuál de las siguientes afirmaciones mejor describe sufrimiento redentor en las sesiones de enseñanza:",
+        "options": [
+          {
+            "id": "A",
+            "label": "Sufrimiento redentor es el resultado directo de resistir y desobedecer a Dios."
+          },
+          {
+            "id": "B",
+            "label": "Sufrimiento redentor se ilustra poderosamente en la vida de Sansón."
+          },
+          {
+            "id": "C",
+            "label": "Sufrimiento redentor es el dolor que experimento como resultado directo de amar y obedecer a Dios."
+          },
+          {
+            "id": "D",
+            "label": "Ninguno de los anteriores."
+          }
+        ],
+        "correctKey": "C",
+        "sourceRef": "Examen oficial N2N — El Sufrimiento y La Pérdida, pregunta 8"
+      },
+      {
+        "number": 9,
+        "type": "multiple_choice",
+        "prompt": "¿Cuál de las siguientes afirmaciones es verdad sobre la Cruz?",
+        "options": [
+          {
+            "id": "A",
+            "label": "El estilo de vida de la Cruz es principalmente para los cristianos en el ministerio."
+          },
+          {
+            "id": "B",
+            "label": "Sanidad y fruto en la vida se experimentan cuando adoptamos la forma de la Cruz."
+          },
+          {
+            "id": "C",
+            "label": "La Cruz es algo que sólo se aplica a la salvación."
+          },
+          {
+            "id": "D",
+            "label": "Ninguno de los anteriores."
+          }
+        ],
+        "correctKey": "B",
+        "sourceRef": "Examen oficial N2N — El Sufrimiento y La Pérdida, pregunta 9"
+      },
+      {
+        "number": 10,
+        "type": "multiple_choice",
+        "prompt": "¿Cuál de las siguientes afirmaciones expresa la enseñanza de Jesús?",
+        "options": [
+          {
+            "id": "A",
+            "label": "La vida surge de la muerte."
+          },
+          {
+            "id": "B",
+            "label": "Aceptación de la cruz es parte de ser un discípulo de Jesús."
+          },
+          {
+            "id": "C",
+            "label": "Aceptación de la Cruz es una expresión de adoración verdadera."
+          },
+          {
+            "id": "D",
+            "label": "Todo lo anterior."
+          }
+        ],
+        "correctKey": "D",
+        "sourceRef": "Examen oficial N2N — El Sufrimiento y La Pérdida, pregunta 10"
+      },
+      {
+        "number": 11,
+        "type": "multiple_choice",
+        "prompt": "¿Cuál de las siguientes afirmaciones describe el resultado (fruto) del sufrimiento redentor?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Sufrimiento redentor produce el carácter de Cristo en nosotros."
+          },
+          {
+            "id": "B",
+            "label": "Sufrimiento redentor produce paz."
+          },
+          {
+            "id": "C",
+            "label": "Sufrimiento redentor produce la fe."
+          },
+          {
+            "id": "D",
+            "label": "Ninguno de los anteriores."
+          }
+        ],
+        "correctKey": "A",
+        "sourceRef": "Examen oficial N2N — El Sufrimiento y La Pérdida, pregunta 11"
+      },
+      {
+        "number": 12,
+        "type": "multiple_choice",
+        "prompt": "¿Cuál de los siguientes obstaculiza la experiencia de recibir bendiciones nuevos?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Intentar recuperar la vida como era."
+          },
+          {
+            "id": "B",
+            "label": "Denegación."
+          },
+          {
+            "id": "C",
+            "label": "Escapar a través de comportamiento autodestructivo."
+          },
+          {
+            "id": "D",
+            "label": "Todo lo anterior."
+          }
+        ],
+        "correctKey": "D",
+        "sourceRef": "Examen oficial N2N — El Sufrimiento y La Pérdida, pregunta 12"
+      },
+      {
+        "number": 13,
+        "type": "multiple_choice",
+        "prompt": "¿Cuál de las siguientes afirmaciones mejor describe lo que produce las lágrimas de Jesús en Juan 11:35?",
+        "options": [
+          {
+            "id": "A",
+            "label": "La incredulidad de los judíos."
+          },
+          {
+            "id": "B",
+            "label": "Su amor por Lázaro."
+          },
+          {
+            "id": "C",
+            "label": "Él fue profundamente conmovido de lo que el pecado trajo al mundo."
+          },
+          {
+            "id": "D",
+            "label": "María y Marta le culparon por la muerte de su hermano."
+          }
+        ],
+        "correctKey": "C",
+        "sourceRef": "Examen oficial N2N — El Sufrimiento y La Pérdida, pregunta 13"
+      },
+      {
+        "number": 14,
+        "type": "multiple_choice",
+        "prompt": "¿Cuál de las siguientes opciones describe nuestra experiencia cuando damos a otros fuera de nuestro dolor?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Nosotros entramos en una relación más profunda con Dios."
+          },
+          {
+            "id": "B",
+            "label": "Somos capaces de impartir más profundamente en la vida de otras personas."
+          },
+          {
+            "id": "C",
+            "label": "Nosotros necesitamos una profunda dependencia de Dios."
+          },
+          {
+            "id": "D",
+            "label": "Todo lo anterior."
+          }
+        ],
+        "correctKey": "D",
+        "sourceRef": "Examen oficial N2N — El Sufrimiento y La Pérdida, pregunta 14"
+      },
+      {
+        "number": 15,
+        "type": "multiple_choice",
+        "prompt": "¿Cuál de los siguientes describe mejor la experiencia de la confianza?",
+        "options": [
+          {
+            "id": "A",
+            "label": "La confianza viene cuando Dios responde a todas nuestras preguntas acerca de nuestro sufrimiento."
+          },
+          {
+            "id": "B",
+            "label": "La confianza es exactamente lo mismo que la fe."
+          },
+          {
+            "id": "C",
+            "label": "La confianza es una manera de encontrar la verdad."
+          },
+          {
+            "id": "D",
+            "label": "La confianza es capaz de abrazar a Dios, aun cuando no tenemos respuestas."
+          }
+        ],
+        "correctKey": "D",
+        "sourceRef": "Examen oficial N2N — El Sufrimiento y La Pérdida, pregunta 15"
+      },
+      {
+        "number": 16,
+        "type": "multiple_choice",
+        "prompt": "¿Cuál de las siguientes emociones tiene que ser enfrentada con el fin de experimentar verdadera curación?",
+        "options": [
+          {
+            "id": "A",
+            "label": "La Confusión"
+          },
+          {
+            "id": "B",
+            "label": "La Ira"
+          },
+          {
+            "id": "C",
+            "label": "La Ansiedad"
+          },
+          {
+            "id": "D",
+            "label": "Todo lo anterior"
+          }
+        ],
+        "correctKey": "D",
+        "sourceRef": "Examen oficial N2N — El Sufrimiento y La Pérdida, pregunta 16"
+      },
+      {
+        "number": 17,
+        "type": "multiple_choice",
+        "prompt": "¿Qué es lo que nos ayuda más a mantener nuestro compromiso con Dios en nuestro sufrimiento?",
+        "options": [
+          {
+            "id": "A",
+            "label": "La fuerza de nuestra voluntad."
+          },
+          {
+            "id": "B",
+            "label": "El consejo de otros cristianos."
+          },
+          {
+            "id": "C",
+            "label": "Basando nuestra relación con Dios en los principios del pacto no en nuestros emociones."
+          },
+          {
+            "id": "D",
+            "label": "El compañerismo con nuestros amigos."
+          }
+        ],
+        "correctKey": "C",
+        "sourceRef": "Examen oficial N2N — El Sufrimiento y La Pérdida, pregunta 17"
+      },
+      {
+        "number": 18,
+        "type": "multiple_choice",
+        "prompt": "¿Cuál de las siguientes mejor expresa el principio de que Nehemías nos enseña acerca de dolor?",
+        "options": [
+          {
+            "id": "A",
+            "label": "La tristeza es un proceso interminable."
+          },
+          {
+            "id": "B",
+            "label": "Nuestra vida desde los montones de escombros de reconstrucción es imposible."
+          },
+          {
+            "id": "C",
+            "label": "Hay un principio y un fin al dolor."
+          },
+          {
+            "id": "D",
+            "label": "Ninguno de los anteriores."
+          }
+        ],
+        "correctKey": "C",
+        "sourceRef": "Examen oficial N2N — El Sufrimiento y La Pérdida, pregunta 18"
+      },
+      {
+        "number": 19,
+        "type": "multiple_choice",
+        "prompt": "¿Cuál de los siguientes dan una verdadera perspectiva sobre el dolor, la aflicción y la pérdida?",
+        "options": [
+          {
+            "id": "A",
+            "label": "La pena se mueve en etapas muy predecibles."
+          },
+          {
+            "id": "B",
+            "label": "El tiempo es un gran curandero en el proceso de duelo."
+          },
+          {
+            "id": "C",
+            "label": "La pena es en proporción directa a la profundidad del amor había para lo que se perdió."
+          },
+          {
+            "id": "D",
+            "label": "Todo lo anterior."
+          }
+        ],
+        "correctKey": "C",
+        "sourceRef": "Examen oficial N2N — El Sufrimiento y La Pérdida, pregunta 19"
+      },
+      {
+        "number": 20,
+        "type": "multiple_choice",
+        "prompt": "¿Cuál de las siguientes afirmaciones mejor describe la verdadera transformación?",
+        "options": [
+          {
+            "id": "A",
+            "label": "Cambiar uno que quita, a uno que recibe."
+          },
+          {
+            "id": "B",
+            "label": "Cambiar uno que quita en un adorador."
+          },
+          {
+            "id": "C",
+            "label": "Cambiar uno que quita en uno que da."
+          },
+          {
+            "id": "D",
+            "label": "Cambiar uno que quita en un trabajador."
+          }
+        ],
+        "correctKey": "C",
+        "sourceRef": "Examen oficial N2N — El Sufrimiento y La Pérdida, pregunta 20"
+      }
+    ]
+  }
+]

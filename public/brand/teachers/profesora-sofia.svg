@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%">
+  <!-- Fondo con halo dorado -->
+  <circle cx="60" cy="60" r="56" fill="#F3EFE6" stroke="#14284B" stroke-width="3" />
+  
+  <!-- Aura de excelencia académica -->
+  <circle cx="60" cy="60" r="52" fill="none" stroke="#8C6B11" stroke-width="1.5" stroke-dasharray="4 3" />
+  
+  <!-- Toga doctoral azul naval con estola dorada -->
+  <path d="M 22 112 C 22 84 40 78 60 78 C 80 78 98 84 98 112 Z" fill="#0C192E" />
+  
+  <!-- Estola de honor académica de Wisdom Academy -->
+  <path d="M 46 78 L 48 112 L 56 112 L 54 82 Z" fill="#8C6B11" />
+  <path d="M 74 78 L 72 112 L 64 112 L 66 82 Z" fill="#8C6B11" />
+  <line x1="54" y1="82" x2="66" y2="82" stroke="#D1B24E" stroke-width="2" />
+
+  <!-- Cuello y Cabeza -->
+  <rect x="54" y="68" width="12" height="12" fill="#E8B88A" rx="2" />
+  <circle cx="60" cy="50" r="21" fill="#F8CBA6" />
+
+  <!-- Cabello recogido elegante con moño académico -->
+  <circle cx="60" cy="28" r="11" fill="#3D2314" />
+  <path d="M 37 50 C 37 32 46 26 60 26 C 74 26 83 32 83 50 C 83 38 74 32 60 32 C 46 32 37 38 37 50 Z" fill="#4A2D1B" />
+  <path d="M 39 46 C 44 36 52 32 60 32 C 68 32 76 36 81 46 C 77 38 69 34 60 34 C 51 34 43 38 39 46 Z" fill="#3D2314" />
+
+  <!-- Ojos perspicaces y cálidos -->
+  <circle cx="51" cy="49" r="2.5" fill="#14284B" />
+  <circle cx="69" cy="49" r="2.5" fill="#14284B" />
+  <circle cx="52" cy="48" r="0.8" fill="#FAF7F2" />
+  <circle cx="70" cy="48" r="0.8" fill="#FAF7F2" />
+
+  <!-- Lentes rectangulares dorados elegantes -->
+  <rect x="44" y="44" width="13" height="9" rx="2" fill="none" stroke="#8C6B11" stroke-width="1.6" />
+  <rect x="63" y="44" width="13" height="9" rx="2" fill="none" stroke="#8C6B11" stroke-width="1.6" />
+  <line x1="57" y1="48" x2="63" y2="48" stroke="#8C6B11" stroke-width="1.6" />
+
+  <!-- Sonrisa distinguida y elocuente -->
+  <path d="M 54 59 Q 60 63 66 59" fill="none" stroke="#8A4A28" stroke-width="1.8" stroke-linecap="round" />
+
+  <!-- Medalla de Cátedra Cristiana de Wisdom Academy -->
+  <circle cx="86" cy="88" r="10" fill="#14284B" stroke="#D1B24E" stroke-width="1.8" />
+  <text x="86" y="92" font-family="'IBM Plex Sans', sans-serif" font-size="9" font-weight="bold" fill="#D1B24E" text-anchor="middle">✝</text>
+</svg>
+

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-label="Grado 8 EGB">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1220"/>
+      <stop offset="0.55" stop-color="#1e1b4b"/>
+      <stop offset="1" stop-color="#4338ca"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#fde68a"/>
+      <stop offset="1" stop-color="#d97706"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="0.75" cy="0.2" r="0.8">
+      <stop offset="0" stop-color="#818cf8" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#818cf8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <rect width="1200" height="675" fill="url(#halo)"/>
+  <g transform="translate(150 155)" stroke="#c7d2fe" stroke-opacity="0.55" fill="none" stroke-width="3">
+    <path d="M0 330 H720"/>
+    <path d="M60 330 V110 H160 V330 M200 330 V110 H300 V330 M340 330 V110 H440 V330 M480 330 V110 H580 V330 M620 330 V110 H720 V330"/>
+    <path d="M20 110 L360 10 L700 110 Z" fill="#312e81" fill-opacity="0.55"/>
+    <path d="M300 330 V240 C300 190 420 190 420 240 V330" stroke-opacity="0.35"/>
+  </g>
+  <g transform="translate(850 150)" fill="none" stroke="url(#gold)" stroke-width="4">
+    <path d="M0 260 C100 190 180 210 250 130 C280 96 310 70 340 40"/>
+    <circle cx="340" cy="40" r="10" fill="#fde68a" stroke="none"/>
+  </g>
+  <g opacity="0.35" stroke="#a5b4fc" stroke-width="2" fill="none">
+    <circle cx="1010" cy="480" r="90"/><circle cx="1010" cy="480" r="140"/><circle cx="1010" cy="480" r="190"/>
+  </g>
+  <path d="M0 590 C240 530 460 650 720 575 C960 505 1080 600 1200 540 V675 H0 Z" fill="#060a16" fill-opacity="0.6"/>
+</svg>

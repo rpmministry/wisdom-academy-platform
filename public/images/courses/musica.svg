@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-label="Música para la adoración">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2e1065"/>
+      <stop offset="0.55" stop-color="#701a75"/>
+      <stop offset="1" stop-color="#be185d"/>
+    </linearGradient>
+    <linearGradient id="wave" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f0abfc"/>
+      <stop offset="1" stop-color="#fda4af"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="0.7" cy="0.2" r="0.85">
+      <stop offset="0" stop-color="#f9a8d4" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#f9a8d4" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <rect width="1200" height="675" fill="url(#halo)"/>
+  <g fill="none" stroke="url(#wave)" stroke-linecap="round">
+    <path d="M90 340 C170 240 250 440 330 340 C410 240 490 440 570 340 C650 240 730 440 810 340 C890 240 970 440 1050 340 C1100 285 1140 300 1170 330" stroke-opacity="0.75" stroke-width="5"/>
+    <path d="M90 390 C180 330 260 450 350 390 C440 330 520 450 610 390 C700 330 780 450 870 390 C960 330 1040 450 1130 390" stroke-opacity="0.3" stroke-width="3"/>
+  </g>
+  <g transform="translate(810 120)" fill="#fbcfe8">
+    <ellipse cx="0" cy="120" rx="34" ry="23" fill-opacity="0.85"/>
+    <ellipse cx="150" cy="80" rx="34" ry="23" fill-opacity="0.7"/>
+    <path d="M26 118 V20 L176 -20 V78" fill="none" stroke="#fbcfe8" stroke-opacity="0.8" stroke-width="9" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(120 140)" opacity="0.5">
+    <circle cx="0" cy="0" r="54" fill="none" stroke="#f0abfc" stroke-width="2"/>
+    <circle cx="120" cy="80" r="26" fill="none" stroke="#f0abfc" stroke-width="2"/>
+    <circle cx="60" cy="190" r="16" fill="#f0abfc" fill-opacity="0.4"/>
+  </g>
+  <path d="M0 590 C260 520 470 660 720 580 C950 505 1080 600 1200 540 V675 H0 Z" fill="#18001f" fill-opacity="0.55"/>
+</svg>

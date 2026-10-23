@@ -1,0 +1,893 @@
+/* ==============================================================================
+ * WISDOM ACADEMY — SISTEMA DE DISEÑO "EVERGREEN & GRAPHITE" (v4.0)
+ * ARCHIVO: src/styles/tokens.css
+ *
+ * Base cálida de papel y grafito inspirada en Bear, con el verde público de
+ * Platzi concentrado en acción, selección, progreso y éxito. El cobre editorial
+ * aporta calidez en etiquetas y documentos. Mantiene los nombres históricos de
+ * tokens para no romper componentes existentes.
+ *
+ * Fuentes autohospedadas (SIL Open Font License 1.1):
+ * - Bricolage Grotesque (display)
+ * - Schibsted Grotesk (interfaz y lectura)
+ * - IBM Plex Mono (métricas y código)
+ * ============================================================================== */
+
+/* ------------------------------------------------------------------------------
+ * 1. FUENTES AUTOHOSPEDADAS — sin dependencias de servidores externos
+ * ------------------------------------------------------------------------------ */
+@font-face {
+  font-family: 'Schibsted Grotesk';
+  src: url('/fonts/schibsted-grotesk-latin.woff2') format('woff2');
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Schibsted Grotesk';
+  src: url('/fonts/schibsted-grotesk-latin-ext.woff2') format('woff2');
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
+    U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020,
+    U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  src: url('/fonts/bricolage-grotesque-latin.woff2') format('woff2');
+  font-weight: 200 800;
+  font-stretch: 75% 100%;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  src: url('/fonts/bricolage-grotesque-latin-ext.woff2') format('woff2');
+  font-weight: 200 800;
+  font-stretch: 75% 100%;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
+    U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020,
+    U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('/fonts/ibm-plex-mono-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('/fonts/ibm-plex-mono-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('/fonts/ibm-plex-mono-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ------------------------------------------------------------------------------
+ * 2. PRIMITIVOS CROMÁTICOS — verde Platzi + neutros académicos
+ * ------------------------------------------------------------------------------ */
+:root {
+  color-scheme: light;
+
+  /* Verdes de marca (referencias verificadas: #0AE98A, #75FABF, #0BAA5E,
+     #05824D, #003222, #F7FAF7, #141414 en el CSS público de Platzi). */
+  --wa-green-950: #03291C;
+  --wa-green-900: #043D2A;
+  --wa-green-850: #03583A;
+  --wa-green-800: #035F3E;
+  --wa-green-700: #047A4F;
+  --wa-green-600: #05854D;
+  --wa-green-500: #0BAA5E;
+  --wa-green-400: #0AE98A;
+  --wa-green-300: #75FABF;
+  --wa-green-200: #A8F5D5;
+  --wa-green-100: #DFFBEC;
+  --wa-green-50: #F0FDF6;
+
+  /* Neutros fríos: slate-50 a slate-950. */
+  --wa-neutral-0: #FFFFFF;
+  --wa-neutral-50: #F8FAFC;
+  --wa-neutral-100: #F1F5F9;
+  --wa-neutral-200: #E2E8F0;
+  --wa-neutral-300: #CBD5E1;
+  --wa-neutral-400: #94A3B8;
+  --wa-neutral-500: #64748B;
+  --wa-neutral-600: #475569;
+  --wa-neutral-800: #1E293B;
+  --wa-neutral-900: #0F172A;
+  --wa-neutral-950: #020617;
+
+  /* Escala esmeralda (acento de selección/progreso). */
+  --wa-emerald-700: #047857;
+  --wa-emerald-600: #059669;
+  --wa-emerald-500: #10B981;
+  --wa-emerald-400: #34D399;
+  --wa-emerald-100: #D1FAE5;
+  --wa-emerald-50: #ECFDF5;
+
+  /* Escala azul (acción e interacción). */
+  --wa-blue-700: #1D4ED8;
+  --wa-blue-600: #2563EB;
+  --wa-blue-500: #3B82F6;
+  --wa-blue-400: #60A5FA;
+  --wa-blue-100: #DBEAFE;
+  --wa-blue-50: #EFF6FF;
+
+  /* Amarillo/ámbar (advertencia e indicadores). */
+  --wa-amber-700: #B45309;
+  --wa-amber-600: #D97706;
+  --wa-amber-400: #FBBF24;
+  --wa-amber-300: #FCD34D;
+  --wa-amber-100: #FEF3C7;
+  --wa-amber-50: #FFFBEB;
+
+  /* Rojo/coral (progreso y urgencia). */
+  --wa-red-700: #B91C1C;
+  --wa-red-600: #DC2626;
+  --wa-red-500: #EF4444;
+  --wa-red-100: #FEE2E2;
+  --wa-red-50: #FEF2F2;
+
+  /* ----------------------------------------------------------------------------
+   * 3. TOKENS SEMÁNTICOS — TEMA CLARO ("Evergreen Daylight")
+   * ---------------------------------------------------------------------------- */
+  --bg-canvas: var(--wa-neutral-50);
+  --bg-surface: var(--wa-neutral-0);
+  --bg-elevated: #FFFFFF;
+  --bg-subtle: var(--wa-neutral-100);
+  --bg-muted: var(--wa-neutral-200);
+  --bg-inverse: var(--wa-neutral-900);
+  --bg-glass: rgba(255, 255, 255, 0.88);
+  --bg-overlay: rgba(15, 23, 42, 0.55);
+
+  --text-primary: var(--wa-neutral-900);
+  --text-secondary: var(--wa-neutral-600);
+  --text-muted: var(--wa-neutral-500);
+  --text-inverse: #F9FAFB;
+  --text-on-brand: #FFFFFF;
+  --text-on-gold: #FFFFFF;
+  --text-on-accent: #041B12;
+
+  /* Marca estructural: slate, no un acento. */
+  --brand-primary: var(--wa-neutral-900);
+  --brand-primary-solid: var(--wa-neutral-800);
+  --brand-primary-hover: var(--wa-neutral-800);
+  --brand-primary-active: var(--wa-neutral-950);
+  --brand-primary-soft: var(--wa-neutral-100);
+  --brand-primary-soft-strong: var(--wa-neutral-200);
+  --brand-primary-bright: var(--wa-amber-400);
+  --brand-primary-bright-hover: var(--wa-amber-300);
+  --brand-primary-bright-soft: var(--wa-amber-100);
+
+  /* Selección y navegación activa: verde menta moderno. */
+  --brand-secondary: #15803D;
+  --brand-secondary-hover: #166534;
+  --brand-secondary-active: #14532D;
+  --brand-secondary-soft: #ECFDF5;
+  --brand-secondary-soft-strong: #D1FAE5;
+  --selected-surface: #34D399;
+  --selected-surface-hover: #6EE7B7;
+  --selected-text: #052E22;
+  --selected-border: #059669;
+  --selected-badge-bg: rgba(255, 255, 255, 0.35);
+  --selected-badge-text: #052E22;
+  --selected-surface-subtle: #ECFDF5;
+
+  /* Acción principal: azul. Alias histórico --brand-gold. */
+  --brand-gold: var(--wa-blue-600);
+  --brand-gold-hover: var(--wa-blue-700);
+  --brand-gold-dark: #1E40AF;
+  --brand-gold-metallic: var(--wa-amber-400);
+  --brand-gold-soft: var(--wa-blue-100);
+  --border-gold: rgba(37, 99, 235, 0.28);
+
+  --accent-study: #15803D;
+  --accent-study-hover: #166534;
+  --accent-study-soft: #ECFDF5;
+
+  --accent-support: var(--wa-blue-600);
+  --accent-support-soft: var(--wa-blue-50);
+
+  --status-success: #15803D;
+  --status-success-bg: #ECFDF5;
+  --status-info: var(--wa-blue-600);
+  --status-info-bg: var(--wa-blue-50);
+  --status-warning: #92400E;
+  --status-warning-bg: var(--wa-amber-100);
+  --status-danger: var(--wa-red-600);
+  --status-danger-bg: var(--wa-red-50);
+
+  --progress-color: var(--wa-red-600);
+  --progress-bg: var(--wa-red-100);
+
+  --border-subtle: var(--wa-neutral-200);
+  --border-default: var(--wa-neutral-300);
+  --border-strong: var(--wa-neutral-400);
+  --divider: var(--border-subtle);
+
+  --focus-ring-color: var(--wa-blue-600);
+  --focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.26);
+
+  /* Superficies y profundidad: sombras frías y sutiles. */
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05), 0 4px 12px -8px rgba(15, 23, 42, 0.12);
+  --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.05), 0 10px 28px -22px rgba(15, 23, 42, 0.22);
+  --shadow-elevated: 0 2px 4px rgba(15, 23, 42, 0.05), 0 24px 48px -28px rgba(15, 23, 42, 0.26);
+  --shadow-overlay: 0 32px 80px -32px rgba(15, 23, 42, 0.40);
+
+  --gradient-hero: linear-gradient(180deg, #F8FAFC 0%, #F1F5F9 100%);
+  --gradient-royal: linear-gradient(135deg, #0F172A 0%, #020617 100%);
+  --gradient-gold: linear-gradient(135deg, var(--wa-blue-500) 0%, var(--wa-blue-700) 100%);
+  --gradient-brand-soft: linear-gradient(180deg, rgba(59, 130, 246, 0.10) 0%, rgba(59, 130, 246, 0) 100%);
+  --gradient-panel-forest: linear-gradient(155deg, #1F2937 0%, #111827 100%);
+  --gradient-panel-ocean: linear-gradient(155deg, #1F2937 0%, #111827 100%);
+  --gradient-panel-graphite: linear-gradient(155deg, #1F2937 0%, #111827 100%);
+  --panel-border: rgba(148, 163, 184, 0.24);
+  --panel-text: #F9FAFB;
+  --panel-muted: #9CA3AF;
+
+  /* Alias heredados de la capa de marca (--wa-*). */
+  --wa-bg-canvas: var(--bg-canvas);
+  --wa-bg-surface: var(--bg-surface);
+  --wa-bg-elevated: var(--bg-elevated);
+  --wa-bg-interactive-subtle: var(--bg-subtle);
+  --wa-text-primary: var(--text-primary);
+  --wa-text-secondary: var(--text-secondary);
+  --wa-text-muted: var(--text-muted);
+
+  --wa-brand-gold-primary: var(--brand-gold);
+  --wa-brand-gold-dark: var(--brand-gold-dark);
+  --wa-brand-navy-primary: var(--brand-secondary);
+  --wa-brand-navy-light: var(--brand-secondary);
+  --wa-brand-secondary: var(--brand-secondary);
+  --wa-brand-secondary-soft: var(--brand-secondary-soft);
+  --wa-brand-emerald-faith: var(--accent-study);
+  --wa-brand-ruby-alert: var(--status-danger);
+  --wa-brand-amber-warning: var(--status-warning);
+
+  --wa-keyline-subtle: var(--border-subtle);
+  --wa-keyline-strong: var(--border-default);
+
+  /* ----------------------------------------------------------------------------
+   * 4. TIPOGRAFÍA — Bricolage Grotesque + Schibsted Grotesk + IBM Plex Mono
+   * ---------------------------------------------------------------------------- */
+  --wa-font-display: 'Bricolage Grotesque', 'Schibsted Grotesk', 'Segoe UI', sans-serif;
+  --wa-font-sans: 'Schibsted Grotesk', 'Segoe UI', 'Helvetica Neue', sans-serif;
+  --wa-font-mono: 'IBM Plex Mono', 'Cascadia Code', 'SFMono-Regular', monospace;
+
+  --font-family-body: var(--wa-font-sans);
+  --font-family-heading: var(--wa-font-display);
+  --font-family-mono: var(--wa-font-mono);
+
+  --wa-font-size-caption: 0.75rem;
+  --wa-font-size-label: 0.8125rem;
+  --wa-font-size-body-sm: 0.875rem;
+  --wa-font-size-body: 1rem;
+  --wa-font-size-body-lg: 1.0625rem;
+  --wa-font-size-h6: 0.875rem;
+  --wa-font-size-h5: 1rem;
+  --wa-font-size-h4: 1.125rem;
+  --wa-font-size-h3: clamp(1.25rem, 1.15rem + 0.35vw, 1.4375rem);
+  --wa-font-size-h2: clamp(1.5rem, 1.3rem + 0.7vw, 1.875rem);
+  --wa-font-size-h1: clamp(1.875rem, 1.55rem + 1.2vw, 2.5rem);
+  --wa-font-size-display: clamp(2.375rem, 1.65rem + 3.1vw, 3.75rem);
+  --wa-font-size-display-sm: clamp(1.875rem, 1.5rem + 1.6vw, 2.75rem);
+
+  --font-size-body: var(--wa-font-size-body);
+  --font-size-heading: var(--wa-font-size-h2);
+
+  --wa-weight-regular: 400;
+  --wa-weight-medium: 500;
+  --wa-weight-semibold: 600;
+  --wa-weight-bold: 700;
+  --wa-weight-display: 700;
+
+  --wa-leading-tight: 1.15;
+  --wa-leading-heading: 1.22;
+  --wa-leading-snug: 1.4;
+  --wa-leading-body: 1.6;
+  --wa-leading-relaxed: 1.7;
+
+  --wa-tracking-display: -0.035em;
+  --wa-tracking-heading: -0.02em;
+  --wa-tracking-body: -0.005em;
+  --wa-tracking-label: 0.04em;
+  --wa-tracking-mono: 0.02em;
+
+  --wa-reading-width: 68ch;
+  --wa-reading-width-narrow: 56ch;
+
+  /* ----------------------------------------------------------------------------
+   * 5. ESPACIADO — ritmo de 4/8 px sobre el 2x Grid de IBM Carbon
+   * ---------------------------------------------------------------------------- */
+  --wa-space-1: 0.25rem;
+  --wa-space-2: 0.5rem;
+  --wa-space-3: 0.75rem;
+  --wa-space-4: 1rem;
+  --wa-space-5: 1.25rem;
+  --wa-space-6: 1.5rem;
+  --wa-space-8: 2rem;
+  --wa-space-10: 2.5rem;
+  --wa-space-12: 3rem;
+  --wa-space-16: 4rem;
+  --wa-space-20: 5rem;
+  --wa-space-24: 6rem;
+
+  --space-component: var(--wa-space-4);
+  --space-section: var(--wa-space-12);
+
+  --carbon-mini-unit: 0.5rem;
+  --carbon-space-2x: 1rem;
+  --carbon-space-3x: 1.5rem;
+  --carbon-space-4x: 2rem;
+  --carbon-space-6x: 3rem;
+  --carbon-space-8x: 4rem;
+
+  /* ----------------------------------------------------------------------------
+   * 6. CONTENEDORES, CUADRÍCULA Y PUNTOS DE RUPTURA
+   * ---------------------------------------------------------------------------- */
+  --wa-container-narrow: 640px;
+  --wa-container-reading: 768px;
+  --wa-container-marketing: 1200px;
+  --wa-container-app: 1440px;
+  --wa-container-max: 1584px;
+  --carbon-max-width: 99rem;
+
+  --carbon-gutter-wide: 2rem;
+  --carbon-gutter-narrow: 1rem;
+  --carbon-gutter-condensed: 0.0625rem;
+
+  --breakpoint-sm: 320px;
+  --breakpoint-md: 672px;
+  --breakpoint-lg: 1056px;
+  --breakpoint-xl: 1312px;
+  --breakpoint-max: 1584px;
+
+  /* ----------------------------------------------------------------------------
+   * 7. RADIOS, BORDES, MOVIMIENTO Y CAPAS
+   * ---------------------------------------------------------------------------- */
+  --wa-radius-xs: 3px;
+  --wa-radius-sm: 4px;
+  --wa-radius-md: 8px;
+  --wa-radius-lg: 12px;
+  --wa-radius-xl: 16px;
+  --wa-radius-pill: 999px;
+  --radius-control: var(--wa-radius-md);
+  --radius-card: var(--wa-radius-lg);
+
+  --wa-border-width: 1px;
+  --wa-border-strong-width: 2px;
+
+  --wa-ease-decelerate: cubic-bezier(0.2, 0, 0.38, 0.9);
+  --wa-ease-accelerate: cubic-bezier(0.4, 0, 1, 1);
+  --wa-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --wa-ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+  --wa-duration-fast: 150ms;
+  --wa-duration-moderate: 240ms;
+  --wa-duration-slow: 320ms;
+  --transition-control: background-color var(--wa-duration-fast) var(--wa-ease-standard),
+    border-color var(--wa-duration-fast) var(--wa-ease-standard),
+    color var(--wa-duration-fast) var(--wa-ease-standard),
+    box-shadow var(--wa-duration-fast) var(--wa-ease-standard);
+
+  --z-base: 1;
+  --z-sticky: 100;
+  --z-dropdown: 400;
+  --z-overlay: 900;
+  --z-modal: 9999;
+  --z-toast: 10000;
+}
+
+/* ------------------------------------------------------------------------------
+ * 8. TEMA OSCURO — "Evergreen Nocturne"
+ * Paleta específica, no una inversión automática del tema claro.
+ * ------------------------------------------------------------------------------ */
+[data-theme='dark'],
+.dark {
+  color-scheme: dark;
+
+  --bg-canvas: #111827;
+  --bg-surface: #1F2937;
+  --bg-elevated: #263244;
+  --bg-subtle: #172033;
+  --bg-muted: #334155;
+  --bg-inverse: #F9FAFB;
+  --bg-glass: rgba(17, 24, 39, 0.86);
+  --bg-overlay: rgba(2, 6, 23, 0.72);
+
+  --text-primary: #F9FAFB;
+  --text-secondary: #9CA3AF;
+  --text-muted: #94A3B8;
+  --text-inverse: #0F172A;
+  --text-on-brand: #0B1220;
+  --text-on-gold: #0B1220;
+  --text-on-accent: #041B12;
+
+  --brand-primary: #F9FAFB;
+  --brand-primary-solid: #E2E8F0;
+  --brand-primary-hover: #FFFFFF;
+  --brand-primary-active: #CBD5E1;
+  --brand-primary-soft: rgba(249, 250, 251, 0.08);
+  --brand-primary-soft-strong: rgba(249, 250, 251, 0.14);
+  --brand-primary-bright: var(--wa-amber-400);
+  --brand-primary-bright-hover: var(--wa-amber-300);
+  --brand-primary-bright-soft: rgba(251, 191, 36, 0.12);
+
+  --brand-secondary: #4ADE80;
+  --brand-secondary-hover: #86EFAC;
+  --brand-secondary-active: #34D399;
+  --brand-secondary-soft: rgba(52, 211, 153, 0.12);
+  --brand-secondary-soft-strong: rgba(52, 211, 153, 0.20);
+  --selected-surface: #34D399;
+  --selected-surface-hover: #6EE7B7;
+  --selected-text: #052E22;
+  --selected-border: #34D399;
+  --selected-badge-bg: rgba(255, 255, 255, 0.28);
+  --selected-badge-text: #052E22;
+  --selected-surface-subtle: rgba(52, 211, 153, 0.12);
+
+  --brand-gold: var(--wa-blue-500);
+  --brand-gold-hover: var(--wa-blue-400);
+  --brand-gold-dark: var(--wa-blue-600);
+  --brand-gold-metallic: var(--wa-amber-400);
+  --brand-gold-soft: rgba(59, 130, 246, 0.12);
+  --border-gold: rgba(59, 130, 246, 0.32);
+
+  --accent-study: #4ADE80;
+  --accent-study-hover: #86EFAC;
+  --accent-study-soft: rgba(52, 211, 153, 0.12);
+
+  --accent-support: var(--wa-blue-400);
+  --accent-support-soft: rgba(96, 165, 250, 0.12);
+
+  --status-success: #4ADE80;
+  --status-success-bg: rgba(52, 211, 153, 0.12);
+  --status-info: var(--wa-blue-400);
+  --status-info-bg: rgba(96, 165, 250, 0.12);
+  --status-warning: var(--wa-amber-400);
+  --status-warning-bg: rgba(251, 191, 36, 0.12);
+  --status-danger: var(--wa-red-500);
+  --status-danger-bg: rgba(239, 68, 68, 0.12);
+
+  --progress-color: var(--wa-red-500);
+  --progress-bg: rgba(239, 68, 68, 0.18);
+
+  --border-subtle: #374151;
+  --border-default: #4B5563;
+  --border-strong: #6B7280;
+  --divider: var(--border-subtle);
+
+  --focus-ring-color: var(--wa-blue-400);
+  --focus-ring: 0 0 0 3px rgba(96, 165, 250, 0.30);
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.28);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.32), 0 6px 16px -10px rgba(0, 0, 0, 0.55);
+  --shadow-card: inset 0 1px 0 rgba(255, 255, 255, 0.035), 0 12px 28px -22px rgba(0, 0, 0, 0.70);
+  --shadow-elevated: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 24px 56px -30px rgba(0, 0, 0, 0.80);
+  --shadow-overlay: 0 40px 96px -32px rgba(0, 0, 0, 0.85);
+
+  --gradient-hero: linear-gradient(180deg, #111827 0%, #0F172A 100%);
+  --gradient-royal: linear-gradient(135deg, #1F2937 0%, #111827 100%);
+  --gradient-gold: linear-gradient(135deg, var(--wa-blue-500) 0%, var(--wa-blue-600) 100%);
+  --gradient-brand-soft: linear-gradient(180deg, rgba(59, 130, 246, 0.08) 0%, rgba(59, 130, 246, 0) 100%);
+  --gradient-panel-forest: linear-gradient(155deg, #1F2937 0%, #111827 100%);
+  --gradient-panel-ocean: linear-gradient(155deg, #1F2937 0%, #111827 100%);
+  --gradient-panel-graphite: linear-gradient(155deg, #1F2937 0%, #111827 100%);
+  --panel-border: rgba(148, 163, 184, 0.24);
+  --panel-text: #F9FAFB;
+  --panel-muted: #9CA3AF;
+
+  --wa-bg-canvas: var(--bg-canvas);
+  --wa-bg-surface: var(--bg-surface);
+  --wa-bg-elevated: var(--bg-elevated);
+  --wa-bg-interactive-subtle: var(--bg-subtle);
+  --wa-text-primary: var(--text-primary);
+  --wa-text-secondary: var(--text-secondary);
+  --wa-text-muted: var(--text-muted);
+
+  --wa-keyline-subtle: var(--border-subtle);
+  --wa-keyline-strong: var(--border-default);
+
+  --wa-brand-navy-primary: var(--brand-secondary);
+  --wa-brand-navy-light: var(--brand-secondary);
+  --wa-brand-secondary: var(--brand-secondary);
+  --wa-brand-secondary-soft: var(--brand-secondary-soft);
+  --wa-brand-gold-primary: var(--brand-gold);
+  --wa-brand-gold-dark: var(--brand-gold-dark);
+  --wa-brand-emerald-faith: var(--accent-study);
+  --wa-brand-ruby-alert: var(--status-danger);
+  --wa-brand-amber-warning: var(--status-warning);
+}
+
+/* ------------------------------------------------------------------------------
+ * 9. BASE GLOBAL Y NORMALIZACIÓN
+ * ------------------------------------------------------------------------------ */
+html,
+body {
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: var(--wa-font-sans);
+  font-size: 16px;
+  line-height: var(--wa-leading-body);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--carbon-space-8x);
+}
+
+body {
+  min-width: 320px;
+  transition: background-color 220ms var(--wa-ease-standard), color 180ms var(--wa-ease-standard);
+}
+
+::selection {
+  background-color: var(--brand-primary-soft-strong);
+  color: var(--text-primary);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--wa-font-display);
+  font-weight: var(--wa-weight-bold);
+  color: var(--text-primary);
+  line-height: var(--wa-leading-heading);
+  letter-spacing: var(--wa-tracking-heading);
+  margin-top: 0;
+  margin-bottom: var(--wa-space-3);
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--wa-font-size-h1);
+  line-height: var(--wa-leading-tight);
+  letter-spacing: var(--wa-tracking-display);
+}
+
+h2 {
+  font-size: var(--wa-font-size-h2);
+}
+
+h3 {
+  font-size: var(--wa-font-size-h3);
+}
+
+h4 {
+  font-size: var(--wa-font-size-h4);
+}
+
+h5 {
+  font-size: var(--wa-font-size-h5);
+}
+
+h6 {
+  font-size: var(--wa-font-size-h6);
+  letter-spacing: 0;
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: var(--wa-space-4);
+  text-wrap: pretty;
+}
+
+strong {
+  font-weight: var(--wa-weight-semibold);
+}
+
+a {
+  color: var(--brand-primary);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  letter-spacing: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+input,
+select,
+textarea {
+  color: var(--text-primary);
+  accent-color: var(--brand-primary);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-muted);
+  opacity: 1;
+}
+
+input:disabled,
+select:disabled,
+textarea:disabled,
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+th {
+  font-weight: var(--wa-weight-semibold);
+  text-align: left;
+}
+
+img,
+svg,
+video {
+  max-width: 100%;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--divider);
+  margin: var(--wa-space-6) 0;
+}
+
+/* Indicador de foco visible y consistente (WCAG 2.4.7 / 2.4.11).
+   !important es intencional: varios controles históricos declaran outline:none
+   en estilos en línea y no deben quedar sin foco perceptible. */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--focus-ring-color) !important;
+  outline-offset: 2px !important;
+}
+
+.wa-skip-link {
+  position: absolute;
+  left: var(--wa-space-4);
+  top: -100px;
+  z-index: var(--z-toast);
+  padding: var(--wa-space-3) var(--wa-space-4);
+  background-color: var(--bg-elevated);
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+  border-radius: var(--wa-radius-md);
+  box-shadow: var(--shadow-elevated);
+  font-weight: var(--wa-weight-semibold);
+  text-decoration: none;
+}
+
+.wa-skip-link:focus {
+  top: var(--wa-space-4);
+}
+
+/* Utilidades mínimas del sistema. */
+.wa-container {
+  width: 100%;
+  max-width: var(--wa-container-marketing);
+  margin-inline: auto;
+  padding-inline: var(--wa-space-4);
+}
+
+.wa-container-wide {
+  width: 100%;
+  max-width: var(--wa-container-app);
+  margin-inline: auto;
+  padding-inline: var(--wa-space-6);
+}
+
+.wa-prose {
+  max-width: var(--wa-reading-width);
+  line-height: var(--wa-leading-relaxed);
+}
+
+.wa-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--wa-space-2);
+  font-family: var(--wa-font-mono);
+  font-size: var(--wa-font-size-caption);
+  font-weight: var(--wa-weight-semibold);
+  letter-spacing: var(--wa-tracking-label);
+  text-transform: uppercase;
+  color: var(--brand-primary);
+}
+
+.wa-display {
+  font-family: var(--wa-font-display);
+  font-size: var(--wa-font-size-display);
+  font-weight: var(--wa-weight-display);
+  line-height: var(--wa-leading-tight);
+  letter-spacing: var(--wa-tracking-display);
+}
+
+.wa-muted {
+  color: var(--text-secondary);
+}
+
+.wa-divider {
+  height: 1px;
+  background-color: var(--divider);
+  border: 0;
+}
+
+.wa-visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Citas y referencias bíblicas: sobrias, sin borde lateral grueso. */
+blockquote,
+.wa-scripture-quote {
+  font-family: var(--wa-font-display);
+  font-style: normal;
+  font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+  line-height: var(--wa-leading-relaxed);
+  border-left: 0;
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: var(--wa-space-5) 0;
+  margin: var(--wa-space-6) 0;
+  color: var(--text-secondary);
+}
+
+code,
+pre,
+kbd,
+samp,
+.wa-metric-number {
+  font-family: var(--wa-font-mono);
+}
+
+code {
+  font-size: 0.9em;
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--wa-radius-sm);
+  padding: 0.1em 0.35em;
+}
+
+pre code {
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+
+/* Scrollbars discretas y coherentes con ambos temas. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--border-default);
+  border: 3px solid transparent;
+  background-clip: content-box;
+  border-radius: var(--wa-radius-pill);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--border-strong);
+}
+
+/* ------------------------------------------------------------------------------
+ * 10. ANIMACIONES GPU (solo transform y opacity)
+ * ------------------------------------------------------------------------------ */
+@keyframes wa-pulse-aura {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
+
+@keyframes wa-soundwave-bar {
+  0%,
+  100% {
+    transform: scaleY(0.25);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes wa-chalk-writing {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translate(4px, -3px) scale(1.04);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.9;
+  }
+}
+
+.wa-teacher-speaking-halo {
+  animation: wa-pulse-aura 1.8s var(--wa-ease-standard) infinite;
+}
+
+.wa-soundwave-active .wa-bar-1 {
+  animation: wa-soundwave-bar 0.7s ease-in-out infinite alternate;
+}
+.wa-soundwave-active .wa-bar-2 {
+  animation: wa-soundwave-bar 0.5s ease-in-out 0.15s infinite alternate;
+}
+.wa-soundwave-active .wa-bar-3 {
+  animation: wa-soundwave-bar 0.8s ease-in-out 0.3s infinite alternate;
+}
+.wa-soundwave-active .wa-bar-4 {
+  animation: wa-soundwave-bar 0.6s ease-in-out 0.2s infinite alternate;
+}
+
+.wa-chalk-active {
+  animation: wa-chalk-writing 1.2s var(--wa-ease-smooth) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

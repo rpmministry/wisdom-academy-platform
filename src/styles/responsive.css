@@ -1,0 +1,1302 @@
+﻿/**
+ * ==============================================================================
+ * PROYECTO: Wisdom Academy Platform - Capa Responsive Global
+ * ARCHIVO: src/styles/responsive.css
+ *
+ * PRINCIPIOS APLICADOS (web.dev / MDN / WCAG 2.2):
+ * 1. Mobile-first y breakpoints definidos por el contenido, no por dispositivos.
+ * 2. Unidades de viewport dinámicas (dvh/svh) para evitar el recorte producido
+ *    por las barras de navegación móviles.
+ * 3. Cero scroll horizontal: contenedores flexibles, min-width: 0 y
+ *    box-sizing: border-box universal.
+ * 4. Áreas táctiles de al menos 24x24 CSS px (WCAG 2.5.8); 40-44 px en acciones.
+ * 5. Contenido principal alineado al inicio del área de scroll para que la
+ *    clase siempre comience en la parte superior visible.
+ * 6. En tablets y móviles, el aula pasa de dos columnas a una columna:
+ *    primero la clase y después el panel de ruta académica.
+ * ==============================================================================
+ */
+
+/* -------------------------------------------------------------------------- */
+/* 1. BASE GLOBAL                                                             */
+/* -------------------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+img,
+svg,
+video,
+canvas,
+iframe {
+  max-width: 100%;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 1.1. TIPOGRAFÍA MODERNA DE PRODUCTO                                        */
+/* -------------------------------------------------------------------------- */
+
+.wa-platzi-classroom,
+.wa-dashboard-page,
+.wa-admin-page,
+.wa-auth-page {
+  font-family: var(--wa-font-sans) !important;
+}
+
+.wa-platzi-classroom h1,
+.wa-platzi-classroom h2,
+.wa-platzi-classroom h3,
+.wa-platzi-classroom h4,
+.wa-dashboard-page h1,
+.wa-dashboard-page h2,
+.wa-dashboard-page h3,
+.wa-dashboard-page h4,
+.wa-admin-page h1,
+.wa-admin-page h2,
+.wa-admin-page h3,
+.wa-admin-page h4,
+.wa-auth-page h1,
+.wa-auth-page h2,
+.wa-auth-page h3 {
+  font-family: var(--wa-font-sans) !important;
+  letter-spacing: -0.025em;
+}
+
+.wa-slide-title {
+  font-size: clamp(1.25rem, 1.8vw, 1.6rem) !important;
+  line-height: 1.22 !important;
+  letter-spacing: -0.03em !important;
+}
+
+.wa-slide-card {
+  max-width: min(880px, 100%) !important;
+  padding: clamp(16px, 2vw, 24px) !important;
+}
+
+.wa-slide-visual {
+  max-width: 460px;
+  min-height: 230px !important;
+  padding-top: 48px !important;
+  margin-inline: auto;
+}
+
+.wa-dashboard-greeting {
+  font-size: clamp(1.4rem, 2vw, 1.65rem) !important;
+  letter-spacing: -0.03em !important;
+}
+
+.wa-dashboard-page h3 {
+  font-size: clamp(1.1rem, 1.5vw, 1.3rem) !important;
+}
+
+.wa-admin-page h4 {
+  font-size: 1rem !important;
+}
+
+/* Objetivos táctiles y estados de interacción (Material 3 / WCAG 2.5.8). */
+.wa-button {
+  min-height: 44px;
+}
+
+.wa-button:hover:not(:disabled) {
+  filter: brightness(1.04);
+}
+
+.wa-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.wa-button:disabled {
+  cursor: not-allowed;
+  filter: grayscale(0.15);
+}
+
+.wa-button-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  animation: wa-button-spin 700ms linear infinite;
+}
+
+@keyframes wa-button-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (pointer: coarse) {
+  .wa-button {
+    min-height: 48px;
+  }
+
+  .wa-platzi-classroom button,
+  .wa-dashboard-page button,
+  .wa-admin-page button,
+  .wa-auth-page button {
+    min-height: 44px;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* 2. AULA VIRTUAL: CONTENEDOR PRINCIPAL                                      */
+/* -------------------------------------------------------------------------- */
+
+.wa-platzi-classroom {
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100svh;
+  max-height: 100dvh;
+  overflow: hidden;
+}
+
+.wa-classroom-header {
+  position: sticky;
+  top: 0;
+  flex-wrap: wrap;
+  overflow: visible !important;
+}
+
+.wa-classroom-content,
+.wa-classroom-main,
+.wa-classroom-stage {
+  min-width: 0;
+  min-height: 0;
+}
+
+.wa-classroom-main {
+  overscroll-behavior: contain;
+}
+
+/* El visor no debe imponer una altura mínima mayor que la ventana. */
+.wa-openmaic-viewer {
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+/* La tarjeta de clase se alinea arriba: nunca se recorta el inicio. */
+.wa-openmaic-stage {
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  overflow: auto !important;
+  scrollbar-gutter: stable;
+}
+
+.wa-openmaic-stage > .wa-slide-card {
+  margin-top: 0;
+  margin-bottom: auto;
+  margin-inline: auto;
+}
+
+/* Las dos columnas internas pueden encogerse sin desbordar. */
+.wa-slide-visual,
+.wa-slide-copy {
+  min-width: 0 !important;
+}
+
+.wa-platzi-right-panel {
+  max-width: min(380px, 100%);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 3. TABLETS: 1100 px o menos                                                */
+/*    El aula pasa a una sola columna. La clase queda primero y el panel      */
+/*    de ruta académica se apila debajo, a ancho completo.                    */
+/* -------------------------------------------------------------------------- */
+
+@media (max-width: 1100px) {
+  .wa-platzi-classroom {
+    height: auto;
+    max-height: none;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+
+  .wa-classroom-content {
+    flex-direction: column !important;
+    overflow: visible !important;
+  }
+
+  .wa-classroom-main {
+    overflow: visible !important;
+    padding: 12px !important;
+    width: 100%;
+  }
+
+  .wa-classroom-stage {
+    flex: 0 0 auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  .wa-openmaic-viewer {
+    height: auto !important;
+    min-height: min(680px, calc(100dvh - 112px)) !important;
+  }
+
+  .wa-openmaic-stage {
+    overflow-y: auto !important;
+  }
+
+  .wa-platzi-right-panel {
+    width: 100% !important;
+    flex: 0 0 auto !important;
+    height: auto !important;
+    max-height: none !important;
+    border-left: none !important;
+    border-top: 1px solid var(--border-default);
+    overflow: visible !important;
+  }
+
+  .wa-platzi-sidebar-collapsed {
+    width: 100% !important;
+    flex: 0 0 auto !important;
+    height: 56px !important;
+    flex-direction: row !important;
+    justify-content: space-between;
+    padding: 0.5rem 1rem !important;
+  }
+
+  .wa-platzi-sidebar-collapsed > div {
+    writing-mode: horizontal-tb !important;
+    transform: none !important;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* 3.5. DOCK INFERIOR MÓVIL (ZONA DEL PULGAR)                                 */
+/* -------------------------------------------------------------------------- */
+
+.wa-mobile-dock {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .wa-platzi-classroom {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .wa-mobile-dock {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 200;
+    padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px));
+    background: var(--bg-surface);
+    background: color-mix(in srgb, var(--bg-surface) 92%, transparent);
+    border-top: 1px solid var(--border-default);
+    box-shadow: 0 -8px 24px rgba(3, 41, 28, 0.12);
+    backdrop-filter: blur(12px);
+  }
+
+  .wa-mobile-dock-item {
+    min-height: 48px;
+    min-width: 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    border: none;
+    border-radius: var(--wa-radius-sm);
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: var(--wa-font-sans);
+    font-size: 0.625rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 150ms ease, color 150ms ease;
+  }
+
+  .wa-mobile-dock-item:active {
+    background: var(--bg-subtle);
+    color: var(--brand-primary);
+  }
+
+  .wa-mobile-dock-item:focus-visible {
+    outline: 3px solid var(--brand-gold);
+    outline-offset: 1px;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* 4. TABLETS PEQUEÑAS Y MÓVILES: 700 px o menos                              */
+/* -------------------------------------------------------------------------- */
+
+@media (max-width: 700px) {
+  .wa-classroom-header {
+    padding: 0.5rem 0.75rem !important;
+    gap: 0.5rem !important;
+  }
+
+  .wa-classroom-brand-text,
+  .wa-classroom-breadcrumb,
+  .wa-classroom-breadcrumb-separator {
+    display: none !important;
+  }
+
+  .wa-classroom-header-left {
+    flex: 0 0 auto !important;
+  }
+
+  .wa-classroom-actions {
+    width: 100%;
+    justify-content: space-between !important;
+    gap: 0.375rem !important;
+  }
+
+  /* En móvil, las guías viven únicamente en el dock inferior. */
+  .wa-header-guides {
+    display: none !important;
+  }
+
+  /* Acciones secundarias: icono visible, etiqueta oculta para no saturar. */
+  .wa-header-tutoring > span:last-child {
+    display: none;
+  }
+
+  .wa-header-tutoring {
+    min-width: 40px;
+    min-height: 40px;
+    padding-left: 0.625rem !important;
+    padding-right: 0.625rem !important;
+  }
+
+  .wa-openmaic-topbar {
+    padding: 0.5rem 0.75rem !important;
+  }
+
+  .wa-openmaic-title {
+    flex-basis: 100% !important;
+  }
+
+  .wa-openmaic-controls {
+    width: 100%;
+    justify-content: space-between !important;
+  }
+
+  .wa-openmaic-stage {
+    padding: 10px !important;
+  }
+
+  .wa-slide-card {
+    padding: 16px 14px !important;
+    border-radius: 12px !important;
+    gap: 12px !important;
+  }
+
+  .wa-slide-title {
+    font-size: 1.35rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .wa-slide-watermark {
+    font-size: 3rem !important;
+    right: 12px !important;
+    opacity: 0.22 !important;
+  }
+
+  .wa-slide-visual {
+    min-height: 210px !important;
+    padding: 12px !important;
+    padding-top: 44px !important;
+  }
+
+  .wa-slide-copy {
+    gap: 10px !important;
+  }
+
+  .wa-platzi-right-panel > div {
+    max-width: 100%;
+  }
+
+  /* Barra multimedia: la consulta IA pasa a una fila propia. */
+  .wa-openmaic-mediabar {
+    padding: 6px 10px !important;
+    min-height: 44px;
+  }
+
+  .wa-openmaic-ai-btn {
+    flex: 1 1 100%;
+    justify-content: center;
+    min-height: 36px;
+  }
+
+  /* Subtítulos del profesor: texto a ancho completo, sin columnas de 1 palabra. */
+  .wa-openmaic-speechbar {
+    padding: 8px 10px !important;
+    gap: 8px !important;
+  }
+
+  .wa-speechbar-teacher {
+    order: 1 !important;
+    flex: 1 1 auto !important;
+  }
+
+  .wa-speechbar-companion {
+    order: 1 !important;
+    flex: 0 0 auto !important;
+  }
+
+  .wa-speechbar-bubble {
+    order: 2 !important;
+    flex: 1 1 100% !important;
+    width: 100%;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* 5. MÓVILES COMPACTOS: 420 px o menos                                       */
+/* -------------------------------------------------------------------------- */
+
+@media (max-width: 420px) {
+  .wa-classroom-actions {
+    gap: 2px !important;
+  }
+
+  .wa-classroom-actions > div button {
+    padding: 0.2rem 0.4rem !important;
+    font-size: 0.6875rem !important;
+  }
+
+  .wa-header-dashboard {
+    display: none !important;
+  }
+
+  .wa-openmaic-controls {
+    gap: 4px !important;
+  }
+
+  .wa-openmaic-controls button {
+    min-height: 32px;
+  }
+
+  .wa-slide-card {
+    padding: 14px 12px !important;
+  }
+
+  .wa-slide-title {
+    font-size: 1.2rem !important;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* 6. DASHBOARD DEL ESTUDIANTE                                                */
+/* -------------------------------------------------------------------------- */
+
+.wa-dashboard-page {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.wa-dashboard-main,
+.wa-dashboard-banner,
+.wa-dashboard-banner-copy {
+  min-width: 0;
+}
+
+@media (max-width: 700px) {
+  .wa-dashboard-header {
+    padding: 0.5rem 0.75rem !important;
+    gap: 0.5rem !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .wa-dashboard-portal-label,
+  .wa-dashboard-admin-link {
+    display: none !important;
+  }
+
+  .wa-dashboard-header-left {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .wa-dashboard-brand-text {
+    display: inline-block !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .wa-dashboard-actions {
+    width: auto;
+    flex: 0 0 auto;
+    justify-content: flex-end !important;
+    margin-left: auto;
+    gap: 0.375rem !important;
+  }
+
+  .wa-dashboard-main {
+    padding: 16px !important;
+    gap: 20px !important;
+  }
+
+  .wa-dashboard-banner {
+    padding: 20px !important;
+    gap: 16px !important;
+  }
+
+  .wa-dashboard-greeting {
+    font-size: 1.5rem !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .wa-dashboard-brand-text {
+    font-size: 1rem !important;
+  }
+
+  .wa-dashboard-greeting {
+    font-size: 1.35rem !important;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* 7. PANEL ADMINISTRATIVO                                                    */
+/* -------------------------------------------------------------------------- */
+
+.wa-admin-page {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.wa-admin-main,
+.wa-admin-header-left {
+  min-width: 0;
+}
+
+/* Las pestañas administrativas se envuelven en tablets/móviles para que
+   "Boletines Ecuador" y el resto sean siempre visibles. */
+@media (max-width: 900px) {
+  .wa-tabs-container {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    row-gap: 2px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-default) transparent;
+  }
+
+  .wa-tabs-container::-webkit-scrollbar {
+    display: block;
+    height: 4px;
+  }
+
+  .wa-tabs-container::-webkit-scrollbar-thumb {
+    border: 0;
+    background-color: var(--border-default);
+  }
+
+  .wa-tabs-container [role='tab'] {
+    flex: 0 0 auto;
+    justify-content: center;
+    padding: 0.625rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .wa-tabs-container [role='tab'] {
+    flex: 0 0 auto;
+  }
+}
+
+@media (max-width: 900px) {
+  .wa-admin-header {
+    padding: 0.5rem 0.75rem !important;
+    gap: 0.5rem !important;
+  }
+
+  .wa-admin-breadcrumb {
+    display: none !important;
+  }
+
+  .wa-admin-actions {
+    width: 100%;
+    justify-content: flex-end !important;
+    gap: 0.375rem !important;
+  }
+
+  .wa-admin-main {
+    padding: 16px !important;
+  }
+}
+
+@media (max-width: 700px) {
+  .wa-admin-header {
+    flex-wrap: wrap !important;
+  }
+
+  .wa-admin-brand-text {
+    display: inline-block !important;
+    font-size: 1rem !important;
+  }
+
+  .wa-admin-user {
+    display: none !important;
+  }
+
+  .wa-admin-main {
+    padding: 12px !important;
+  }
+
+  .wa-admin-actions .wa-button {
+    min-height: 40px;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* 7.1. VISTA PREVIA A4 DEL BOLETÍN MINEDUC                                   */
+/* -------------------------------------------------------------------------- */
+
+.wa-boletin-a4 {
+  width: 794px !important;
+  max-width: none !important;
+  box-sizing: border-box;
+  transform-origin: top center;
+}
+
+@media (max-width: 1100px) {
+  .wa-boletin-a4 {
+    zoom: 0.92;
+  }
+}
+
+@media (max-width: 900px) {
+  .wa-boletin-a4 {
+    zoom: 0.76;
+  }
+}
+
+@media (max-width: 700px) {
+  .wa-boletin-a4 {
+    zoom: 0.56;
+  }
+}
+
+@media (max-width: 480px) {
+  .wa-boletin-a4 {
+    zoom: 0.44;
+  }
+}
+
+@media print {
+  .wa-boletin-a4 {
+    zoom: 1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* 7.2. LANDING PÚBLICA                                                       */
+/* -------------------------------------------------------------------------- */
+
+.wa-landing-header {
+  min-height: 64px;
+}
+
+.wa-bento-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+@media (max-width: 1055px) {
+  .wa-bento-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 671px) {
+  .wa-bento-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .wa-bento-card {
+    grid-column: span 1 !important;
+  }
+}
+
+.wa-landing-menu-btn {
+  display: none;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-default);
+  border-radius: var(--wa-radius-md);
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+  font-size: 1.125rem;
+  cursor: pointer;
+}
+
+.wa-landing-mobile-menu {
+  display: none;
+}
+
+.wa-landing-students {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 520px;
+  margin-top: 0.25rem;
+}
+
+.wa-landing-student {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--wa-radius-lg);
+  background: var(--bg-glass);
+  text-align: left;
+}
+
+@media (max-width: 600px) {
+  .wa-landing-students {
+    grid-template-columns: 1fr;
+    max-width: 360px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .wa-landing-brand-copy span:last-child {
+    display: none !important;
+  }
+
+  .wa-landing-brand-copy span:first-child {
+    font-size: 1.125rem !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .wa-landing-header {
+    padding: 0 1rem !important;
+    height: auto !important;
+    min-height: 64px;
+    gap: 0.5rem;
+  }
+
+  .wa-segmented-control {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .wa-segmented-control button {
+    white-space: normal !important;
+    text-align: center;
+    min-height: 44px;
+    padding: 0.5rem 0.375rem !important;
+  }
+
+  .wa-landing-nav {
+    display: none !important;
+  }
+
+  .wa-landing-actions {
+    gap: 0.375rem !important;
+  }
+
+  .wa-landing-menu-btn {
+    display: inline-flex;
+  }
+
+  .wa-landing-mobile-menu {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 64px;
+    left: 0;
+    right: 0;
+    z-index: 99;
+    padding: 0.75rem 1rem 1rem;
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-default);
+    box-shadow: var(--shadow-elevated);
+  }
+
+  .wa-landing-mobile-menu a {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 0 0.75rem;
+    border-radius: var(--wa-radius-sm);
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9375rem;
+  }
+
+  .wa-landing-mobile-menu a:active {
+    background: var(--bg-subtle);
+  }
+}
+
+@media (max-width: 480px) {
+  .wa-landing-header {
+    padding: 0 0.75rem !important;
+  }
+
+  .wa-landing-brand-copy {
+    display: none !important;
+  }
+
+  .wa-landing-actions .wa-button {
+    min-height: 40px;
+    padding-left: 0.625rem !important;
+    padding-right: 0.625rem !important;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* 7.3. GUARDIÁN DE SESIÓN                                                    */
+/* -------------------------------------------------------------------------- */
+
+.wa-auth-loading {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.875rem;
+  padding: 2rem;
+  background: var(--bg-canvas);
+  color: var(--text-secondary);
+  font-family: var(--wa-font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.wa-auth-loading-spinner {
+  width: 34px;
+  height: 34px;
+  border: 3px solid var(--border-default);
+  border-top-color: var(--brand-gold);
+  border-radius: 50%;
+  animation: wa-button-spin 750ms linear infinite;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 8. ACCESIBILIDAD: movimiento reducido y foco visible                       */
+/* -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .wa-platzi-classroom *,
+  .wa-openmaic-viewer * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.wa-platzi-classroom button:focus-visible,
+.wa-platzi-classroom a:focus-visible,
+.wa-openmaic-viewer button:focus-visible,
+.wa-dashboard-page button:focus-visible,
+.wa-dashboard-page a:focus-visible,
+.wa-admin-page button:focus-visible,
+.wa-admin-page a:focus-visible,
+.wa-auth-page button:focus-visible,
+.wa-auth-page a:focus-visible {
+  outline: 3px solid var(--brand-gold);
+  outline-offset: 2px;
+}
+
+.wa-auth-page input:focus-visible,
+.wa-admin-page input:focus-visible,
+.wa-admin-page select:focus-visible,
+.wa-admin-page textarea:focus-visible {
+  border-color: var(--brand-primary) !important;
+  box-shadow: var(--focus-ring) !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 9. LIENZO FIJO DE DIAPOSITIVA (ESCALADO PROPORCIONAL)                      */
+/*    Técnica: lienzo de diseño fijo + transform: scale calculado con         */
+/*    ResizeObserver. Garantiza que toda la diapositiva quepa en el visor.     */
+/* -------------------------------------------------------------------------- */
+
+.wa-slide-frame {
+  flex: 0 0 auto;
+  position: relative;
+}
+
+.wa-slide-canvas {
+  max-width: none !important;
+  padding: 20px 24px !important;
+  gap: 10px !important;
+  overflow: hidden !important;
+}
+
+.wa-slide-canvas .wa-slide-header {
+  flex: 0 0 auto;
+}
+
+.wa-slide-canvas .wa-slide-title {
+  font-size: 30px !important;
+  line-height: 1.15 !important;
+  margin-bottom: 4px !important;
+}
+
+.wa-slide-canvas .wa-slide-steps {
+  flex: 0 0 auto;
+  margin: 0 !important;
+  gap: 6px !important;
+}
+
+.wa-slide-canvas .wa-slide-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  gap: 14px !important;
+}
+
+.wa-slide-canvas--landscape .wa-slide-body {
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+}
+
+.wa-slide-canvas--portrait .wa-slide-body,
+.wa-slide-canvas--phone .wa-slide-body {
+  flex-direction: column !important;
+  flex-wrap: nowrap !important;
+}
+
+.wa-slide-canvas .wa-slide-visual {
+  max-width: none !important;
+  min-height: 0 !important;
+  padding-top: 42px !important;
+  flex: 1 1 48% !important;
+  align-self: stretch;
+}
+
+.wa-slide-canvas--portrait .wa-slide-visual {
+  flex: 0 0 230px !important;
+}
+
+.wa-slide-canvas--phone .wa-slide-visual {
+  flex: 0 0 188px !important;
+  padding: 8px !important;
+  padding-top: 36px !important;
+}
+
+.wa-slide-canvas .wa-slide-copy {
+  flex: 1 1 52% !important;
+  gap: 8px !important;
+  justify-content: flex-start !important;
+}
+
+.wa-slide-canvas--portrait .wa-slide-copy,
+.wa-slide-canvas--phone .wa-slide-copy {
+  flex: 1 1 auto !important;
+  justify-content: center !important;
+}
+
+.wa-slide-canvas .wa-copy-card {
+  padding: 8px 11px !important;
+}
+
+.wa-slide-canvas .wa-copy-card p {
+  font-size: 14px !important;
+  line-height: 1.3 !important;
+}
+
+.wa-slide-canvas .wa-copy-card li {
+  font-size: 12.5px !important;
+  line-height: 1.3 !important;
+}
+
+.wa-slide-canvas .wa-copy-card span {
+  font-size: 9.5px !important;
+}
+
+.wa-slide-canvas .wa-copy-card ul {
+  margin-top: 2px !important;
+  padding-left: 16px !important;
+}
+
+.wa-slide-canvas--phone .wa-slide-title {
+  font-size: 23px !important;
+}
+
+.wa-slide-canvas--phone .wa-slide-header p {
+  font-size: 12px !important;
+}
+
+.wa-slide-canvas--phone .wa-slide-steps button {
+  padding: 3px 7px !important;
+  font-size: 10px !important;
+}
+
+.wa-slide-canvas--phone .wa-copy-card p {
+  font-size: 13px !important;
+}
+
+.wa-slide-canvas--phone .wa-copy-card li {
+  font-size: 11px !important;
+}
+
+/* Ajustes finales del lienzo fijo por orientación. */
+.wa-slide-canvas .wa-slide-title {
+  font-size: 26px !important;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.wa-slide-canvas--portrait .wa-slide-visual {
+  flex: 0 0 280px !important;
+}
+
+.wa-slide-canvas--phone .wa-slide-visual {
+  flex: 0 0 250px !important;
+}
+
+.wa-slide-canvas--portrait .wa-copy-card {
+  padding: 7px 10px !important;
+}
+
+.wa-slide-canvas--portrait .wa-copy-card p {
+  font-size: 13px !important;
+}
+
+.wa-slide-canvas--portrait .wa-copy-card li {
+  font-size: 11.5px !important;
+}
+
+.wa-slide-canvas--phone .wa-copy-card {
+  padding: 6px 9px !important;
+}
+
+.wa-slide-canvas--phone .wa-copy-card p {
+  font-size: 12.5px !important;
+}
+
+.wa-slide-canvas--phone .wa-copy-card li {
+  font-size: 10.5px !important;
+}
+
+@media (max-width: 700px) {
+  .wa-openmaic-viewer {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+  }
+
+  .wa-openmaic-stage {
+    flex: 0 0 auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+}
+
+.wa-slide-canvas--phone .wa-slide-title {
+  font-size: 22px !important;
+}
+
+.wa-slide-canvas--portrait .wa-slide-visual {
+  flex: 0 0 300px !important;
+}
+
+.wa-slide-canvas--phone .wa-slide-visual {
+  flex: 0 0 290px !important;
+}
+
+.wa-slide-canvas .wa-slide-visual {
+  width: 100% !important;
+  margin-inline: 0 !important;
+}
+
+.wa-slide-canvas--portrait .wa-slide-copy,
+.wa-slide-canvas--phone .wa-slide-copy {
+  justify-content: flex-start !important;
+}
+
+.wa-slide-canvas .wa-visual-badge {
+  max-width: calc(100% - 24px);
+  white-space: normal;
+  line-height: 1.2;
+  font-size: 10px !important;
+}
+
+.wa-slide-canvas--portrait .wa-slide-visual {
+  flex: 0 0 320px !important;
+}
+
+.wa-slide-canvas--phone .wa-slide-visual {
+  flex: 0 0 315px !important;
+}
+
+@media (max-width: 900px) and (min-width: 701px) {
+  .wa-header-tutoring > span:last-child {
+    display: none;
+  }
+
+  .wa-header-tutoring {
+    min-width: 40px;
+    padding-left: 0.625rem !important;
+    padding-right: 0.625rem !important;
+  }
+}
+
+.wa-slide-canvas--portrait .wa-slide-copy,
+.wa-slide-canvas--phone .wa-slide-copy {
+  justify-content: space-between !important;
+}
+
+/* La explicación es el contenido principal de la diapositiva. */
+.wa-slide-canvas .wa-slide-title {
+  font-size: 30px !important;
+}
+
+.wa-slide-canvas .wa-explanation-card {
+  padding: 8px 11px !important;
+}
+
+.wa-slide-canvas .wa-explanation-text {
+  font-size: 17px !important;
+  line-height: 1.36 !important;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.wa-slide-canvas .wa-copy-card p {
+  font-size: 15px !important;
+  line-height: 1.35 !important;
+}
+
+.wa-slide-canvas .wa-copy-card li {
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+}
+
+.wa-slide-canvas--phone .wa-slide-title {
+  font-size: 23px !important;
+}
+
+.wa-slide-canvas--phone .wa-explanation-text {
+  font-size: 15px !important;
+  -webkit-line-clamp: 6;
+}
+
+.wa-slide-canvas .wa-copy-card {
+  flex-shrink: 0 !important;
+}
+
+.wa-slide-canvas .wa-explanation-text {
+  -webkit-line-clamp: 6;
+}
+
+.wa-slide-canvas--portrait .wa-slide-copy,
+.wa-slide-canvas--phone .wa-slide-copy {
+  justify-content: flex-start !important;
+}
+
+/* La explicación ocupa más ancho que el gráfico en formato horizontal. */
+.wa-slide-canvas--landscape .wa-slide-visual {
+  flex: 1 1 40% !important;
+}
+
+.wa-slide-canvas--landscape .wa-slide-copy {
+  flex: 1 1 60% !important;
+}
+
+/* Reparto exacto de columnas: el gap no provoca desbordamiento horizontal. */
+.wa-slide-canvas--landscape .wa-slide-visual {
+  flex: 4 1 0 !important;
+  min-width: 0 !important;
+}
+
+.wa-slide-canvas--landscape .wa-slide-copy {
+  flex: 6 1 0 !important;
+  min-width: 0 !important;
+}
+
+/* A 100% no hay barras: la diapositiva está ajustada. Las barras solo aparecen
+   cuando el estudiante amplía deliberadamente con el control de zoom. */
+.wa-openmaic-stage {
+  overflow: hidden !important;
+}
+
+.wa-openmaic-stage--zoomed {
+  overflow: auto !important;
+}
+
+/* En pantallas de poca altura, la narración se compacta para dar más espacio
+   a la diapositiva. El botón de reproducir y la burbuja siguen disponibles. */
+@media (max-height: 800px) and (min-width: 701px) {
+  .wa-openmaic-speechbar {
+    padding: 5px 12px !important;
+    gap: 8px !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .wa-speechbar-bubble {
+    padding: 4px 10px !important;
+    min-height: 36px !important;
+  }
+
+  .wa-speechbar-bubble p {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 11px !important;
+    line-height: 1.35 !important;
+  }
+
+  .wa-speechbar-bubble span:first-child {
+    font-size: 9px !important;
+  }
+
+  .wa-speechbar-companion {
+    display: none !important;
+  }
+}
+
+/* Portátiles de poca altura: se prioriza la diapositiva completa y legible.
+   La narración sigue reproduciéndose; solo se oculta su barra de subtítulos. */
+@media (max-height: 700px) and (min-width: 901px) {
+  .wa-openmaic-speechbar {
+    display: none !important;
+  }
+
+  .wa-openmaic-topbar {
+    min-height: 40px !important;
+    padding: 2px 12px !important;
+  }
+}
+

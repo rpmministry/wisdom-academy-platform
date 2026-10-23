@@ -1,0 +1,195 @@
+/* ==============================================================================
+ * PROYECTO: Wisdom Academy Platform - Implementación del 2x Grid de IBM Carbon
+ * ARCHIVO: src/styles/carbon-grid.css
+ *
+ * PROPÓSITO ARQUITECTÓNICO:
+ * Implementa la cuadrícula de 16 columnas responsivas de IBM Carbon Design System
+ * en los 5 breakpoints oficiales (320px, 672px, 1056px, 1312px y 1584px).
+ *
+ * Ofrece dos modelos estructurales:
+ * 1. Modelo de Producto (.wa-carbon-grid): Alineado a la izquierda para el aula
+ *    interactiva de OpenMAIC, con panel lateral de horario y portafolio.
+ * 2. Modelo Editorial (.wa-carbon-editorial-grid): Centrado con ancho máximo de
+ *    1584px para el catálogo público de talleres y portafolio ministerial.
+ *
+ * CUMPLE ESTRICTAMENTE:
+ * - Padding obligatorio de 16px para texto (--carbon-space-2x).
+ * - Gutters Wide (32px), Narrow (16px) y Condensed (1px).
+ * - Proporciones canónicas de aspecto (16:9, 4:3, 3:2, 2:1, 1:1).
+ * ============================================================================== */
+
+/* ------------------------------------------------------------------------------
+ * MODELO 1: MODELO DE PRODUCTO / AULA (.wa-carbon-grid)
+ * Utilizado en la interfaz diaria de estudio de Avril y Gael.
+ * ------------------------------------------------------------------------------ */
+.wa-carbon-grid {
+  display: grid;
+  width: 100%;
+  box-sizing: border-box;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--carbon-gutter-narrow);
+  padding-left: var(--carbon-space-2x);
+  padding-right: var(--carbon-space-2x);
+}
+
+/* ------------------------------------------------------------------------------
+ * MODELO 2: MODELO EDITORIAL (.wa-carbon-editorial-grid)
+ * Centrado en pantallas grandes con margen de 24px para cursos libres y certificados.
+ * ------------------------------------------------------------------------------ */
+.wa-carbon-editorial-grid {
+  display: grid;
+  width: 100%;
+  max-width: var(--carbon-max-width);
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--carbon-gutter-wide);
+  padding-left: var(--carbon-space-2x);
+  padding-right: var(--carbon-space-2x);
+}
+
+/* ------------------------------------------------------------------------------
+ * LOS 5 BREAKPOINTS OFICIALES DE IBM CARBON
+ * ------------------------------------------------------------------------------ */
+
+/* 1. BREAKPOINT SMALL (320px a 671px) - 4 Columnas */
+@media (min-width: 320px) {
+  .wa-carbon-grid,
+  .wa-carbon-editorial-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--carbon-gutter-narrow);
+    padding-left: var(--carbon-space-2x);
+    padding-right: var(--carbon-space-2x);
+  }
+
+  .wa-col-sm-4 { grid-column: span 4; }
+  .wa-col-sm-2 { grid-column: span 2; }
+  .wa-col-sm-1 { grid-column: span 1; }
+}
+
+/* 2. BREAKPOINT MEDIUM (672px a 1055px) - 8 Columnas */
+@media (min-width: 672px) {
+  .wa-carbon-grid,
+  .wa-carbon-editorial-grid {
+    grid-template-columns: repeat(8, 1fr);
+    gap: var(--carbon-gutter-narrow);
+    padding-left: var(--carbon-space-2x);
+    padding-right: var(--carbon-space-2x);
+  }
+
+  .wa-col-md-8 { grid-column: span 8; }
+  .wa-col-md-6 { grid-column: span 6; }
+  .wa-col-md-4 { grid-column: span 4; }
+  .wa-col-md-2 { grid-column: span 2; }
+}
+
+/* 3. BREAKPOINT LARGE (1056px a 1311px) - 16 Columnas */
+@media (min-width: 1056px) {
+  .wa-carbon-grid,
+  .wa-carbon-editorial-grid {
+    grid-template-columns: repeat(16, 1fr);
+    gap: var(--carbon-gutter-narrow);
+    padding-left: var(--carbon-space-2x);
+    padding-right: var(--carbon-space-2x);
+  }
+
+  .wa-col-lg-16 { grid-column: span 16; }
+  .wa-col-lg-12 { grid-column: span 12; }
+  .wa-col-lg-8  { grid-column: span 8; }
+  .wa-col-lg-4  { grid-column: span 4; }
+  .wa-col-lg-2  { grid-column: span 2; }
+}
+
+/* 4. BREAKPOINT X-LARGE (1312px a 1583px) - 16 Columnas */
+@media (min-width: 1312px) {
+  .wa-carbon-grid {
+    grid-template-columns: repeat(16, 1fr);
+    gap: var(--carbon-gutter-narrow);
+  }
+
+  .wa-carbon-editorial-grid {
+    grid-template-columns: repeat(16, 1fr);
+    gap: var(--carbon-gutter-wide);
+  }
+
+  .wa-col-xlg-16 { grid-column: span 16; }
+  .wa-col-xlg-12 { grid-column: span 12; }
+  .wa-col-xlg-8  { grid-column: span 8; }
+  .wa-col-xlg-4  { grid-column: span 4; }
+}
+
+/* 5. BREAKPOINT MAX (1584px en adelante) - 16 Columnas Centrado */
+@media (min-width: 1584px) {
+  .wa-carbon-grid {
+    grid-template-columns: repeat(16, 1fr);
+    gap: var(--carbon-gutter-narrow);
+    padding-left: var(--carbon-space-3x);
+    padding-right: var(--carbon-space-3x);
+  }
+
+  .wa-carbon-editorial-grid {
+    grid-template-columns: repeat(16, 1fr);
+    gap: var(--carbon-gutter-wide);
+    padding-left: var(--carbon-space-3x);
+    padding-right: var(--carbon-space-3x);
+  }
+
+  .wa-col-max-16 { grid-column: span 16; }
+  .wa-col-max-12 { grid-column: span 12; }
+  .wa-col-max-8  { grid-column: span 8; }
+  .wa-col-max-4  { grid-column: span 4; }
+}
+
+/* ------------------------------------------------------------------------------
+ * PROPORCIONES DE ASPECTO CANÓNICAS DE CARBON
+ * ------------------------------------------------------------------------------ */
+.wa-aspect-16-9 {
+  aspect-ratio: 16 / 9;
+  width: 100%;
+}
+
+.wa-aspect-4-3 {
+  aspect-ratio: 4 / 3;
+  width: 100%;
+}
+
+.wa-aspect-3-2 {
+  aspect-ratio: 3 / 2;
+  width: 100%;
+}
+
+.wa-aspect-2-1 {
+  aspect-ratio: 2 / 1;
+  width: 100%;
+}
+
+.wa-aspect-1-1 {
+  aspect-ratio: 1 / 1;
+}
+
+/* ------------------------------------------------------------------------------
+ * PADDING OBLIGATORIO DE TEXTO (16PX / --carbon-space-2x)
+ * ------------------------------------------------------------------------------ */
+.wa-text-padded {
+  padding: var(--carbon-space-2x);
+  box-sizing: border-box;
+}
+
+/* ------------------------------------------------------------------------------
+ * CONTENEDORES DE SUPERFICIE ELEVADA (SIN CARD-IN-CARD)
+ * ------------------------------------------------------------------------------ */
+.wa-surface-card {
+  background-color: var(--wa-bg-surface);
+  border: 1px solid var(--wa-keyline-subtle);
+  border-radius: var(--wa-radius-lg);
+  padding: var(--carbon-space-2x);
+  box-sizing: border-box;
+  transition: transform var(--wa-duration-fast) var(--wa-ease-decelerate),
+              opacity var(--wa-duration-fast) var(--wa-ease-decelerate);
+}
+
+.wa-surface-card:hover {
+  transform: translateY(-2px);
+}
+

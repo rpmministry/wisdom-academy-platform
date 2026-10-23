@@ -1,0 +1,38 @@
+name: Proponer una mejora
+description: Describe una necesidad educativa, técnica o de operación.
+title: '[Feature]: '
+labels: ['enhancement']
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema o necesidad
+      description: ¿Qué necesidad del estudiante, familia o administración resuelve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Propuesta
+      description: Describe el comportamiento esperado y las alternativas consideradas.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Área
+      options:
+        - Catálogo y checkout
+        - PayPal y pagos
+        - Aula virtual
+        - Administración y CRM
+        - Accesibilidad y diseño
+        - Base de datos y despliegue
+        - Otro
+    validations:
+      required: true
+  - type: textarea
+    id: risks
+    attributes:
+      label: Riesgos o consideraciones
+      description: Privacidad de menores, pagos, datos, migraciones o permisos.

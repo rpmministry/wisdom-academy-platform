@@ -1,0 +1,701 @@
+/* ==============================================================================
+ * REPASOS SEMANALES EN VIVO
+ * Tarjeta integrada en la semana, editor administrativo y stage embebido.
+ * ============================================================================== */
+
+.wa-mt-card {
+  --meeting-accent: var(--accent-study);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.8rem;
+  align-items: center;
+  margin: 0.8rem 1rem 0;
+  padding: 0.85rem 0.9rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  background: var(--bg-surface);
+  box-shadow: inset 3px 0 0 var(--meeting-accent), var(--shadow-card, 0 1px 3px rgba(15, 23, 42, 0.05));
+}
+
+.wa-mt-card.is-live {
+  background: color-mix(in srgb, var(--status-success-bg) 55%, var(--bg-surface));
+  border-color: color-mix(in srgb, var(--status-success) 30%, var(--border-subtle));
+}
+
+.wa-mt-card.is-cancelled {
+  opacity: 0.85;
+}
+
+.wa-mt-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  background: var(--bg-subtle);
+  color: var(--meeting-accent);
+  flex: 0 0 auto;
+}
+
+.wa-mt-main {
+  min-width: 0;
+}
+
+.wa-mt-topline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.2rem;
+}
+
+.wa-mt-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.wa-mt-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--status-success);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--status-success) 18%, transparent);
+  animation: wa-mt-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes wa-mt-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.wa-mt-status {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 0.18rem 0.5rem;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+}
+
+.wa-mt-status.is-live,
+.wa-mt-status.is-available {
+  background: var(--status-success-bg);
+  color: var(--status-success);
+}
+
+.wa-mt-status.is-upcoming {
+  background: var(--status-warning-bg);
+  color: var(--status-warning);
+}
+
+.wa-mt-status.is-cancelled {
+  background: var(--status-danger-bg);
+  color: var(--status-danger);
+}
+
+.wa-mt-status.is-completed {
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+}
+
+.wa-mt-title {
+  display: block;
+  font-size: 0.82rem;
+  line-height: 1.35;
+  color: var(--text-primary);
+}
+
+.wa-mt-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.7rem;
+  margin-top: 0.25rem;
+  font-size: 0.66rem;
+  color: var(--text-secondary);
+}
+
+.wa-mt-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.22rem;
+}
+
+.wa-mt-provider i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--meeting-accent);
+}
+
+.wa-mt-note {
+  margin: 0.25rem 0 0;
+  font-size: 0.67rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.wa-mt-alert {
+  margin-top: 0.35rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: 7px;
+  background: var(--status-danger-bg);
+  color: var(--status-danger);
+  font-size: 0.65rem;
+}
+
+.wa-mt-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.wa-mt-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  min-height: 34px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 0.38rem 0.65rem;
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 130ms ease, background 130ms ease;
+}
+
+.wa-mt-btn:hover {
+  transform: translateY(-1px);
+}
+
+.wa-mt-btn-primary {
+  background: var(--accent-study);
+  color: var(--text-on-brand);
+}
+
+.wa-mt-btn-secondary {
+  background: var(--bg-surface);
+  border-color: var(--border-subtle);
+  color: var(--text-primary);
+}
+
+.wa-mt-btn-danger {
+  background: transparent;
+  border-color: color-mix(in srgb, var(--status-danger) 40%, transparent);
+  color: var(--status-danger);
+}
+
+.wa-mt-btn-small {
+  min-height: 30px;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.64rem;
+}
+
+.wa-mt-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border: 0;
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.64rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0.3rem 0.35rem;
+}
+
+.wa-mt-edit:hover {
+  color: var(--text-primary);
+}
+
+.wa-mt-unavailable {
+  font-size: 0.64rem;
+  color: var(--text-muted);
+}
+
+.wa-mt-external-note {
+  grid-column: 2 / -1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  margin-top: -0.15rem;
+}
+
+.wa-mt-card.is-empty {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  border-style: dashed;
+}
+
+.wa-mt-card.is-empty strong {
+  display: block;
+  font-size: 0.8rem;
+}
+
+.wa-mt-card.is-empty small {
+  display: block;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+}
+
+/* Editor ------------------------------------------------------------------- */
+
+.wa-mt-modal-overlay,
+.wa-mt-stage-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(6, 18, 12, 0.62);
+  backdrop-filter: blur(4px);
+}
+
+.wa-mt-modal {
+  width: min(720px, 100%);
+  max-height: min(90dvh, 820px);
+  overflow: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: 18px;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  box-shadow: 0 35px 90px -40px rgba(0, 0, 0, 0.6);
+  padding: 1.1rem;
+}
+
+.wa-mt-modal-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  align-items: flex-start;
+  margin-bottom: 0.8rem;
+}
+
+.wa-mt-modal-head h2 {
+  margin: 0.2rem 0 0.2rem;
+  font-family: var(--wa-font-display, "Bricolage Grotesque", sans-serif);
+  font-size: 1.2rem;
+  letter-spacing: -0.02em;
+}
+
+.wa-mt-modal-head p {
+  margin: 0;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.wa-mt-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.wa-mt-form {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.wa-mt-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.wa-mt-form label {
+  display: grid;
+  gap: 0.22rem;
+  font-size: 0.64rem;
+  font-weight: 800;
+  color: var(--text-secondary);
+}
+
+.wa-mt-form input,
+.wa-mt-form select,
+.wa-mt-form textarea {
+  width: 100%;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 0.45rem 0.55rem;
+  font: inherit;
+  font-size: 0.74rem;
+  font-weight: 400;
+  background: var(--bg-canvas);
+  color: var(--text-primary);
+}
+
+.wa-mt-form textarea {
+  min-height: 64px;
+  resize: vertical;
+}
+
+.wa-mt-form small {
+  font-weight: 400;
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.wa-mt-span-2 {
+  grid-column: span 2;
+}
+
+.wa-mt-form-error {
+  padding: 0.5rem 0.6rem;
+  border-radius: 8px;
+  background: var(--status-danger-bg);
+  color: var(--status-danger);
+  font-size: 0.7rem;
+}
+
+.wa-mt-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+  margin-top: 0.4rem;
+}
+
+/* Stage -------------------------------------------------------------------- */
+
+.wa-mt-stage {
+  width: min(1180px, 100%);
+  max-height: 94dvh;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.85rem;
+  border-radius: 18px;
+  background: #08130d;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 40px 100px -40px rgba(0, 0, 0, 0.8);
+}
+
+.wa-mt-stage-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  align-items: center;
+  flex-wrap: wrap;
+  color: #f2fff7;
+}
+
+.wa-mt-stage-head strong {
+  display: block;
+  font-size: 0.85rem;
+  margin-top: 0.12rem;
+}
+
+.wa-mt-stage .wa-mt-kicker {
+  color: #b8e9c9;
+}
+
+.wa-mt-stage .wa-mt-close {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #f2fff7;
+}
+
+.wa-mt-stage-actions {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.wa-mt-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+}
+
+.wa-mt-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.wa-mt-stage-note {
+  margin: 0;
+  font-size: 0.65rem;
+  color: rgba(242, 255, 247, 0.7);
+  line-height: 1.45;
+}
+
+/* Dark --------------------------------------------------------------------- */
+
+[data-theme='dark'] .wa-mt-card,
+.dark .wa-mt-card,
+[data-theme='dark'] .wa-mt-modal,
+.dark .wa-mt-modal {
+  background: var(--bg-surface);
+  border-color: var(--border-subtle);
+}
+
+[data-theme='dark'] .wa-mt-card.is-live,
+.dark .wa-mt-card.is-live {
+  background: color-mix(in srgb, var(--status-success) 10%, var(--bg-surface));
+}
+
+[data-theme='dark'] .wa-mt-form input,
+[data-theme='dark'] .wa-mt-form select,
+[data-theme='dark'] .wa-mt-form textarea,
+.dark .wa-mt-form input,
+.dark .wa-mt-form select,
+.dark .wa-mt-form textarea {
+  background: var(--bg-canvas);
+  color: var(--text-primary);
+  border-color: var(--border-subtle);
+}
+
+/* Responsive --------------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .wa-mt-card {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .wa-mt-actions {
+    grid-column: span 2;
+    justify-content: flex-start;
+  }
+  .wa-mt-external-note {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 640px) {
+  .wa-mt-card {
+    margin-inline: 0.7rem;
+    padding: 0.7rem;
+    gap: 0.6rem;
+  }
+  .wa-mt-modal {
+    padding: 0.8rem;
+  }
+  .wa-mt-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .wa-mt-span-2 {
+    grid-column: auto;
+  }
+  .wa-mt-stage {
+    padding: 0.55rem;
+  }
+  .wa-mt-stage-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+
+/* Panel CRM de videollamadas */
+.wa-mt-admin {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.wa-mt-admin-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.55rem;
+}
+
+.wa-mt-admin-kpis > div {
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  background: var(--bg-surface);
+  padding: 0.8rem;
+  box-shadow: var(--shadow-card, 0 1px 3px rgba(15, 23, 42, 0.05));
+}
+
+.wa-mt-admin-kpis span {
+  display: block;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.wa-mt-admin-kpis strong {
+  display: block;
+  font-family: var(--wa-font-display, "Bricolage Grotesque", sans-serif);
+  font-size: 1.5rem;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  margin-top: 0.15rem;
+}
+
+.wa-mt-admin-toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  background: var(--bg-surface);
+  padding: 0.85rem;
+}
+
+.wa-mt-admin-toolbar h2 {
+  margin: 0.15rem 0;
+  font-family: var(--wa-font-display, "Bricolage Grotesque", sans-serif);
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+.wa-mt-admin-toolbar p {
+  margin: 0;
+  max-width: 62ch;
+  font-size: 0.68rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+.wa-mt-admin-toolbar input {
+  min-width: min(280px, 100%);
+  border: 1px solid var(--border-subtle);
+  border-radius: 9px;
+  background: var(--bg-canvas);
+  color: var(--text-primary);
+  padding: 0.5rem 0.6rem;
+  font: inherit;
+  font-size: 0.72rem;
+}
+
+.wa-mt-admin-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  background: var(--bg-surface);
+}
+
+.wa-mt-admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.72rem;
+}
+
+.wa-mt-admin-table th {
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: var(--bg-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  white-space: nowrap;
+}
+
+.wa-mt-admin-table td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  vertical-align: middle;
+}
+
+.wa-mt-admin-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.wa-mt-admin-table a {
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.wa-mt-admin-table a:hover {
+  color: var(--accent-study);
+}
+
+.wa-mt-admin-provider {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 0.2rem 0.5rem;
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+  font-size: 0.6rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.wa-mt-admin-actions {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.wa-mt-admin-link {
+  font-size: 0.64rem;
+  color: var(--accent-study) !important;
+}
+
+.wa-mt-admin-empty,
+.wa-mt-admin-loading {
+  padding: 1.2rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+
+/* Botón principal: mismo verde de marca que el resto del aula */
+.wa-mt-btn-primary {
+  background: linear-gradient(145deg, #0f8a58, #075f3d);
+  border-color: transparent;
+  color: #f5fff9;
+  box-shadow: 0 10px 20px -14px rgba(11, 107, 67, 0.9);
+}
+
+.wa-mt-btn-primary:hover {
+  background: linear-gradient(145deg, #109963, #086a44);
+  color: #ffffff;
+}
+
+.wa-mt-btn-primary svg {
+  color: inherit;
+}
+
+
+/* El aula aplica color a todos los enlaces; recuperamos el contraste del CTA. */
+.wa-lms a.wa-mt-btn-primary,
+.wa-mt-card a.wa-mt-btn-primary,
+.wa-mt-card button.wa-mt-btn-primary {
+  color: #f5fff9;
+}
+
+.wa-lms a.wa-mt-btn-primary:hover,
+.wa-mt-card a.wa-mt-btn-primary:hover,
+.wa-mt-card button.wa-mt-btn-primary:hover {
+  color: #ffffff;
+}

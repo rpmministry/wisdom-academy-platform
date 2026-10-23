@@ -1,0 +1,16 @@
+{
+  "name": "Wisdom Academy",
+  "short_name": "Wisdom",
+  "description": "Ecosistema Educativo de Excelencia y Sabiduría",
+  "icons": [
+    {"src": "/favicon/icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "/favicon/icon-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "/favicon/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"},
+    {"src": "/icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "/icon-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ],
+  "theme_color": "#2563EB",
+  "background_color": "#F8FAFC",
+  "display": "standalone"
+}

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-label="Liderazgo y cosmovisión bíblica">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#071a33"/>
+      <stop offset="0.6" stop-color="#12325c"/>
+      <stop offset="1" stop-color="#8a5a16"/>
+    </linearGradient>
+    <linearGradient id="sun" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fde68a"/>
+      <stop offset="1" stop-color="#d97706"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="0.78" cy="0.24" r="0.62">
+      <stop offset="0" stop-color="#fbbf24" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#fbbf24" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <rect width="1200" height="675" fill="url(#halo)"/>
+  <circle cx="960" cy="160" r="74" fill="url(#sun)" fill-opacity="0.9"/>
+  <circle cx="960" cy="160" r="112" fill="none" stroke="#fde68a" stroke-opacity="0.18" stroke-width="2"/>
+  <path d="M0 520 L220 340 L390 470 L590 250 L800 430 L980 300 L1200 470 V675 H0 Z" fill="#06121f" fill-opacity="0.72"/>
+  <path d="M0 590 L250 430 L430 540 L640 360 L850 500 L1030 400 L1200 520 V675 H0 Z" fill="#030b14" fill-opacity="0.82"/>
+  <path d="M545 585 C620 500 705 470 800 395 C850 356 890 320 925 282" fill="none" stroke="#fbbf24" stroke-opacity="0.55" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 18"/>
+  <g transform="translate(925 282)">
+    <circle r="34" fill="#fbbf24" fill-opacity="0.14" stroke="#fde68a" stroke-opacity="0.75"/>
+    <path d="M0 -22 L7 -4 L26 0 L7 5 L0 23 L-7 5 L-26 0 L-7 -4 Z" fill="#fde68a"/>
+  </g>
+  <g transform="translate(120 120)" fill="none" stroke="#93c5fd" stroke-opacity="0.45" stroke-width="2">
+    <path d="M0 80 H230"/><path d="M0 120 H180"/><path d="M0 160 H205"/>
+  </g>
+</svg>

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-label="Guía de bienvenida Homeschool">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8fafc"/>
+      <stop offset="0.6" stop-color="#fef3c7"/>
+      <stop offset="1" stop-color="#fbbf24"/>
+    </linearGradient>
+    <linearGradient id="book" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f172a"/>
+      <stop offset="1" stop-color="#334155"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <g opacity="0.5" fill="none" stroke="#d97706" stroke-width="2">
+    <circle cx="1040" cy="120" r="90"/><circle cx="1040" cy="120" r="140"/>
+    <path d="M100 580 C250 440 390 500 520 380"/>
+  </g>
+  <g transform="translate(300 190)">
+    <path d="M0 250 C120 200 240 200 300 240 V60 C240 20 120 20 0 60 Z" fill="url(#book)"/>
+    <path d="M300 240 C360 200 480 200 600 250 V70 C480 30 360 30 300 60 Z" fill="#1e293b"/>
+    <path d="M300 240 V60" stroke="#fbbf24" stroke-opacity="0.6" stroke-width="4"/>
+    <path d="M60 115 C130 90 200 90 250 110 M60 160 C130 135 200 135 250 155 M60 205 C130 180 200 180 250 200" stroke="#e2e8f0" stroke-opacity="0.35" stroke-width="10" stroke-linecap="round"/>
+    <path d="M350 115 C420 90 500 92 550 112 M350 160 C420 135 500 137 550 157 M350 205 C420 180 500 182 550 202" stroke="#e2e8f0" stroke-opacity="0.35" stroke-width="10" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(940 420)">
+    <path d="M0 -60 L18 -18 L62 -14 L28 14 L38 58 L0 34 L-38 58 L-28 14 L-62 -14 L-18 -18 Z" fill="#fbbf24" fill-opacity="0.9"/>
+  </g>
+</svg>

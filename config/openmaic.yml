@@ -1,0 +1,132 @@
+# ==============================================================================
+# PROYECTO: Wisdom Academy Platform - Configuración Centralizada de OpenMAIC v1.2.0
+# PROPÓSITO ARQUITECTÓNICO:
+# Define el comportamiento pedagógico del motor multi-agente de aula inteligente.
+# Bloquea configuraciones técnicas para los estudiantes y establece los perfiles
+# diferenciados por edad, con rigor académico y separación explícita entre
+# asignaturas académicas y la formación confesional de Relación con Dios.
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# POLÍTICAS DE SEGURIDAD Y RESTRICCIÓN DE INTERFAZ
+# Impide que niños y jóvenes vean ventanas modales de selección de modelos o claves API.
+# ------------------------------------------------------------------------------
+lockModelSettings: true
+forbidUserApiKeys: true
+
+# ------------------------------------------------------------------------------
+# PROVEEDORES DE MODELOS LLM EN LA NUBE (NIVELES GRATUITOS)
+# ------------------------------------------------------------------------------
+providers:
+  # Proveedor Principal: Google Gemini API (Free Tier a través de Google AI Studio)
+  google:
+    enabled: true
+    models:
+      - name: "gemini-3.8-flash"
+        alias: "gemini-flash"
+        purpose: "Interacciones rápidas, diálogos de compañeros IA y quizzes en tiempo real"
+        temperature: 0.6
+      - name: "gemini-3.8-pro"
+        alias: "gemini-pro"
+        purpose: "Descomposición curricular profunda con MinerU y generación de rúbricas PBL"
+        temperature: 0.3
+    apiKeyEnv: "GOOGLE_API_KEY"
+
+  # Proveedor de Respaldo: OpenRouter Free Models
+  custom_openrouter:
+    enabled: true
+    baseUrl: "https://openrouter.ai/api/v1"
+    models:
+      - name: "google/gemini-2.0-flash-exp:free"
+        alias: "openrouter-free-flash"
+      - name: "meta-llama/llama-3.3-70b-instruct:free"
+        alias: "openrouter-free-llama"
+    apiKeyEnv: "OPENROUTER_FREE_API_KEY"
+
+# ------------------------------------------------------------------------------
+# MOTOR DE SÍNTESIS DE VOZ NEURAL BILINGÜE (TTS)
+# Voces cálidas, claras y didácticas para profesores y compañeros simulados
+# ------------------------------------------------------------------------------
+speechSynthesis:
+  enabled: true
+  provider: "edge-neural"
+  voices:
+    spanish_narrator: "es-CO-SalomeNeural"
+    spanish_tutor: "es-MX-DaliaNeural"
+    english_narrator: "en-US-AndrewNeural"
+    english_tutor: "en-US-EmmaNeural"
+
+# ------------------------------------------------------------------------------
+# PERFILES PEDAGÓGICOS PERSONALIZADOS POR ESTUDIANTE
+# ------------------------------------------------------------------------------
+profiles:
+  # ----------------------------------------------------------------------------
+  # PERFIL 1: Gael (8 años, 4° de EGB - Subnivel Elemental MINEDUC Ecuador)
+  # Enfoque: aprendizaje lúdico, visual y basado en evidencia.
+  # ----------------------------------------------------------------------------
+  elementary_gael_8yo:
+    displayName: "Gael - 4to EGB (Explorador Académico)"
+    targetAge: 8
+    targetGrade: "4to EGB"
+    languageBalance:
+      spanish: 0.70
+      english: 0.30
+    systemPrompt: >
+      Eres el Profesor Principal de Wisdom Academy para Gael (8 años). Enseña con rigor académico,
+      lenguaje alegre y analogías cotidianas. En Ciencias, Matemáticas, Lengua, Estudios Sociales,
+      Inglés, Programación, Arte y Educación Física, utiliza exclusivamente contenido neutral,
+      basado en el método científico y en el Currículo Nacional del MINEDUC; no introduzcas
+      versículos, exhortaciones religiosas ni referencias confesionales. Solo en la asignatura
+      "Relación con Dios" puedes desarrollar el contenido bíblico y teológico con profundidad.
+      Integra inglés natural de forma amigable (fonética, vocabulario y frases cortas). Jamás uses
+      tecnicismos oscuros.
+    sceneWeights:
+      slides: 0.35      # Presentaciones dinámicas altamente ilustradas
+      interactive: 0.35 # Simulaciones táctiles y juegos pedagógicos
+      quiz: 0.20        # Preguntas cortas de refuerzo con retroalimentación inmediata
+      pbl: 0.10         # Pequeños retos creativos para su cuaderno de evidencias
+
+  # ----------------------------------------------------------------------------
+  # PERFIL 2: Avril (12 años, 8° de EGB - Subnivel Básica Superior MINEDUC Ecuador)
+  # Enfoque: rigor académico, pensamiento analítico, evidencia y proyectos.
+  # ----------------------------------------------------------------------------
+  middle_school_avril_12yo:
+    displayName: "Avril - 8vo EGB (Investigadora Académica)"
+    targetAge: 12
+    targetGrade: "8vo EGB"
+    languageBalance:
+      spanish: 0.50
+      english: 0.50
+    systemPrompt: >
+      Eres la Profesora Tutora de Wisdom Academy para Avril (12 años). Fomenta el pensamiento
+      crítico, el método científico y el rigor analítico. En las asignaturas académicas, fundamenta
+      cada afirmación en evidencia, fuentes verificables y argumentación lógica; no introduzcas
+      contenido confesional, versículos ni exhortaciones religiosas. Solo en "Relación con Dios"
+      desarrolla teología bíblica con profundidad exegética y aplicación pastoral. Conduce la clase
+      en un ambiente bilingüe equilibrado (50% Español académico y 50% Academic English) para
+      preparar sus proyectos de investigación y portafolio autónomo.
+    sceneWeights:
+      slides: 0.30      # Contenido estructurado con diagramas y conceptos clave
+      interactive: 0.25 # Pizarra colaborativa, fórmulas y mapas conceptuales
+      quiz: 0.20        # Evaluaciones formativas con justificación lógica
+      pbl: 0.25         # Proyectos de investigación práctica (Project-Based Learning)
+
+  # ----------------------------------------------------------------------------
+  # PERFIL 3: General K-12 y Escuela de Talleres
+  # Enfoque: Modular y adaptable para cualquier nivel (1° EGB a 3° BGU y cursos libres).
+  # ----------------------------------------------------------------------------
+  general_k12_and_workshops:
+    displayName: "Wisdom General K-12 & Talleres"
+    languageBalance:
+      spanish: 0.60
+      english: 0.40
+    systemPrompt: >
+      Enseña con rigor académico y neutralidad disciplinar. En asignaturas científicas, técnicas,
+      sociales y artísticas, utiliza evidencia, método y fuentes verificables. Reserva el contenido
+      bíblico y confesional exclusivamente para la asignatura Relación con Dios.
+    sceneWeights:
+      slides: 0.30
+      interactive: 0.30
+      quiz: 0.20
+      pbl: 0.20
+
