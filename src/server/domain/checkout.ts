@@ -309,6 +309,13 @@ function markOrderPaid(input: {
       input.currency,
       paidAt
     );
+    // Si el webhook PENDING llegó antes, la misma captura pasa de pendiente
+    // a completada sin crear una transacción duplicada.
+    prepare(`
+      UPDATE transactions
+      SET status = 'completed', amount_cents = ?, currency = ?
+      WHERE provider = 'paypal' AND provider_txn_id = ? AND kind = 'capture'
+    `).run(input.amountCents, input.currency, input.captureId);
     consumeDiscountRedemption(order.id);
     grantAccessForOrder(order.id);
     return { alreadyPaid: false };
@@ -898,6 +905,58 @@ export async function handlePayPalWebhook(headers: Headers, rawBody: string): Pr
         amountCents: amount.cents,
         currency: amount.currency,
       });
+    } else if (event.event_type === 'PAYMENT.CAPTURE.PENDING') {
+      // Una captura pendiente se registra para conciliación, pero la orden
+      // sigue pendiente y no concede derechos hasta el evento COMPLETED.
+      const customId = event.resource?.custom_id || event.resource?.invoice_id || null;
+      const paypalOrderId = event.resource?.supplementary_data?.related_ids?.order_id || null;
+      const order = findOrderForWebhook({ customId, paypalOrderId });
+      if (!order) {
+        prepare(
+          "UPDATE webhook_events SET status = 'ignored', processed_at = ? WHERE provider = 'paypal' AND event_id = ?"
+        ).run(nowIso(), event.id);
+        return { processed: true, duplicate: false, eventType: event.event_type };
+      }
+      const amount = webhookAmount(event);
+      if (
+        !event.resource?.id ||
+        amount.cents === null ||
+        amount.currency !== order.currency ||
+        amount.cents !== order.total_cents
+      ) {
+        throw new ApiError(
+          409,
+          'PAYMENT_AMOUNT_MISMATCH',
+          'La captura pendiente no coincide con el total de la orden.'
+        );
+      }
+      const existingCapture = prepare(`
+        SELECT id, status FROM transactions
+        WHERE provider = 'paypal' AND provider_txn_id = ? AND kind = 'capture'
+        LIMIT 1
+      `).get(event.resource.id) as { id: string; status: string } | undefined;
+      if (!existingCapture) {
+        prepare(`
+          INSERT INTO transactions
+            (id, order_id, provider, kind, provider_txn_id, amount_cents, currency,
+             status, metadata_json, created_at)
+          VALUES (?, ?, 'paypal', 'capture', ?, ?, ?, 'pending', ?, ?)
+        `).run(
+          `txn_${randomToken(16)}`,
+          order.id,
+          event.resource.id,
+          amount.cents,
+          amount.currency,
+          JSON.stringify({ event: event.event_type, webhookId: event.id }),
+          nowIso()
+        );
+      } else if (existingCapture.status !== 'completed') {
+        prepare(`
+          UPDATE transactions
+          SET status = 'pending', amount_cents = ?, currency = ?
+          WHERE id = ?
+        `).run(amount.cents, amount.currency, existingCapture.id);
+      }
     } else if (event.event_type === 'PAYMENT.CAPTURE.DENIED') {
       const customId = event.resource?.custom_id || event.resource?.invoice_id || null;
       const paypalOrderId = event.resource?.supplementary_data?.related_ids?.order_id || null;

@@ -235,6 +235,72 @@ test('el webhook verificado es idempotente y no duplica derechos', async () => {
   assert.equal(Number(count.total), rights.length);
 });
 
+test('una captura pendiente no concede acceso y se completa con el webhook posterior', async () => {
+  const userId = createUser({ email: 'pay-webhook-pending@test.local' });
+  const checkout = await createCheckout({
+    user: actor(userId),
+    productIds: [productId('taller-escuela-padres-homeschoolers')],
+    appUrl: 'http://127.0.0.1:3100',
+  });
+  const paypalOrderId = checkout.approvalUrl?.split('/').pop() || '';
+  const order = prepare('SELECT total_cents FROM orders WHERE id = ?').get(checkout.orderId) as {
+    total_cents: number;
+  };
+  const amount = { currency_code: 'USD', value: (order.total_cents / 100).toFixed(2) };
+  const headersFor = (id: string) =>
+    new Headers({
+      'paypal-transmission-id': id,
+      'paypal-transmission-time': new Date().toISOString(),
+      'paypal-cert-url': `${baseUrl}/cert.pem`,
+      'paypal-auth-algo': 'SHA256withRSA',
+      'paypal-transmission-sig': 'signature',
+    });
+  const pendingEvent = {
+    id: 'WH-PENDING-CAPTURE',
+    event_type: 'PAYMENT.CAPTURE.PENDING',
+    resource: {
+      id: 'CAP-PENDING-1',
+      status: 'PENDING',
+      custom_id: checkout.orderId,
+      amount,
+      supplementary_data: { related_ids: { order_id: paypalOrderId } },
+    },
+  };
+  await handlePayPalWebhook(headersFor('tx-pending'), JSON.stringify(pendingEvent));
+  const pendingStatus = prepare('SELECT status FROM orders WHERE id = ?').get(checkout.orderId) as {
+    status: string;
+  };
+  assert.equal(pendingStatus.status, 'pending');
+  assert.equal(
+    listUserEntitlements(userId).some((right) => right.effectiveStatus === 'active'),
+    false
+  );
+  const pendingTxn = prepare(`
+    SELECT status FROM transactions
+    WHERE provider = 'paypal' AND provider_txn_id = 'CAP-PENDING-1'
+  `).get() as { status: string } | undefined;
+  assert.equal(pendingTxn?.status, 'pending');
+
+  const completedEvent = {
+    ...pendingEvent,
+    id: 'WH-COMPLETED-AFTER-PENDING',
+    event_type: 'PAYMENT.CAPTURE.COMPLETED',
+    resource: { ...pendingEvent.resource, status: 'COMPLETED' },
+  };
+  await handlePayPalWebhook(headersFor('tx-completed'), JSON.stringify(completedEvent));
+  const paidStatus = prepare('SELECT status FROM orders WHERE id = ?').get(checkout.orderId) as {
+    status: string;
+  };
+  assert.equal(paidStatus.status, 'paid');
+  const captures = prepare(`
+    SELECT status FROM transactions
+    WHERE provider = 'paypal' AND provider_txn_id = 'CAP-PENDING-1' AND kind = 'capture'
+  `).all() as Array<{ status: string }>;
+  assert.equal(captures.length, 1);
+  assert.equal(captures[0]?.status, 'completed');
+  assert.ok(listUserEntitlements(userId).some((right) => right.effectiveStatus === 'active'));
+});
+
 test('un webhook con firma inválida se rechaza', async () => {
   verifySuccess = false;
   const headers = new Headers({

@@ -227,9 +227,9 @@ Resultados de la sesión de validación:
 
 | Comando | Resultado |
 |---|---|
-| `npm test` | **174 aprobadas, 0 fallos** |
-| `npm run test:platform` | **71 aprobadas, 0 fallos** |
-| `npm run test:payments` | **28 aprobadas, 0 fallos** |
+| `npm test` | **175 aprobadas, 0 fallos** |
+| `npm run test:platform` | **72 aprobadas, 0 fallos** |
+| `npm run test:payments` | **29 aprobadas, 0 fallos** |
 | Playwright (suite completa) | **50 aprobadas, 0 fallos** |
 | `npm run build` | Correcto, 19 páginas prerenderizadas |
 | PayPal Sandbox real | Orden `3TY92249470992444`, captura `9S879207H39589335`, `10.00 USD` (evidencia del 23/10/2026) |
