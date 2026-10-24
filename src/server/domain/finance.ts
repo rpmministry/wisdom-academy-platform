@@ -38,6 +38,8 @@ export interface FinanceOrder {
   userEmail: string;
   userName: string;
   status: FinanceStatus;
+  checkoutMode: 'account' | 'guest';
+  registrationStatus: string;
   subtotalCents: number;
   discountCents: number;
   totalCents: number;
@@ -60,6 +62,12 @@ export interface FinanceOrder {
     currency: string;
     status: string;
     providerTxnId: string | null;
+    createdAt: string;
+  }>;
+  statusHistory: Array<{
+    fromStatus: string | null;
+    toStatus: string;
+    reason: string;
     createdAt: string;
   }>;
 }
@@ -178,8 +186,8 @@ function buildFilter(filters: FinanceFilters): {
     const like = `%${q}%`;
     clauses.push(`(
       o.id LIKE ?
-      OR u.email LIKE ?
-      OR COALESCE(u.display_name, '') LIKE ?
+      OR COALESCE(o.buyer_email, u.email) LIKE ?
+      OR COALESCE(o.buyer_name, u.display_name, '') LIKE ?
       OR COALESCE(o.paypal_order_id, '') LIKE ?
       OR COALESCE(o.paypal_capture_id, '') LIKE ?
     )`);
@@ -333,8 +341,10 @@ export function buildFinanceReport(filters: FinanceFilters = {}): FinanceReport 
 
   const orderRows = prepare(`
     SELECT
-      o.id, o.user_id, u.email AS user_email, COALESCE(u.display_name, u.email) AS user_name,
-      o.status, o.subtotal_cents, o.discount_cents, o.total_cents, o.currency,
+      o.id, o.user_id, COALESCE(o.buyer_email, u.email) AS user_email,
+      COALESCE(o.buyer_name, u.display_name, o.buyer_email, u.email) AS user_name,
+      o.status, o.checkout_mode, o.registration_status,
+      o.subtotal_cents, o.discount_cents, o.total_cents, o.currency,
       o.paypal_order_id, o.paypal_capture_id, o.created_at, o.paid_at, o.updated_at,
       dc.code_hint AS discount_code_hint
     FROM orders o
@@ -349,6 +359,8 @@ export function buildFinanceReport(filters: FinanceFilters = {}): FinanceReport 
     user_email: string;
     user_name: string;
     status: FinanceStatus;
+    checkout_mode: 'account' | 'guest';
+    registration_status: string;
     subtotal_cents: number;
     discount_cents: number;
     total_cents: number;
@@ -382,12 +394,23 @@ export function buildFinanceReport(filters: FinanceFilters = {}): FinanceReport 
       provider_txn_id: string | null;
       created_at: string;
     }>;
+    const statusHistory = prepare(`
+      SELECT from_status, to_status, reason, created_at
+      FROM order_status_history WHERE order_id = ? ORDER BY created_at ASC
+    `).all(row.id) as Array<{
+      from_status: string | null;
+      to_status: string;
+      reason: string;
+      created_at: string;
+    }>;
     return {
       id: row.id,
       userId: row.user_id,
       userEmail: row.user_email,
       userName: row.user_name,
       status: row.status,
+      checkoutMode: row.checkout_mode || 'account',
+      registrationStatus: row.registration_status || 'not_required',
       subtotalCents: Number(row.subtotal_cents),
       discountCents: Number(row.discount_cents),
       totalCents: Number(row.total_cents),
@@ -411,6 +434,12 @@ export function buildFinanceReport(filters: FinanceFilters = {}): FinanceReport 
         status: txn.status,
         providerTxnId: txn.provider_txn_id,
         createdAt: txn.created_at,
+      })),
+      statusHistory: statusHistory.map((entry) => ({
+        fromStatus: entry.from_status,
+        toStatus: entry.to_status,
+        reason: entry.reason,
+        createdAt: entry.created_at,
       })),
     };
   });

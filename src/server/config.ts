@@ -32,6 +32,18 @@ export function appUrl(req?: Request): string {
   return 'http://localhost:3000';
 }
 
+export function emailConfig(): {
+  apiKey: string;
+  from: string;
+  replyTo: string | null;
+  configured: boolean;
+} {
+  const apiKey = process.env.RESEND_API_KEY?.trim() || '';
+  const from = process.env.EMAIL_FROM?.trim() || '';
+  const replyTo = process.env.EMAIL_REPLY_TO?.trim() || null;
+  return { apiKey, from, replyTo, configured: Boolean(apiKey && from) };
+}
+
 export function googleClientId(): string | null {
   return (
     process.env.GOOGLE_CLIENT_ID?.trim() ||

@@ -878,6 +878,153 @@ const MIGRATIONS: Migration[] = [
       WHERE price_cents = 0 AND slug LIKE 'wa-programa-%';
     `,
   },
+  {
+    version: 9,
+    name: 'compra_invitada_registro_posterior_y_tokens_de_cuenta',
+    sql: `
+      -- Compra sin cuenta: la orden conserva el correo del comprador y un
+      -- usuario interno sin credenciales mantiene la integridad de las claves
+      -- foráneas existentes. El acceso se concede al completar el registro.
+      ALTER TABLE orders ADD COLUMN buyer_email TEXT COLLATE NOCASE;
+      ALTER TABLE orders ADD COLUMN buyer_name TEXT;
+      ALTER TABLE orders ADD COLUMN checkout_mode TEXT NOT NULL DEFAULT 'account'
+        CHECK (checkout_mode IN ('account','guest'));
+      ALTER TABLE orders ADD COLUMN registration_status TEXT NOT NULL DEFAULT 'not_required'
+        CHECK (registration_status IN ('not_required','pending','completed','expired'));
+      ALTER TABLE orders ADD COLUMN registered_user_id TEXT REFERENCES users(id);
+      ALTER TABLE orders ADD COLUMN registration_completed_at TEXT;
+
+      UPDATE orders
+      SET buyer_email = (SELECT email FROM users WHERE users.id = orders.user_id)
+      WHERE buyer_email IS NULL;
+      UPDATE orders
+      SET buyer_name = (SELECT display_name FROM users WHERE users.id = orders.user_id)
+      WHERE buyer_name IS NULL;
+
+      CREATE INDEX IF NOT EXISTS ix_orders_buyer_email ON orders(buyer_email);
+      CREATE INDEX IF NOT EXISTS ix_orders_registration_status ON orders(registration_status);
+
+      INSERT OR IGNORE INTO users
+        (id, email, email_verified, display_name, username, password_hash,
+         password_updated_at, must_change_password, status, is_minor, created_at, updated_at)
+      VALUES
+        ('usr_guest_checkout', 'guest-checkout@internal.invalid', 0, 'Compra invitada',
+         NULL, NULL, NULL, 0, 'suspended', 0,
+         strftime('%Y-%m-%dT%H:%M:%fZ','now'), strftime('%Y-%m-%dT%H:%M:%fZ','now'));
+
+      ALTER TABLE discount_redemptions ADD COLUMN buyer_email TEXT COLLATE NOCASE;
+      UPDATE discount_redemptions
+      SET buyer_email = (SELECT email FROM users WHERE users.id = discount_redemptions.user_id)
+      WHERE buyer_email IS NULL;
+
+      CREATE TABLE IF NOT EXISTS checkout_registrations (
+        id TEXT PRIMARY KEY,
+        order_id TEXT NOT NULL UNIQUE REFERENCES orders(id) ON DELETE CASCADE,
+        buyer_email TEXT NOT NULL COLLATE NOCASE,
+        buyer_name TEXT,
+        buyer_first_name TEXT,
+        buyer_last_name TEXT,
+        buyer_document_type TEXT,
+        buyer_document_number TEXT,
+        buyer_country TEXT,
+        buyer_phone TEXT,
+        buyer_type TEXT NOT NULL DEFAULT 'student'
+          CHECK (buyer_type IN ('student','guardian','other')),
+        product_kind TEXT NOT NULL DEFAULT 'course'
+          CHECK (product_kind IN ('course','workshop','program','mixed','other')),
+        requires_guardian INTEGER NOT NULL DEFAULT 0,
+        student_first_name TEXT,
+        student_last_name TEXT,
+        student_birth_date TEXT,
+        student_grade TEXT,
+        student_academic_notes TEXT,
+        guardian_first_name TEXT,
+        guardian_last_name TEXT,
+        guardian_email TEXT COLLATE NOCASE,
+        guardian_phone TEXT,
+        guardian_relationship TEXT,
+        status TEXT NOT NULL DEFAULT 'pending'
+          CHECK (status IN ('pending','completed','expired','revoked')),
+        expires_at TEXT NOT NULL,
+        completed_user_id TEXT REFERENCES users(id),
+        completed_at TEXT,
+        invite_sent_at TEXT,
+        terms_version TEXT NOT NULL,
+        terms_accepted_at TEXT,
+        privacy_version TEXT NOT NULL,
+        privacy_accepted_at TEXT,
+        marketing_opt_in INTEGER NOT NULL DEFAULT 0,
+        data_json TEXT NOT NULL DEFAULT '{}',
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS ix_checkout_registrations_status
+        ON checkout_registrations(status);
+      CREATE INDEX IF NOT EXISTS ix_checkout_registrations_email
+        ON checkout_registrations(buyer_email);
+
+      CREATE TABLE IF NOT EXISTS order_status_history (
+        id TEXT PRIMARY KEY,
+        order_id TEXT NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+        from_status TEXT,
+        to_status TEXT NOT NULL,
+        reason TEXT NOT NULL DEFAULT 'status_change',
+        created_at TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS ix_order_status_history_order
+        ON order_status_history(order_id, created_at);
+
+      INSERT INTO order_status_history (id, order_id, from_status, to_status, reason, created_at)
+      SELECT 'osh_legacy_' || rowid, id, NULL, status, 'backfill', created_at
+      FROM orders;
+
+      CREATE TRIGGER IF NOT EXISTS trg_order_status_after_insert
+      AFTER INSERT ON orders
+      BEGIN
+        INSERT INTO order_status_history (id, order_id, from_status, to_status, reason, created_at)
+        VALUES (
+          'osh_' || lower(hex(randomblob(16))), NEW.id, NULL, NEW.status, 'created',
+          strftime('%Y-%m-%dT%H:%M:%fZ','now')
+        );
+      END;
+
+      CREATE TRIGGER IF NOT EXISTS trg_order_status_after_update
+      AFTER UPDATE OF status ON orders
+      WHEN OLD.status IS NOT NEW.status
+      BEGIN
+        INSERT INTO order_status_history (id, order_id, from_status, to_status, reason, created_at)
+        VALUES (
+          'osh_' || lower(hex(randomblob(16))), NEW.id, OLD.status, NEW.status, 'status_change',
+          strftime('%Y-%m-%dT%H:%M:%fZ','now')
+        );
+      END;
+
+      CREATE TABLE IF NOT EXISTS auth_tokens (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        kind TEXT NOT NULL CHECK (kind IN ('email_verify','password_reset')),
+        token_hash TEXT NOT NULL UNIQUE,
+        expires_at TEXT NOT NULL,
+        used_at TEXT,
+        created_at TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS ix_auth_tokens_user ON auth_tokens(user_id, kind);
+
+      ALTER TABLE student_profiles ADD COLUMN first_name TEXT;
+      ALTER TABLE student_profiles ADD COLUMN last_name TEXT;
+      ALTER TABLE student_profiles ADD COLUMN birth_date TEXT;
+      ALTER TABLE student_profiles ADD COLUMN country TEXT;
+      ALTER TABLE student_profiles ADD COLUMN phone TEXT;
+      ALTER TABLE student_profiles ADD COLUMN document_type TEXT;
+      ALTER TABLE student_profiles ADD COLUMN document_number TEXT;
+      ALTER TABLE student_profiles ADD COLUMN guardian_first_name TEXT;
+      ALTER TABLE student_profiles ADD COLUMN guardian_last_name TEXT;
+      ALTER TABLE student_profiles ADD COLUMN guardian_email TEXT COLLATE NOCASE;
+      ALTER TABLE student_profiles ADD COLUMN guardian_phone TEXT;
+      ALTER TABLE student_profiles ADD COLUMN guardian_relationship TEXT;
+      ALTER TABLE student_profiles ADD COLUMN registration_origin TEXT;
+    `,
+  },
 ];
 
 let database: SqliteDatabase | null = null;
@@ -929,6 +1076,55 @@ function assertPersistentDatabaseLocation(location: string): void {
       'o migra la capa de datos a una base administrada antes de usar Vercel.',
       'Consulta docs/despliegue/GUIA_PRODUCCION_VERCEL.md.',
     ].join(' ')
+  );
+}
+
+/**
+ * Antes de aplicar migraciones pendientes sobre una base existente se crea un
+ * respaldo consistente con VACUUM INTO. Si el respaldo falla, el arranque se
+ * detiene para no modificar datos de producción sin una copia recuperable.
+ */
+function backupBeforePendingMigrations(db: SqliteDatabase, location: string): void {
+  if (location === ':memory:') return;
+  const table = db
+    .prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'schema_migrations'")
+    .get() as { name: string } | undefined;
+  if (!table) return;
+  const current = Number(
+    (db.prepare('SELECT COALESCE(MAX(version), 0) AS version FROM schema_migrations').get() as {
+      version: number;
+    }).version
+  );
+  const latest = Math.max(...MIGRATIONS.map((migration) => migration.version));
+  if (current >= latest) return;
+
+  const directory =
+    process.env.WISDOM_BACKUP_DIR || path.join(path.dirname(location), 'backups');
+  fs.mkdirSync(directory, { recursive: true });
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const target = path.join(
+    directory,
+    `pre-migration-v${current}-to-v${latest}-${stamp}.db`
+  );
+  db.exec(`VACUUM INTO '${target.replace(/'/g, "''")}'`);
+  const verification = openRawDatabase(target);
+  try {
+    const integrity = verification.prepare('PRAGMA integrity_check').get() as {
+      integrity_check: string;
+    };
+    if (integrity.integrity_check !== 'ok') {
+      throw new Error(`El respaldo previo a migración no pasó integrity_check.`);
+    }
+  } finally {
+    verification.close();
+  }
+  try {
+    fs.chmodSync(target, 0o600);
+  } catch {
+    // En Windows puede no estar disponible; el archivo sigue en el volumen.
+  }
+  console.log(
+    `[db] Respaldo previo a migración verificado: ${path.basename(target)} (v${current} → v${latest})`
   );
 }
 
@@ -990,6 +1186,7 @@ export function getDb(): SqliteDatabase {
     db.exec('PRAGMA journal_mode = WAL');
     db.exec('PRAGMA synchronous = NORMAL');
   }
+  backupBeforePendingMigrations(db, location);
   applyMigrations(db);
   databaseInitializer?.(db);
 

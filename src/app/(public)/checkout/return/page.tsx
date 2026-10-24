@@ -8,76 +8,60 @@ import { useCart } from '@/lib/cart/cartContext';
 import { apiFetch, errorMessage } from '@/lib/api/client';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
 import { WisdomIcon } from '@/components/ui/WisdomIcon';
 
-interface OrderReceipt {
-  id: string;
+interface CaptureResult {
+  orderId: string;
   status: string;
-  subtotalCents: number;
-  discountCents: number;
-  totalCents: number;
-  currency: string;
-  paidAt: string | null;
-  reference: string;
-  items: Array<{ title: string; priceCents: number }>;
-}
-
-function money(cents: number, currency: string): string {
-  return new Intl.NumberFormat('es-EC', { style: 'currency', currency }).format(cents / 100);
+  alreadyPaid: boolean;
+  registrationUrl?: string | null;
 }
 
 function CheckoutReturnPageInner() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { usuario, sesionLista, refrescarSesion } = useAuth();
+  const { sesionLista, refrescarSesion } = useAuth();
   const { clearCart } = useCart();
   const [estado, setEstado] = useState<'verificando' | 'exito' | 'error'>('verificando');
   const [mensaje, setMensaje] = useState('Verificando el pago con el servidor…');
-  const [recibo, setRecibo] = useState<OrderReceipt | null>(null);
+  const [registroUrl, setRegistroUrl] = useState<string | null>(null);
+  const [orderId, setOrderId] = useState<string | null>(null);
   const ejecutado = useRef(false);
 
   useEffect(() => {
     if (!sesionLista || ejecutado.current) return;
     const token = searchParams.get('token');
-    const orderId = searchParams.get('wa_order');
+    const internalOrderId = searchParams.get('wa_order');
+    setOrderId(internalOrderId);
 
-    if (!usuario) {
-      const requested = `/checkout/return?${searchParams.toString()}`;
-      router.replace(`/login?next=${encodeURIComponent(requested)}`);
-      return;
-    }
-
-    if (!token && !orderId) {
+    if (!token && !internalOrderId) {
       setEstado('error');
       setMensaje('No se recibió una referencia de pago válida.');
       return;
     }
     ejecutado.current = true;
 
-    apiFetch<{ orden: { orderId: string; status: string; alreadyPaid: boolean } }>(
-      '/api/checkout/capture',
-      { body: { orderId, paypalOrderId: token } }
-    )
+    apiFetch<{ orden: CaptureResult }>('/api/checkout/capture', {
+      body: { orderId: internalOrderId, paypalOrderId: token },
+    })
       .then(async (response) => {
-        await refrescarSesion();
-        try {
-          const detalle = await apiFetch<{ orden: OrderReceipt }>(
-            `/api/me/orders/${encodeURIComponent(response.orden.orderId)}`
-          );
-          setRecibo(detalle.orden);
-        } catch {
-          setRecibo(null);
-        }
         clearCart();
+        await refrescarSesion();
+        setOrderId(response.orden.orderId);
+        if (response.orden.registrationUrl) {
+          setRegistroUrl(response.orden.registrationUrl);
+          setMensaje('Pago confirmado. Te llevamos a completar tu registro…');
+          router.replace(response.orden.registrationUrl);
+          return;
+        }
         setEstado('exito');
-        setMensaje('Pago verificado. El acceso a tus productos quedó habilitado.');
+        setMensaje('Pago verificado. Tu compra quedó registrada en la cuenta.');
       })
       .catch((error) => {
         setEstado('error');
         setMensaje(errorMessage(error));
       });
-  }, [clearCart, router, searchParams, sesionLista, usuario, refrescarSesion]);
+  }, [clearCart, refrescarSesion, router, searchParams, sesionLista]);
 
   return (
     <main
@@ -85,7 +69,7 @@ function CheckoutReturnPageInner() {
         minHeight: '100dvh',
         display: 'grid',
         placeItems: 'center',
-        padding: '2rem',
+        padding: 'clamp(1rem, 4vw, 2rem)',
         background: 'var(--bg-canvas)',
         color: 'var(--text-primary)',
         fontFamily: 'var(--wa-font-sans)',
@@ -109,111 +93,59 @@ function CheckoutReturnPageInner() {
                 : 'No se pudo confirmar'}
           </h1>
         </div>
-        <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>{mensaje}</p>
+        <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }} role="status">
+          {mensaje}
+        </p>
 
-        {estado === 'exito' && recibo && (
-          <>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: '0.5rem',
-                flexWrap: 'wrap',
-                padding: '0.7rem',
-                borderRadius: 'var(--wa-radius-md)',
-                background: 'var(--bg-subtle)',
-                margin: '0.5rem 0 0.8rem',
-              }}
-            >
-              <div>
-                <span style={{ display: 'block', fontSize: '0.66rem', color: 'var(--text-muted)' }}>
-                  Referencia
-                </span>
-                <strong style={{ fontFamily: 'var(--wa-font-mono)', fontSize: '0.75rem' }}>
-                  {recibo.reference}
-                </strong>
-              </div>
-              <Badge variant={recibo.status === 'paid' ? 'emerald' : 'gold'} size="sm">
-                {recibo.status === 'paid' ? 'Pagada' : recibo.status === 'free' ? 'Gratuita' : recibo.status}
-              </Badge>
-            </div>
-            <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: '0.35rem' }}>
-              {recibo.items.map((item, index) => (
-                <li
-                  key={`${item.title}-${index}`}
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    gap: '0.75rem',
-                    fontSize: '0.78rem',
-                    color: 'var(--text-secondary)',
-                  }}
-                >
-                  <span>{item.title}</span>
-                  <strong style={{ color: 'var(--text-primary)', fontFamily: 'var(--wa-font-mono)' }}>
-                    {money(item.priceCents, recibo.currency)}
-                  </strong>
-                </li>
-              ))}
-              {recibo.discountCents > 0 && (
-                <li
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    gap: '0.75rem',
-                    fontSize: '0.78rem',
-                    color: 'var(--accent-study)',
-                  }}
-                >
-                  <span>Descuento</span>
-                  <strong>- {money(recibo.discountCents, recibo.currency)}</strong>
-                </li>
-              )}
-              <li
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  gap: '0.75rem',
-                  paddingTop: '0.4rem',
-                  borderTop: '1px solid var(--border-subtle)',
-                  fontWeight: 700,
-                }}
-              >
-                <span>Total</span>
-                <strong style={{ fontFamily: 'var(--wa-font-mono)' }}>
-                  {money(recibo.totalCents, recibo.currency)}
-                </strong>
-              </li>
-            </ul>
-          </>
+        {registroUrl && (
+          <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+            Si la redirección no ocurre,{' '}
+            <a href={registroUrl} style={{ color: 'var(--brand-gold-dark)' }}>
+              continúa al registro
+            </a>
+            .
+          </p>
         )}
 
-        {estado !== 'verificando' && (
+        {orderId && (
+          <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', wordBreak: 'break-word' }}>
+            Referencia de la orden: <strong>{orderId}</strong>
+          </p>
+        )}
+
+        {estado === 'exito' && (
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
             <Link href="/mi-acceso">
-              <Button variant="primary-gold" size="sm">
-                Ver mis accesos
-              </Button>
+              <Button variant="primary-gold" size="sm">Ver mis accesos</Button>
             </Link>
-            <Link href="/cursos">
-              <Button variant="secondary" size="sm">
-                Ir a mis cursos
-              </Button>
+            <Link href="/dashboard">
+              <Button variant="secondary" size="sm">Ir a mi portal</Button>
             </Link>
             <Link href="/catalogo">
-              <Button variant="secondary" size="sm">
-                Volver al catálogo
-              </Button>
+              <Button variant="secondary" size="sm">Volver al catálogo</Button>
             </Link>
           </div>
         )}
+
         {estado === 'error' && (
-          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '1rem' }}>
-            Si PayPal ya cobró la operación, el webhook verificado puede completar el acceso
-            aunque esta confirmación falle. Revisa «Mis accesos» o contacta a administración con
-            tu orden. El carrito se conserva para reintentar sin crear cargos duplicados.
-          </p>
+          <>
+            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '1rem' }}>
+              Si PayPal ya cobró la operación, el webhook verificado puede completar el acceso.
+              También puedes recuperar el enlace de registro con el correo de la compra. El
+              carrito se conserva para reintentar sin crear cargos duplicados.
+            </p>
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.75rem' }}>
+              <Link href="/bienvenida/recuperar">
+                <Button variant="primary-gold" size="sm">Recuperar mi registro</Button>
+              </Link>
+              <Link href="/checkout">
+                <Button variant="secondary" size="sm">Volver al checkout</Button>
+              </Link>
+              <Link href="/mi-acceso">
+                <Button variant="secondary" size="sm">Revisar mis accesos</Button>
+              </Link>
+            </div>
+          </>
         )}
       </Card>
     </main>

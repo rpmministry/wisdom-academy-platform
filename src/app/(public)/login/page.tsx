@@ -317,6 +317,15 @@ export default function LoginPage() {
                     />
                   </label>
 
+                  <div style={{ textAlign: 'right', marginTop: '-0.35rem' }}>
+                    <Link
+                      href="/recuperar-acceso"
+                      style={{ color: 'var(--text-secondary)', fontSize: '0.72rem' }}
+                    >
+                      ¿Olvidaste tu contraseña?
+                    </Link>
+                  </div>
+
                   <Button
                     type="submit"
                     variant="primary-gold"
@@ -338,7 +347,8 @@ export default function LoginPage() {
                   <WisdomIcon name="shield" size={16} />
                   <div>
                     <strong>Acceso personal e intransferible</strong>
-                    Las credenciales se generan desde el Panel de Gestión. Cada estudiante accede
+                    Las cuentas nuevas se crean al completar el registro posterior a una compra.
+                    Cada estudiante accede
                     únicamente a su información académica, apuntes y calificaciones.
                   </div>
                 </div>

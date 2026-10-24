@@ -13,6 +13,7 @@ import { Tabs } from '@/components/ui/Tabs';
 import type { TabItem } from '@/components/ui/Tabs';
 import { AdminOverview } from '@/components/admin/AdminOverview';
 import { FinancePanel } from '@/components/crm/FinancePanel';
+import { RegistrationsPanel } from '@/components/crm/RegistrationsPanel';
 
 type Tab =
   | 'resumen'
@@ -24,6 +25,7 @@ type Tab =
   | 'regalos'
   | 'invitaciones'
   | 'ordenes'
+  | 'registros'
   | 'auditoria';
 
 interface CrmDashboardProps {
@@ -351,6 +353,7 @@ const TAB_ICONS: Record<Tab, Parameters<typeof WisdomIcon>[0]['name']> = {
   regalos: 'sparkles',
   invitaciones: 'cross',
   ordenes: 'receipt',
+  registros: 'user',
   auditoria: 'activity',
 };
 
@@ -364,6 +367,7 @@ const TAB_TITLES: Record<Tab, string> = {
   regalos: 'Códigos de regalo',
   invitaciones: 'Fundadores e inversores',
   ordenes: 'Pagos y reembolsos',
+  registros: 'Registros y matrículas',
   auditoria: 'Auditoría de seguridad',
 };
 
@@ -377,6 +381,7 @@ const CRM_TABS: Array<{ id: Tab; label: string; permission: string | null }> = [
   { id: 'regalos', label: 'Regalos', permission: 'gifts.read' },
   { id: 'invitaciones', label: 'Fundadores / inversores', permission: 'invitations.read' },
   { id: 'ordenes', label: 'Pagos', permission: 'orders.read' },
+  { id: 'registros', label: 'Registros', permission: 'users.read' },
   { id: 'auditoria', label: 'Auditoría', permission: 'audit.read' },
 ];
 
@@ -1833,6 +1838,8 @@ export function CrmDashboard({
           canRefund={tienePermiso('orders.refund')}
         />
       )}
+
+      {tab === 'registros' && <RegistrationsPanel />}
 
       {tab === 'auditoria' && (
         <Card variant="surface" padding="md">

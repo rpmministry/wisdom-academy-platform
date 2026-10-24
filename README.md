@@ -58,10 +58,14 @@
 - Catálogo responsive con filtros, orden, precios, disponibilidad y estado de precio.
 - Encabezado público compartido, carrito con contador y menú de cuenta accesible en móvil, tableta y escritorio.
 - Carrito persistente para varios productos con retirada, subtotal y continuidad al checkout.
-- Checkout con login integrado (sin perder el carrito), cotización del servidor, códigos de descuento y PayPal Sandbox/Live.
+- Checkout sin cuenta previa: correo de compra, cotización del servidor, códigos de descuento y PayPal Sandbox/Live.
+- Registro posterior al pago con formulario adulto o de representante/estudiante, consentimientos versionados y vinculación de cuentas existentes.
+- Matrícula automática solo de los productos pagados, con sesión, correo de bienvenida y enlace directo al curso.
+- Recuperación de contraseña, verificación de correo y reenvío/recuperación del enlace de registro.
 - Guía de bienvenida descargable y recursos de acceso gratuito.
 - Página de retorno que confirma la captura en el servidor, nunca por el navegador.
 - Perfil `/mi-cuenta` con identidad, accesos e historial de compras.
+- Bandeja **Registros** en el CRM con estados separados de pago, registro, correo y matrícula; protección de menores con `minors.read`.
 
 ### Aula virtual y academia
 
@@ -127,6 +131,7 @@ flowchart LR
 | Runtime | Node.js 24 |
 | Persistencia | SQLite con `node:sqlite`, WAL y migraciones versionadas |
 | Pagos | PayPal Orders v2, OAuth 2.0 y webhooks |
+| Correo | Resend por API HTTP (bienvenida, verificación y recuperación) |
 | Pruebas | Node Test Runner, Playwright y servidor PayPal simulado |
 | Documentos | Generación PDF, guías y reportes |
 | Integraciones | Google Drive, Moodle, YouTube, OpenMAIC y orquestación IA |
@@ -227,11 +232,11 @@ Resultados de la sesión de validación:
 
 | Comando | Resultado |
 |---|---|
-| `npm test` | **175 aprobadas, 0 fallos** |
-| `npm run test:platform` | **72 aprobadas, 0 fallos** |
-| `npm run test:payments` | **29 aprobadas, 0 fallos** |
-| Playwright (suite completa) | **50 aprobadas, 0 fallos** |
-| `npm run build` | Correcto, 19 páginas prerenderizadas |
+| `npm test` | **186 aprobadas, 0 fallos** |
+| `npm run test:platform` | **83 aprobadas, 0 fallos** |
+| `npm run test:payments` | **31 aprobadas, 0 fallos** |
+| Playwright (suite completa) | **52 aprobadas, 0 fallos** |
+| `npm run build` | Correcto |
 | PayPal Sandbox real | Orden `3TY92249470992444`, captura `9S879207H39589335`, `10.00 USD` (evidencia del 23/10/2026) |
 
 Los detalles y evidencias están en [docs/PAYPAL_TESTING.md](docs/PAYPAL_TESTING.md).
@@ -288,6 +293,7 @@ Ver [docs/PAYPAL_DEPLOYMENT.md](docs/PAYPAL_DEPLOYMENT.md).
 | [docs/DEPLOY_FREE_HOSTING.md](docs/DEPLOY_FREE_HOSTING.md) | Hosting gratuito con volumen persistente |
 | [docs/PAYPAL_ACCEPTANCE.md](docs/PAYPAL_ACCEPTANCE.md) | Condiciones de aceptación y evidencias |
 | [docs/CHECKOUT_Y_CRM_FINANCIERO.md](docs/CHECKOUT_Y_CRM_FINANCIERO.md) | Carrito, checkout, permisos y módulo financiero del CRM |
+| [docs/COMPRA_INVITADA_REGISTRO.md](docs/COMPRA_INVITADA_REGISTRO.md) | Compra sin cuenta, registro, matrícula, correo y Vercel |
 | [docs/UX_PORTALES_Y_NAVEGACION.md](docs/UX_PORTALES_Y_NAVEGACION.md) | Encabezados responsive, perfil y patrones de navegación |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Arquitectura, módulos, datos y flujo de pagos |
 

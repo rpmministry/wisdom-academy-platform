@@ -90,6 +90,7 @@ function discountResourceSet(discountId: string): Set<string> {
 export function validateDiscountForUser(input: {
   code: string;
   userId: string;
+  buyerEmail?: string | null;
   products: ProductForDiscount[];
   now?: string;
 }): DiscountValidation {
@@ -130,10 +131,18 @@ export function validateDiscountForUser(input: {
     throw new ApiError(409, 'DISCOUNT_EXHAUSTED', 'El código de descuento agotó sus usos.');
   }
 
-  const usedByUser = prepare(`
-    SELECT COUNT(*) AS total FROM discount_redemptions
-    WHERE discount_code_id = ? AND user_id = ? AND status IN ('reserved','consumed')
-  `).get(codeRow.id, input.userId) as { total: number };
+  // En compras de invitado el límite por persona se asocia al correo de la
+  // compra; el usuario interno compartido no debe acumular los usos de todos.
+  const usedByUser = input.buyerEmail
+    ? (prepare(`
+        SELECT COUNT(*) AS total FROM discount_redemptions
+        WHERE discount_code_id = ? AND buyer_email = ? COLLATE NOCASE
+          AND status IN ('reserved','consumed')
+      `).get(codeRow.id, input.buyerEmail) as { total: number })
+    : (prepare(`
+        SELECT COUNT(*) AS total FROM discount_redemptions
+        WHERE discount_code_id = ? AND user_id = ? AND status IN ('reserved','consumed')
+      `).get(codeRow.id, input.userId) as { total: number });
   if (
     discount.max_uses_per_user !== null &&
     Number(usedByUser.total) >= Number(discount.max_uses_per_user)
@@ -191,18 +200,20 @@ export function validateDiscountForUser(input: {
 export function reserveDiscountRedemption(input: {
   validation: DiscountValidation;
   userId: string;
+  buyerEmail?: string | null;
   orderId: string;
   status?: 'reserved' | 'consumed';
 }): void {
   const now = nowIso();
   prepare(`
     INSERT INTO discount_redemptions
-      (id, discount_code_id, user_id, order_id, amount_cents, status, created_at, consumed_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      (id, discount_code_id, user_id, buyer_email, order_id, amount_cents, status, created_at, consumed_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     `dr_${randomToken(12)}`,
     input.validation.codeId,
     input.userId,
+    input.buyerEmail || null,
     input.orderId,
     input.validation.discountCents,
     input.status || 'reserved',

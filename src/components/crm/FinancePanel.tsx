@@ -21,6 +21,8 @@ interface FinanceOrder {
   userEmail: string;
   userName: string;
   status: FinanceStatus;
+  checkoutMode?: 'account' | 'guest';
+  registrationStatus?: string;
   subtotalCents: number;
   discountCents: number;
   totalCents: number;
@@ -43,6 +45,12 @@ interface FinanceOrder {
     currency: string;
     status: string;
     providerTxnId: string | null;
+    createdAt: string;
+  }>;
+  statusHistory: Array<{
+    fromStatus: string | null;
+    toStatus: string;
+    reason: string;
     createdAt: string;
   }>;
 }
@@ -703,6 +711,19 @@ export const FinancePanel: React.FC<FinancePanelProps> = ({ products, canRefund 
                   <li><span>Nombre</span><strong>{selectedOrder.userName}</strong></li>
                   <li><span>Correo</span><strong>{selectedOrder.userEmail}</strong></li>
                   <li><span>Estado interno</span><strong>{STATUS_LABEL[selectedOrder.status]}</strong></li>
+                  <li><span>Compra</span><strong>{selectedOrder.checkoutMode === 'guest' ? 'Invitado' : 'Cuenta'}</strong></li>
+                  <li>
+                    <span>Registro posterior</span>
+                    <strong>
+                      {selectedOrder.registrationStatus === 'pending'
+                        ? 'Pendiente'
+                        : selectedOrder.registrationStatus === 'completed'
+                          ? 'Completado'
+                          : selectedOrder.registrationStatus === 'not_required'
+                            ? 'No requerido'
+                            : selectedOrder.registrationStatus || '—'}
+                    </strong>
+                  </li>
                   <li><span>PayPal order</span><strong>{selectedOrder.paypalOrderId || '—'}</strong></li>
                   <li><span>PayPal capture</span><strong>{selectedOrder.paypalCaptureId || '—'}</strong></li>
                   {selectedOrder.discountCodeHint && (
@@ -740,6 +761,23 @@ export const FinancePanel: React.FC<FinancePanelProps> = ({ products, canRefund 
                     ))
                   ) : (
                     <li><span>Sin transacciones registradas</span></li>
+                  )}
+                </ul>
+                <h4 style={{ marginTop: '0.7rem' }}>Historial de estados</h4>
+                <ul className="wa-fin-detail-list">
+                  {(selectedOrder.statusHistory || []).length > 0 ? (
+                    selectedOrder.statusHistory.map((entry, index) => (
+                      <li key={`${entry.toStatus}-${entry.createdAt}-${index}`}>
+                        <span>
+                          {entry.fromStatus ? `${entry.fromStatus} → ` : ''}
+                          <strong>{entry.toStatus}</strong>
+                          <br />
+                          <small>{fecha(entry.createdAt)}</small>
+                        </span>
+                      </li>
+                    ))
+                  ) : (
+                    <li><span>Sin historial registrado</span></li>
                   )}
                 </ul>
               </div>

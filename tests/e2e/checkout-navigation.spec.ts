@@ -1,3 +1,4 @@
+import { createHmac } from 'node:crypto';
 import { test, expect } from '@playwright/test';
 
 test.describe.configure({ timeout: 240_000 });
@@ -133,12 +134,54 @@ test.describe('Carrito desde el catálogo', () => {
     await modal.getByRole('button', { name: /Comprar ahora/i }).click();
     await expect(page).toHaveURL(/\/checkout/, { timeout: 30_000 });
     await expect(page.getByRole('heading', { name: /Revisa tu pedido/i })).toBeVisible();
-    await expect(page.locator('#checkout-identificador')).toBeVisible();
+    await expect(page.locator('#checkout-email')).toBeVisible();
+    await expect(page.getByText(/Compra como invitado/i).first()).toBeVisible();
+  });
+});
+
+test.describe('Registro posterior al pago', () => {
+  test('un invitado crea su cuenta y activa su acceso desde el enlace del pago', async ({ page }) => {
+    const registrationId = 'reg_e2e_guest';
+    const expiry = Math.floor(Date.parse('2099-01-01T00:00:00.000Z') / 1000);
+    const signature = createHmac('sha256', 'e2e-only-code-pepper-32-bytes-minimum')
+      .update(`${registrationId}.${expiry}`)
+      .digest('hex');
+    const token = `${registrationId}.${expiry}.${signature}`;
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(`/bienvenida/registro?token=${encodeURIComponent(token)}`, {
+      waitUntil: 'domcontentloaded',
+    });
+    await expect(page.getByRole('heading', { name: /Activa tu espacio de estudio/i })).toBeVisible({
+      timeout: 60_000,
+    });
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1
+    );
+    expect(overflow).toBe(false);
+
+    await page.getByLabel('Nombres', { exact: true }).fill('Invitada');
+    await page.getByLabel('Apellidos', { exact: true }).fill('Prueba');
+    await page.getByLabel('Teléfono (opcional)', { exact: true }).fill('+593 99 000 1111');
+    await page.getByLabel('Contraseña', { exact: true }).fill('E2eGuest2026!Segura');
+    await page.getByLabel('Confirmar contraseña', { exact: true }).fill('E2eGuest2026!Segura');
+    await page.getByRole('checkbox', { name: /términos y condiciones/i }).check();
+    await page.getByRole('checkbox', { name: /tratamiento de mis datos/i }).check();
+    await page.getByRole('button', { name: /Crear mi cuenta y activar acceso/i }).click();
+    await expect(page).toHaveURL(/\/aula\?recurso=/, { timeout: 90_000 });
+
+    await page.goto('/mi-cuenta', { waitUntil: 'domcontentloaded' });
+    await expect(page.getByText('e2e.invitado@wisdomacademy.test').first()).toBeVisible({
+      timeout: 60_000,
+    });
+    await page.goto('/mi-acceso', { waitUntil: 'domcontentloaded' });
+    await expect(page.getByText(/Programación|Python/i).first()).toBeVisible({
+      timeout: 60_000,
+    });
   });
 });
 
 test.describe('Checkout preservando carrito', () => {
-  test('el carrito sobrevive al iniciar sesión dentro del checkout', async ({ page }) => {
+  test('el carrito se conserva al completar el correo de compra sin exigir cuenta', async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 740 });
     const catalogResponse = await page.request.get('/api/catalog');
     expect(catalogResponse.ok()).toBeTruthy();
@@ -194,12 +237,10 @@ test.describe('Checkout preservando carrito', () => {
       timeout: 30_000,
     });
     await expect(page.getByText(product.name, { exact: false }).first()).toBeVisible();
-    await expect(page.locator('#checkout-identificador')).toBeVisible();
-
-    await page.fill('#checkout-identificador', studentEmail);
-    await page.fill('#checkout-contrasenia', studentPassword);
-    await page.getByRole('button', { name: /Iniciar sesión y continuar/i }).click();
-    await expect(page.getByRole('button', { name: /Usar otra cuenta/i })).toBeVisible({
+    await expect(page.locator('#checkout-email')).toBeVisible();
+    await expect(page).toHaveURL(/\/checkout/);
+    await page.fill('#checkout-email', 'e2e.compra.invitada@wisdomacademy.test');
+    await expect(page.getByRole('button', { name: /Pagar con PayPal/i })).toBeVisible({
       timeout: 30_000,
     });
     await expect(page).toHaveURL(/\/checkout/);

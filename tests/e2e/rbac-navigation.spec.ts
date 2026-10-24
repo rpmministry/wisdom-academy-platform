@@ -110,4 +110,30 @@ test.describe('RBAC y navegación administrativa', () => {
     expect(payload.reporte.summary.capturedCents).toBe(0);
     expect(payload.reporte.summary.pendingOrders).toBe(0);
   });
+
+  test('un administrador con users.read consulta registros y estados de matrícula', async ({
+    page,
+  }) => {
+    await adminLogin(page);
+    // Compila la ruta administrativa antes de medir la interfaz.
+    await page.request.get('/api/admin/registrations?limit=1', { timeout: 120_000 });
+    await page.goto('/admin?tab=crm&crm=registros', { waitUntil: 'domcontentloaded' });
+    const registrationsTab = page.getByRole('tab', { name: /^Registros$/i });
+    await expect(registrationsTab).toBeVisible({ timeout: 120_000 });
+    await registrationsTab.click();
+    await expect(page.getByRole('heading', { name: /Registros posteriores al pago/i })).toBeVisible({
+      timeout: 60_000,
+    });
+    await page.getByPlaceholder(/Comprador, correo, estudiante u orden/i).fill(
+      'e2e.invitado@wisdomacademy.test'
+    );
+    await expect(page.getByText('e2e.invitado@wisdomacademy.test').first()).toBeVisible({
+      timeout: 60_000,
+    });
+    await expect(page.getByText(/Registro (pendiente|completado)/i).first()).toBeVisible();
+    const response = await page.request.get('/api/admin/registrations?q=e2e.invitado');
+    expect(response.status()).toBe(200);
+    const payload = (await response.json()) as { registros: Array<{ buyerEmail: string }> };
+    expect(payload.registros[0]?.buyerEmail).toBe('e2e.invitado@wisdomacademy.test');
+  });
 });

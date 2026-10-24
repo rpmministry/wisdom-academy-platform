@@ -241,12 +241,15 @@ export function listAdminUsers(
   const rows = search
     ? (prepare(`
         SELECT id FROM users
-        WHERE email LIKE ? OR display_name LIKE ? OR username LIKE ?
+        WHERE id <> 'usr_guest_checkout'
+          AND (email LIKE ? OR display_name LIKE ? OR username LIKE ?)
         ORDER BY created_at DESC LIMIT ?
       `).all(`%${search}%`, `%${search}%`, `%${search}%`, limit) as Array<{ id: string }>)
-    : (prepare('SELECT id FROM users ORDER BY created_at DESC LIMIT ?').all(limit) as Array<{
-        id: string;
-      }>);
+    : (prepare(`
+        SELECT id FROM users
+        WHERE id <> 'usr_guest_checkout'
+        ORDER BY created_at DESC LIMIT ?
+      `).all(limit) as Array<{ id: string }>);
 
   return rows
     .map((row) =>

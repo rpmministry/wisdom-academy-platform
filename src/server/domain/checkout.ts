@@ -24,7 +24,8 @@ import {
   PayPalApiError,
   type PayPalCaptureResponse,
 } from '../payments/paypal';
-import { randomToken } from '../security/random';
+import { randomToken, sha256 } from '../security/random';
+import { GUEST_CHECKOUT_USER_ID, normalizeBuyerEmail } from './guestCheckout';
 
 type OrderStatus = 'pending' | 'paid' | 'failed' | 'cancelled' | 'refunded' | 'reversed' | 'free';
 
@@ -43,6 +44,12 @@ interface OrderRow {
   paypal_approval_url: string | null;
   idempotency_key: string | null;
   metadata_json: string;
+  buyer_email: string | null;
+  buyer_name: string | null;
+  checkout_mode: 'account' | 'guest';
+  registration_status: 'not_required' | 'pending' | 'completed' | 'expired';
+  registered_user_id: string | null;
+  registration_completed_at: string | null;
   created_at: string;
   updated_at: string;
   paid_at: string | null;
@@ -293,7 +300,11 @@ function markOrderPaid(input: {
     const paidAt = input.paidAt || nowIso();
     prepare(`
       UPDATE orders
-      SET status = 'paid', paid_at = ?, paypal_capture_id = ?, updated_at = ?
+      SET status = 'paid', paid_at = ?, paypal_capture_id = ?, updated_at = ?,
+          registration_status = CASE
+            WHEN checkout_mode = 'guest' AND registration_status = 'not_required' THEN 'pending'
+            ELSE registration_status
+          END
       WHERE id = ?
     `).run(paidAt, input.captureId, paidAt, order.id);
     prepare(`
@@ -317,7 +328,9 @@ function markOrderPaid(input: {
       WHERE provider = 'paypal' AND provider_txn_id = ? AND kind = 'capture'
     `).run(input.amountCents, input.currency, input.captureId);
     consumeDiscountRedemption(order.id);
-    grantAccessForOrder(order.id);
+    // El acceso del invitado se crea solo al completar el registro posterior
+    // al pago; nunca se concede al usuario interno de compras anónimas.
+    if (order.checkout_mode !== 'guest') grantAccessForOrder(order.id);
     return { alreadyPaid: false };
   });
 }
@@ -342,7 +355,8 @@ export interface CheckoutQuote {
  * resumen; la orden y el cobro vuelven a validar catálogo, moneda y descuento.
  */
 export function quoteCheckout(input: {
-  user: AuthUser;
+  user?: AuthUser | null;
+  buyerEmail?: string | null;
   productIds: string[];
   discountCode?: string | null;
 }): CheckoutQuote {
@@ -350,10 +364,12 @@ export function quoteCheckout(input: {
   const { products } = loadPublishedProducts(productIds);
   const currency = paypalConfig().currency;
   const subtotalCents = products.reduce((total, product) => total + product.priceCents, 0);
+  const buyerEmail = normalizeBuyerEmail(input.buyerEmail || input.user?.email);
   const discount = input.discountCode?.trim()
     ? validateDiscountForUser({
         code: input.discountCode,
-        userId: input.user.id,
+        userId: input.user?.id || GUEST_CHECKOUT_USER_ID,
+        buyerEmail,
         products,
       })
     : null;
@@ -381,10 +397,14 @@ export interface CheckoutResult {
   currency: string;
   approvalUrl?: string | null;
   freeAccessGranted?: boolean;
+  checkoutMode: 'account' | 'guest';
+  registrationRequired: boolean;
 }
 
 export async function createCheckout(input: {
-  user: AuthUser;
+  user?: AuthUser | null;
+  buyerEmail?: string | null;
+  buyerName?: string | null;
   productIds: string[];
   discountCode?: string | null;
   idempotencyKey?: string | null;
@@ -395,12 +415,28 @@ export async function createCheckout(input: {
   const currency = paypalConfig().currency;
   const subtotal = products.reduce((total, product) => total + product.priceCents, 0);
   const rawById = new Map(raw.map((product) => [product.id, product]));
-  const requestedKey = input.idempotencyKey?.trim().slice(0, 100) || null;
+  const isGuest = !input.user;
+  // El correo es obligatorio incluso para invitados: es el contacto de la
+  // compra y la identidad que se verificará al crear la cuenta.
+  const buyerEmail = normalizeBuyerEmail(input.buyerEmail || input.user?.email);
+  const buyerName =
+    typeof input.buyerName === 'string' ? input.buyerName.trim().slice(0, 160) || null : null;
+  const checkoutMode: 'account' | 'guest' = isGuest ? 'guest' : 'account';
+  const orderUserId = input.user?.id || GUEST_CHECKOUT_USER_ID;
+  const registrationStatus = isGuest ? 'pending' : 'not_required';
+  const rawKey = input.idempotencyKey?.trim().slice(0, 100) || null;
+  // La clave de invitado se liga al correo para que dos compradores no puedan
+  // recuperar la orden de otra persona reutilizando la misma cabecera.
+  const requestedKey = rawKey
+    ? isGuest
+      ? `guest:${sha256(`${buyerEmail}:${rawKey}`)}`.slice(0, 100)
+      : rawKey
+    : null;
 
   if (requestedKey) {
     const existing = prepare(
       'SELECT * FROM orders WHERE user_id = ? AND idempotency_key = ?'
-    ).get(input.user.id, requestedKey) as OrderRow | undefined;
+    ).get(orderUserId, requestedKey) as OrderRow | undefined;
     if (existing) return orderToCheckoutResult(existing);
   }
 
@@ -413,7 +449,7 @@ export async function createCheckout(input: {
     if (requestedKey) {
       const existing = prepare(
         'SELECT * FROM orders WHERE user_id = ? AND idempotency_key = ?'
-      ).get(input.user.id, requestedKey) as OrderRow | undefined;
+      ).get(orderUserId, requestedKey) as OrderRow | undefined;
       if (existing) {
         return { existing };
       }
@@ -422,7 +458,8 @@ export async function createCheckout(input: {
     if (input.discountCode?.trim()) {
       discount = validateDiscountForUser({
         code: input.discountCode,
-        userId: input.user.id,
+        userId: orderUserId,
+        buyerEmail,
         products,
       });
     }
@@ -435,11 +472,12 @@ export async function createCheckout(input: {
     prepare(`
       INSERT INTO orders
         (id, user_id, status, subtotal_cents, discount_cents, total_cents, currency, discount_id,
-         discount_code_id, idempotency_key, metadata_json, created_at, updated_at, paid_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+         discount_code_id, idempotency_key, metadata_json, created_at, updated_at, paid_at,
+         buyer_email, buyer_name, checkout_mode, registration_status)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(
       orderId,
-      input.user.id,
+      orderUserId,
       status,
       subtotal,
       discountCents,
@@ -448,10 +486,14 @@ export async function createCheckout(input: {
       discount?.discountId ?? null,
       discount?.codeId ?? null,
       requestedKey,
-      JSON.stringify({ source: 'checkout' }),
+      JSON.stringify({ source: 'checkout', checkoutMode }),
       now,
       now,
-      status === 'free' ? now : null
+      status === 'free' ? now : null,
+      buyerEmail,
+      buyerName,
+      checkoutMode,
+      registrationStatus
     );
 
     for (const productId of productIds) {
@@ -467,7 +509,8 @@ export async function createCheckout(input: {
     if (discount) {
       reserveDiscountRedemption({
         validation: discount,
-        userId: input.user.id,
+        userId: orderUserId,
+        buyerEmail,
         orderId,
         status: status === 'free' ? 'consumed' : 'reserved',
       });
@@ -475,7 +518,9 @@ export async function createCheckout(input: {
 
     if (status === 'free') {
       insertFreeTransaction(orderId, 0, currency, now);
-      grantAccessForOrder(orderId);
+      // El invitado obtiene acceso cuando completa el registro, no al crear
+      // una orden gratuita; la cuenta autenticada sí puede recibirlo ya.
+      if (!isGuest) grantAccessForOrder(orderId);
     }
 
     return { existing: null };
@@ -491,7 +536,9 @@ export async function createCheckout(input: {
       status: 'free',
       totalCents: 0,
       currency,
-      freeAccessGranted: true,
+      freeAccessGranted: !isGuest,
+      checkoutMode,
+      registrationRequired: isGuest,
     };
   }
 
@@ -536,6 +583,8 @@ export async function createCheckout(input: {
       totalCents,
       currency,
       approvalUrl: paypalOrder.approvalUrl,
+      checkoutMode,
+      registrationRequired: isGuest,
     };
   } catch (error) {
     withTransaction(() => {
@@ -569,7 +618,12 @@ function orderToCheckoutResult(order: OrderRow): CheckoutResult {
     totalCents: Number(order.total_cents),
     currency: order.currency,
     approvalUrl: order.status === 'pending' ? order.paypal_approval_url : null,
-    freeAccessGranted: order.status === 'free' || order.status === 'paid',
+    freeAccessGranted:
+      order.checkout_mode === 'account' &&
+      (order.status === 'free' || order.status === 'paid'),
+    checkoutMode: order.checkout_mode || 'account',
+    registrationRequired:
+      order.checkout_mode === 'guest' && order.registration_status !== 'completed',
   };
 }
 
@@ -620,17 +674,42 @@ export function findOrderByPayPalIdForUser(
 }
 
 export async function captureCheckout(input: {
-  user: AuthUser;
+  user?: AuthUser | null;
   orderId?: string | null;
   paypalOrderId?: string | null;
 }): Promise<{ orderId: string; status: OrderStatus; alreadyPaid: boolean }> {
   const order = input.orderId
     ? loadOrder(input.orderId)
     : input.paypalOrderId
-    ? findOrderByPayPalIdForUser(input.paypalOrderId, input.user.id)
-    : null;
-  if (!order || order.user_id !== input.user.id) {
+      ? input.user
+        ? findOrderByPayPalIdForUser(input.paypalOrderId, input.user.id)
+        : ((prepare('SELECT * FROM orders WHERE paypal_order_id = ?').get(
+            input.paypalOrderId
+          ) as OrderRow | undefined) ?? null)
+      : null;
+  if (!order) {
     throw new ApiError(404, 'ORDER_NOT_FOUND', 'La orden no existe.');
+  }
+  if (input.user) {
+    const ownsOrder =
+      order.user_id === input.user.id ||
+      order.registered_user_id === input.user.id ||
+      (order.checkout_mode === 'guest' &&
+        (order.buyer_email || '').toLowerCase() === input.user.email.toLowerCase());
+    if (!ownsOrder) {
+      throw new ApiError(404, 'ORDER_NOT_FOUND', 'La orden no existe.');
+    }
+  } else {
+    // El invitado demuestra posesión con el token de aprobación que PayPal
+    // entrega únicamente al navegador del comprador. El id interno por sí solo
+    // no permite capturar ni consultar la orden.
+    if (
+      order.checkout_mode !== 'guest' ||
+      !input.paypalOrderId ||
+      order.paypal_order_id !== input.paypalOrderId
+    ) {
+      throw new ApiError(404, 'ORDER_NOT_FOUND', 'La orden no existe.');
+    }
   }
   if (order.status === 'paid' || order.status === 'free') {
     return { orderId: order.id, status: order.status, alreadyPaid: true };
@@ -816,6 +895,7 @@ export async function handlePayPalWebhook(headers: Headers, rawBody: string): Pr
   processed: boolean;
   duplicate: boolean;
   eventType: string | null;
+  paidGuestOrderId?: string | null;
 }> {
   const paypal = getPayPalClient();
   if (!paypal) {
@@ -877,6 +957,7 @@ export async function handlePayPalWebhook(headers: Headers, rawBody: string): Pr
     }
   }
 
+  let paidGuestOrderId: string | null = null;
   try {
     if (event.event_type === 'PAYMENT.CAPTURE.COMPLETED') {
       const customId = event.resource?.custom_id || event.resource?.invoice_id || null;
@@ -905,6 +986,7 @@ export async function handlePayPalWebhook(headers: Headers, rawBody: string): Pr
         amountCents: amount.cents,
         currency: amount.currency,
       });
+      if (order.checkout_mode === 'guest') paidGuestOrderId = order.id;
     } else if (event.event_type === 'PAYMENT.CAPTURE.PENDING') {
       // Una captura pendiente se registra para conciliación, pero la orden
       // sigue pendiente y no concede derechos hasta el evento COMPLETED.
@@ -1068,7 +1150,12 @@ export async function handlePayPalWebhook(headers: Headers, rawBody: string): Pr
     prepare(
       "UPDATE webhook_events SET status = 'processed', processed_at = ? WHERE provider = 'paypal' AND event_id = ?"
     ).run(nowIso(), event.id);
-    return { processed: true, duplicate: false, eventType: event.event_type };
+    return {
+      processed: true,
+      duplicate: false,
+      eventType: event.event_type,
+      paidGuestOrderId,
+    };
   } catch (error) {
     prepare(
       "UPDATE webhook_events SET status = 'error', processed_at = ? WHERE provider = 'paypal' AND event_id = ?"
@@ -1228,7 +1315,8 @@ export function listOrders(): Array<
   }
 > {
   const rows = prepare(`
-    SELECT o.*, u.email AS user_email, u.display_name AS user_name
+    SELECT o.*, COALESCE(o.buyer_email, u.email) AS user_email,
+           COALESCE(o.buyer_name, u.display_name, o.buyer_email, u.email) AS user_name
     FROM orders o JOIN users u ON u.id = o.user_id
     ORDER BY o.created_at DESC LIMIT 200
   `).all() as Array<OrderRow & { user_email: string; user_name: string }>;

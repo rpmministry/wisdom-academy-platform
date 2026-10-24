@@ -166,6 +166,18 @@ if (!/^[A-Z]{3}$/.test(paypalCurrency)) {
 } else {
   add('OK', 'PAYPAL_CURRENCY', 'USD');
 }
+if (!env.RESEND_API_KEY?.trim() || !env.EMAIL_FROM?.trim()) {
+  add(
+    'WARN',
+    'Correo transaccional',
+    'RESEND_API_KEY o EMAIL_FROM no están definidos: el registro funciona, pero no se envían bienvenida, verificación ni recuperación de contraseña.'
+  );
+} else if (!env.EMAIL_FROM.includes('@')) {
+  add('FAIL', 'EMAIL_FROM', 'El remitente debe ser un correo válido y estar verificado en el proveedor.');
+} else {
+  add('OK', 'Correo transaccional', 'Remitente configurado (valor no mostrado).');
+}
+
 if (env.PAYPAL_MODE === 'live') {
   if (!env.PAYPAL_CLIENT_ID || !env.PAYPAL_CLIENT_SECRET || !env.PAYPAL_WEBHOOK_ID) {
     add(
@@ -293,7 +305,7 @@ if (dbPath !== ':memory:' && fs.existsSync(absoluteDbPath)) {
         add(
           'WARN',
           'Migración de precios',
-          'La columna price_status no existe todavía; arranca la aplicación para aplicar la migración 8.'
+          'La columna price_status no existe todavía; arranca la aplicación para aplicar la migración 9.'
         );
       }
     } finally {

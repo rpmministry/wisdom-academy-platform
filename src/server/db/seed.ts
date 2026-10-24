@@ -602,6 +602,13 @@ function ensureE2EAdmin(db: SqliteDatabase): void {
     INSERT OR IGNORE INTO crm_contacts (id, email, name, status, created_at, updated_at)
     VALUES ('ctc_e2e_admin', ?, 'Administrador E2E', 'customer', ?, ?)
   `).run(adminEmail, timestamp, timestamp);
+  // Permiso específico para validar la bandeja de registros sin conceder
+  // pagos, catálogo ni capacidades de gestión de usuarios.
+  db.prepare(`
+    INSERT OR IGNORE INTO user_permissions
+      (id, user_id, permission_code, granted_by, granted_at)
+    VALUES ('up_e2e_admin_users_read', ?, 'users.read', 'seed_e2e', ?)
+  `).run(adminId, timestamp);
 }
 
 /**
@@ -636,10 +643,55 @@ function ensureE2EFinance(db: SqliteDatabase): void {
   grant.run('up_e2e_finance_products_read', userId, 'products.read', timestamp);
 }
 
+/**
+ * Orden gratuita de invitado con registro pendiente para probar la pantalla
+ * posterior al pago sin ejecutar PayPal en E2E. El token se firma con el
+ * CODE_HASH_PEPPER fijado por playwright.config.ts.
+ */
+function ensureE2EGuestRegistration(db: SqliteDatabase): void {
+  const orderId = 'ord_e2e_guest_registration';
+  const existing = db.prepare('SELECT id FROM orders WHERE id = ?').get(orderId);
+  if (existing) return;
+  const product = db
+    .prepare("SELECT id FROM products WHERE slug = 'curso-python-ia-jovenes'")
+    .get() as { id: string } | undefined;
+  if (!product) return;
+  const timestamp = nowIso();
+  const email = 'e2e.invitado@wisdomacademy.test';
+  const expiresAt = '2099-01-01T00:00:00.000Z';
+  db.prepare(`
+    INSERT INTO orders
+      (id, user_id, status, subtotal_cents, discount_cents, total_cents, currency,
+       metadata_json, created_at, updated_at, paid_at, buyer_email, buyer_name,
+       checkout_mode, registration_status)
+    VALUES (?, 'usr_guest_checkout', 'free', 0, 0, 0, 'USD', '{"source":"e2e_fixture"}',
+            ?, ?, ?, ?, 'Invitado E2E', 'guest', 'pending')
+  `).run(orderId, timestamp, timestamp, timestamp, email);
+  db.prepare(`
+    INSERT INTO order_items
+      (id, order_id, product_id, title_snapshot, unit_price_cents, quantity)
+    VALUES ('oit_e2e_guest_registration', ?, ?, 'Programación con IA y Python para Jóvenes', 0, 1)
+  `).run(orderId, product.id);
+  db.prepare(`
+    INSERT OR IGNORE INTO transactions
+      (id, order_id, provider, kind, provider_txn_id, amount_cents, currency, status,
+       metadata_json, created_at)
+    VALUES ('txn_e2e_guest_registration', ?, 'free', 'free', ?, 0, 'USD', 'completed', '{}', ?)
+  `).run(orderId, `free:${orderId}`, timestamp);
+  db.prepare(`
+    INSERT INTO checkout_registrations
+      (id, order_id, buyer_email, buyer_name, buyer_type, product_kind, requires_guardian,
+       status, expires_at, terms_version, privacy_version, data_json, created_at, updated_at)
+    VALUES ('reg_e2e_guest', ?, ?, 'Invitado E2E', 'student', 'course', 0, 'pending', ?,
+            '2026-10-24', '2026-10-24', '{}', ?, ?)
+  `).run(orderId, email, expiresAt, timestamp, timestamp);
+}
+
 function seedE2EStudent(db: SqliteDatabase): void {
   if (process.env.WISDOM_E2E !== '1') return;
   ensureE2EAdmin(db);
   ensureE2EFinance(db);
+  ensureE2EGuestRegistration(db);
 
   const existing = db
     .prepare('SELECT id FROM users WHERE email = ?')

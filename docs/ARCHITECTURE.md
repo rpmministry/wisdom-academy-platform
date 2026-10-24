@@ -90,7 +90,10 @@ sequenceDiagram
 | `discounts`, `discount_codes`, `discount_redemptions` | Promociones y reservas |
 | `audit_log` | Trazabilidad administrativa |
 
-La migración 8 añadió `products.price_status` con valores `defined` y `pending`. Los productos creados automáticamente desde un curso nacen pendientes; administración los habilita al fijar un precio.
+La migración 9 añadió compra invitada (`orders.buyer_email`, `checkout_mode`,
+`registration_status`, `registered_user_id`), `checkout_registrations`,
+`auth_tokens` y los campos de expediente en `student_profiles`. La migración 8
+añadió `products.price_status` con valores `defined` y `pending`. Los productos creados automáticamente desde un curso nacen pendientes; administración los habilita al fijar un precio.
 
 ## 5. Seguridad
 

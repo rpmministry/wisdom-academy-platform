@@ -1157,6 +1157,41 @@
 }
 
 /* --------------------------------------------------------------------------
+   Registro posterior al pago
+   -------------------------------------------------------------------------- */
+.wa-registration-form {
+  display: grid;
+  min-width: 0;
+}
+
+.wa-registration-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  margin-top: 0.6rem;
+  color: var(--text-secondary);
+  font-size: 0.74rem;
+  line-height: 1.55;
+  cursor: pointer;
+}
+
+.wa-registration-check input {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  margin-top: 0.1rem;
+  accent-color: var(--brand-gold);
+}
+
+.wa-registration-check a {
+  color: var(--brand-gold-dark);
+}
+
+.wa-registration-check + .wa-registration-check {
+  margin-top: 0.45rem;
+}
+
+/* --------------------------------------------------------------------------
    Mi cuenta (perfil de autoservicio)
    -------------------------------------------------------------------------- */
 .wa-account-page {

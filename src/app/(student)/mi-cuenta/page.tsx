@@ -41,10 +41,12 @@ function fecha(value: string | null): string {
 }
 
 export default function MiCuentaPage() {
-  const { usuario } = useAuth();
+  const { usuario, refrescarSesion } = useAuth();
   const [orders, setOrders] = useState<UserOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [verifyBusy, setVerifyBusy] = useState(false);
+  const [verifyMessage, setVerifyMessage] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -63,6 +65,24 @@ export default function MiCuentaPage() {
       cancelled = true;
     };
   }, []);
+
+  const resendVerification = async () => {
+    if (verifyBusy) return;
+    setVerifyBusy(true);
+    setVerifyMessage(null);
+    try {
+      const response = await apiFetch<{ mensaje: string }>(
+        '/api/auth/verify-email/resend',
+        { method: 'POST' }
+      );
+      setVerifyMessage(response.mensaje);
+      await refrescarSesion();
+    } catch (err) {
+      setVerifyMessage(errorMessage(err));
+    } finally {
+      setVerifyBusy(false);
+    }
+  };
 
   if (!usuario) return null;
 
@@ -101,7 +121,28 @@ export default function MiCuentaPage() {
             <li><span>Correo</span><strong>{usuario.correo}</strong></li>
             <li><span>Rol</span><strong>{rol}</strong></li>
             <li><span>Estado</span><strong>{usuario.activo ? 'Activo' : 'Inactivo'}</strong></li>
+            <li>
+              <span>Correo</span>
+              <strong>{usuario.correoVerificado ? 'Verificado' : 'Pendiente de verificación'}</strong>
+            </li>
           </ul>
+          {!usuario.correoVerificado && (
+            <div style={{ marginTop: '0.6rem' }}>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => void resendVerification()}
+                disabled={verifyBusy}
+              >
+                {verifyBusy ? 'Enviando…' : 'Reenviar verificación'}
+              </Button>
+              {verifyMessage && (
+                <p className="wa-checkout-notice" role="status" style={{ fontSize: '0.7rem' }}>
+                  {verifyMessage}
+                </p>
+              )}
+            </div>
+          )}
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.85rem' }}>
             <Link href="/cambiar-contrasena?next=%2Fmi-cuenta">
               <Button variant="secondary" size="sm">Cambiar contraseña</Button>

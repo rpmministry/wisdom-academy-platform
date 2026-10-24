@@ -51,6 +51,7 @@ export default defineConfig({
       WISDOM_DB_PATH: e2eDbPath,
       WISDOM_BACKUP_DIR: 'test-results/e2e-backups',
       APP_URL: baseURL,
+      CODE_HASH_PEPPER: 'e2e-only-code-pepper-32-bytes-minimum',
     },
   },
 });

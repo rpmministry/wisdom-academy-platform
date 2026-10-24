@@ -49,6 +49,9 @@ interface CheckoutState {
   currency: string;
   approvalUrl?: string | null;
   freeAccessGranted?: boolean;
+  checkoutMode?: 'account' | 'guest';
+  registrationRequired?: boolean;
+  registrationUrl?: string | null;
 }
 
 interface CompletedOrder {
@@ -62,6 +65,10 @@ function money(cents: number, currency: string): string {
   return new Intl.NumberFormat('es-EC', { style: 'currency', currency }).format(cents / 100);
 }
 
+function isValidEmail(value: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim()) && value.trim().length <= 254;
+}
+
 function newIdempotencyKey(): string {
   const random =
     typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
@@ -72,20 +79,13 @@ function newIdempotencyKey(): string {
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const {
-    usuario,
-    sesionLista,
-    autenticar,
-    cerrarSesion,
-    refrescarSesion,
-    paypalConfigured,
-  } = useAuth();
+  const { usuario, sesionLista, cerrarSesion, refrescarSesion, paypalConfigured } = useAuth();
   const { items, hydrated, subtotalCents, addItem, removeItem, clearCart } = useCart();
 
-  const [identificador, setIdentificador] = useState('');
-  const [contrasenia, setContrasenia] = useState('');
-  const [loginLoading, setLoginLoading] = useState(false);
-  const [loginError, setLoginError] = useState<string | null>(null);
+  // Datos mínimos para la compra. La contraseña y el expediente se completan
+  // después del pago, en /bienvenida/registro.
+  const [buyerEmail, setBuyerEmail] = useState('');
+  const [buyerName, setBuyerName] = useState('');
 
   const [codigoInput, setCodigoInput] = useState('');
   const [codigoAplicado, setCodigoAplicado] = useState('');
@@ -113,13 +113,13 @@ export default function CheckoutPage() {
   const visibleTotal = quote?.totalCents ?? subtotalCents;
   const visibleCurrency = quote?.currency || cartCurrency;
   const isFree = visibleTotal === 0;
+  const emailValid = isValidEmail(buyerEmail);
   const canPay =
-    Boolean(usuario) &&
+    emailValid &&
     Boolean(quote) &&
     !quoteLoading &&
     !quoteError &&
     (isFree || paypalConfigured);
-  const canAttemptPayment = usuario ? canPay : !quoteLoading;
 
   const cartItemById = useMemo(
     () => new Map(items.map((item) => [item.productId, item])),
@@ -184,7 +184,14 @@ export default function CheckoutPage() {
   }, [hydrated]);
 
   useEffect(() => {
-    if (!usuario || items.length === 0) {
+    if (usuario) {
+      setBuyerEmail(usuario.correo);
+      setBuyerName(usuario.nombreCompleto);
+    }
+  }, [usuario]);
+
+  useEffect(() => {
+    if (items.length === 0 || !emailValid) {
       setQuote(null);
       setQuoteLoading(false);
       return;
@@ -198,6 +205,7 @@ export default function CheckoutPage() {
         const response = await apiFetch<{ cotizacion: CheckoutQuote }>('/api/checkout/quote', {
           body: {
             productIds,
+            buyerEmail: buyerEmail.trim(),
             codigoDescuento: codigoAplicado || undefined,
           },
         });
@@ -210,38 +218,14 @@ export default function CheckoutPage() {
       } finally {
         if (!cancelled) setQuoteLoading(false);
       }
-    }, 250);
+    }, 300);
     return () => {
       cancelled = true;
       window.clearTimeout(timer);
     };
     // productKey representa la composición exacta del carrito.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [codigoAplicado, items.length, productKey, usuario?.id]);
-
-  const login = async (event: React.FormEvent) => {
-    event.preventDefault();
-    if (loginLoading) return;
-    setLoginError(null);
-    if (!identificador.trim() || !contrasenia) {
-      setLoginError('Ingresa tu usuario o correo y tu contraseña.');
-      return;
-    }
-    setLoginLoading(true);
-    try {
-      const result = await autenticar(identificador.trim(), contrasenia);
-      if (!result.exito) {
-        setLoginError(result.mensaje);
-        return;
-      }
-      setContrasenia('');
-      if (result.debeCambiarContrasena) {
-        router.push('/cambiar-contrasena?next=%2Fcheckout');
-      }
-    } finally {
-      setLoginLoading(false);
-    }
-  };
+  }, [buyerEmail, codigoAplicado, emailValid, items.length, productKey]);
 
   const cambiarCuenta = async () => {
     const result = await cerrarSesion();
@@ -252,6 +236,8 @@ export default function CheckoutPage() {
     setQuote(null);
     setCodigoAplicado('');
     setCodigoInput('');
+    setBuyerEmail('');
+    setBuyerName('');
   };
 
   const aplicarCodigo = () => {
@@ -271,7 +257,11 @@ export default function CheckoutPage() {
   };
 
   const placeOrder = async () => {
-    if (submittingRef.current || !usuario || items.length === 0) return;
+    if (submittingRef.current || items.length === 0) return;
+    if (!emailValid) {
+      setError('Ingresa el correo de la compra para continuar.');
+      return;
+    }
     if (!canPay) {
       setError(
         isFree
@@ -287,7 +277,7 @@ export default function CheckoutPage() {
     const signature = `${items
       .map((item) => item.productId)
       .sort()
-      .join(',')}|${codigoAplicado}|${usuario.id}`;
+      .join(',')}|${codigoAplicado}|${buyerEmail.trim().toLowerCase()}|${usuario?.id || 'guest'}`;
     if (idempotencyRef.current.signature !== signature) {
       idempotencyRef.current = { signature, key: newIdempotencyKey() };
     }
@@ -296,6 +286,8 @@ export default function CheckoutPage() {
       const response = await apiFetch<{ checkout: CheckoutState }>('/api/checkout', {
         body: {
           productIds: items.map((item) => item.productId),
+          buyerEmail: buyerEmail.trim(),
+          buyerName: buyerName.trim() || undefined,
           codigoDescuento: codigoAplicado || undefined,
         },
         headers: { 'Idempotency-Key': idempotencyRef.current.key },
@@ -307,13 +299,23 @@ export default function CheckoutPage() {
       }
       if (checkout.status === 'paid' || checkout.status === 'free') {
         clearCart();
+        if (checkout.registrationUrl) {
+          router.push(checkout.registrationUrl);
+          return;
+        }
+        if (checkout.registrationRequired) {
+          setError(
+            'El pago está confirmado, pero falta el registro posterior. Escríbenos con la referencia de la orden para recuperar el enlace.'
+          );
+          return;
+        }
         setCompleted({
           orderId: checkout.orderId,
           status: checkout.status,
           totalCents: checkout.totalCents,
           currency: checkout.currency,
         });
-        await refrescarSesion();
+        if (usuario) await refrescarSesion();
         return;
       }
       if (checkout.status === 'failed' || checkout.status === 'cancelled') {
@@ -327,9 +329,9 @@ export default function CheckoutPage() {
         'La orden quedó pendiente sin una URL de PayPal. Revisa tu correo o contacta a administración con la referencia.'
       );
     } catch (err) {
-      if (err instanceof ApiClientError && (err.status === 401 || err.status === 403)) {
+      if (err instanceof ApiClientError && err.status === 401) {
         await refrescarSesion();
-        setLoginError('Tu sesión expiró. Inicia sesión para reanudar el pago.');
+        setError('La sesión expiró. Vuelve a iniciar sesión o continúa como invitado.');
       } else if (
         err instanceof ApiClientError &&
         ['PAYPAL_NOT_CONFIGURED', 'PAYPAL_CREATE_FAILED'].includes(err.code)
@@ -456,15 +458,16 @@ export default function CheckoutPage() {
           <span className="wa-eyebrow">Checkout seguro</span>
           <h1>Revisa tu pedido y completa el pago</h1>
           <p>
-            El importe final se calcula en el servidor con el catálogo vigente. Si todavía no
-            tienes sesión, puedes iniciarla aquí mismo sin perder los productos del carrito.
+            Compra sin crear una cuenta. El importe final se calcula en el servidor con el
+            catálogo vigente; después de confirmar el pago completarás tus datos y credenciales
+            para activar el acceso.
           </p>
         </header>
 
         <ol className="wa-checkout-steps" aria-label="Etapas de la compra">
           <li className="is-active">1. Productos</li>
-          <li className={usuario ? 'is-active' : undefined}>2. Identidad</li>
-          <li className={usuario && quote && !quoteError ? 'is-active' : undefined}>3. Pago</li>
+          <li className={emailValid ? 'is-active' : undefined}>2. Datos de compra</li>
+          <li className={emailValid && quote && !quoteError ? 'is-active' : undefined}>3. Pago</li>
         </ol>
 
         <div className="wa-checkout-grid">
@@ -532,95 +535,81 @@ export default function CheckoutPage() {
             <section className="wa-checkout-card" aria-labelledby="checkout-identity-heading">
               <div className="wa-checkout-card-head">
                 <div>
-                  <h2 id="checkout-identity-heading">Identidad del comprador</h2>
+                  <h2 id="checkout-identity-heading">Datos de compra</h2>
                   <p>
-                    {usuario
-                      ? 'La orden quedará vinculada a esta cuenta.'
-                      : 'Inicia sesión con tu cuenta institucional para registrar la compra.'}
+                    Compra como invitado. Después de confirmar el pago crearás tu contraseña y
+                    completarás tu matrícula.
                   </p>
                 </div>
-                <WisdomIcon name={usuario ? 'shield' : 'user'} size={22} />
+                <Badge variant="navy" size="sm">
+                  {usuario ? 'Cuenta vinculada' : 'Invitado'}
+                </Badge>
               </div>
 
-              {usuario ? (
-                <div className="wa-checkout-auth">
-                  <p style={{ margin: 0, fontSize: '0.84rem' }}>
-                    <strong>{usuario.nombreCompleto}</strong>
-                    <br />
-                    <span style={{ color: 'var(--text-secondary)' }}>{usuario.correo}</span>
-                  </p>
-                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <form className="wa-checkout-auth" onSubmit={(event) => event.preventDefault()}>
+                <div className="wa-checkout-auth-fields">
+                  <label className="wa-checkout-field" htmlFor="checkout-email">
+                    Correo para la compra y el acceso
+                    <input
+                      id="checkout-email"
+                      name="email"
+                      type="email"
+                      inputMode="email"
+                      autoComplete="email"
+                      autoCapitalize="none"
+                      spellCheck={false}
+                      maxLength={254}
+                      value={buyerEmail}
+                      onChange={(event) => setBuyerEmail(event.target.value)}
+                      readOnly={Boolean(usuario)}
+                      required
+                    />
+                  </label>
+                  <label className="wa-checkout-field" htmlFor="checkout-name">
+                    Nombre del comprador (opcional)
+                    <input
+                      id="checkout-name"
+                      name="name"
+                      type="text"
+                      autoComplete="name"
+                      maxLength={160}
+                      value={buyerName}
+                      onChange={(event) => setBuyerName(event.target.value)}
+                    />
+                  </label>
+                </div>
+
+                {usuario ? (
+                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                    <span style={{ color: 'var(--text-secondary)', fontSize: '0.74rem' }}>
+                      La compra se vinculará a la cuenta de {usuario.nombreCompleto}.
+                    </span>
                     <Button variant="secondary" size="sm" onClick={() => void cambiarCuenta()}>
                       Usar otra cuenta
                     </Button>
-                    <Link href="/cambiar-contrasena?next=%2Fcheckout">
-                      <Button variant="secondary" size="sm">Cambiar contraseña</Button>
-                    </Link>
                   </div>
-                </div>
-              ) : (
-                <form className="wa-checkout-auth" onSubmit={login}>
-                  {loginError && (
-                    <div className="wa-checkout-error" role="alert" id="checkout-login-error">
-                      <WisdomIcon name="shield" size={16} />
-                      <span>{loginError}</span>
-                    </div>
-                  )}
-                  <div className="wa-checkout-auth-fields">
-                    <label className="wa-checkout-field" htmlFor="checkout-identificador">
-                      Usuario o correo
-                      <input
-                        id="checkout-identificador"
-                        name="identificador"
-                        type="text"
-                        autoComplete="username"
-                        autoCapitalize="none"
-                        spellCheck={false}
-                        maxLength={200}
-                        value={identificador}
-                        onChange={(event) => setIdentificador(event.target.value)}
-                        aria-invalid={Boolean(loginError)}
-                        aria-describedby={loginError ? 'checkout-login-error' : undefined}
-                        required
-                      />
-                    </label>
-                    <label className="wa-checkout-field" htmlFor="checkout-contrasenia">
-                      Contraseña
-                      <input
-                        id="checkout-contrasenia"
-                        name="contrasenia"
-                        type="password"
-                        autoComplete="current-password"
-                        maxLength={300}
-                        value={contrasenia}
-                        onChange={(event) => setContrasenia(event.target.value)}
-                        aria-invalid={Boolean(loginError)}
-                        aria-describedby={loginError ? 'checkout-login-error' : undefined}
-                        required
-                      />
-                    </label>
-                  </div>
-                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                    <Button
-                      type="submit"
-                      variant="primary-navy"
-                      size="sm"
-                      disabled={loginLoading}
-                      cargando={loginLoading}
-                    >
-                      {loginLoading ? 'Verificando…' : 'Iniciar sesión y continuar'}
-                    </Button>
-                    <Link href="/login?next=%2Fcheckout">
-                      <Button variant="secondary" size="sm">Ir a la página de acceso</Button>
-                    </Link>
-                  </div>
-                  <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.7rem', lineHeight: 1.5 }}>
-                    Las cuentas de Wisdom Academy se habilitan desde administración. Si todavía
-                    no tienes credenciales, contacta a la institución; no necesitas crearlas de
-                    nuevo.
+                ) : (
+                  <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.72rem', lineHeight: 1.55 }}>
+                    ¿Ya tienes una cuenta?{' '}
+                    <Link href="/login?next=%2Fcheckout" style={{ color: 'var(--brand-gold-dark)' }}>
+                      Inicia sesión
+                    </Link>{' '}
+                    para vincular la compra. También puedes continuar sin cuenta.
                   </p>
-                </form>
-              )}
+                )}
+
+                <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.7rem', lineHeight: 1.5 }}>
+                  Al continuar aceptas los{' '}
+                  <Link href="/terminos" target="_blank" rel="noreferrer">
+                    términos y condiciones
+                  </Link>{' '}
+                  y el{' '}
+                  <Link href="/privacidad" target="_blank" rel="noreferrer">
+                    tratamiento de datos personales
+                  </Link>
+                  . Las autorizaciones de menores se solicitan en el registro posterior al pago.
+                </p>
+              </form>
             </section>
 
             <section className="wa-checkout-card" aria-labelledby="checkout-payment-heading">
@@ -739,22 +728,22 @@ export default function CheckoutPage() {
                   variant="primary-gold"
                   size="lg"
                   onClick={() => {
-                    if (!usuario) {
+                    if (!emailValid) {
                       document
-                        .getElementById('checkout-identificador')
+                        .getElementById('checkout-email')
                         ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                      document.getElementById('checkout-identificador')?.focus();
+                      document.getElementById('checkout-email')?.focus();
                       return;
                     }
                     void placeOrder();
                   }}
-                  disabled={submitting || quoteLoading || (Boolean(usuario) && !canAttemptPayment)}
+                  disabled={submitting || quoteLoading || (emailValid && !canPay)}
                   cargando={submitting}
                 >
                   {submitting
                     ? 'Preparando el pago…'
-                    : !usuario
-                      ? 'Inicia sesión para pagar'
+                    : !emailValid
+                      ? 'Ingresa tu correo para pagar'
                       : isFree
                         ? 'Confirmar acceso gratuito'
                         : 'Pagar con PayPal'}
@@ -766,7 +755,8 @@ export default function CheckoutPage() {
 
               <p style={{ margin: '0.75rem 0 0', color: 'var(--text-muted)', fontSize: '0.66rem', lineHeight: 1.5 }}>
                 Al continuar aceptas que el acceso se concede únicamente cuando el servidor
-                confirma el pago. Si cancelas PayPal, el carrito se conserva para reintentar.
+                confirma el pago y completas el registro. Si cancelas PayPal, el carrito se
+                conserva para reintentar.
               </p>
             </div>
           </aside>

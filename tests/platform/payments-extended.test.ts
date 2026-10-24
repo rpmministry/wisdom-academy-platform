@@ -15,6 +15,11 @@ import {
 } from '../../src/server/domain/checkout';
 import { createProgram } from '../../src/server/domain/coursePrograms';
 import { listUserEntitlements } from '../../src/server/domain/access';
+import {
+  getRegistrationView,
+  registrationUrlForOrder,
+} from '../../src/server/domain/checkoutRegistration';
+import { GUEST_CHECKOUT_USER_ID } from '../../src/server/domain/guestCheckout';
 import { POST as checkoutPOST } from '../../src/app/api/checkout/route';
 import { POST as capturePOST } from '../../src/app/api/checkout/capture/route';
 import { POST as webhookPOST } from '../../src/app/api/paypal/webhook/route';
@@ -760,7 +765,7 @@ test('una reversión cuyo resource.id es la captura no sobrescribe la captura or
   assert.equal(reversal.provider_txn_id, `reversal:${captureId}`);
 });
 
-test('la ruta de checkout exige sesión y la ruta de captura usa la sesión autenticada', async () => {
+test('el checkout permite invitados con correo y la captura autenticada sigue vinculada', async () => {
   const anonymous = await checkoutPOST(
     new NextRequest('http://127.0.0.1:3100/api/checkout', {
       method: 'POST',
@@ -768,7 +773,40 @@ test('la ruta de checkout exige sesión y la ruta de captura usa la sesión aute
       body: JSON.stringify({ productIds: [productId('curso-python-ia-jovenes')] }),
     })
   );
-  assert.equal(anonymous.status, 401);
+  assert.equal(anonymous.status, 400);
+  assert.equal(
+    ((await anonymous.json()) as { code: string }).code,
+    'EMAIL_REQUIRED'
+  );
+
+  const guestEmail = `pay-ext-guest-${Date.now()}@test.local`;
+  const guest = await checkoutPOST(
+    new NextRequest('http://127.0.0.1:3100/api/checkout', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        productIds: [productId('curso-python-ia-jovenes')],
+        buyerEmail: guestEmail,
+      }),
+    })
+  );
+  assert.equal(guest.status, 200);
+  const guestBody = (await guest.json()) as {
+    checkout: {
+      orderId: string;
+      checkoutMode: string;
+      registrationRequired: boolean;
+      approvalUrl: string;
+    };
+  };
+  assert.equal(guestBody.checkout.checkoutMode, 'guest');
+  assert.equal(guestBody.checkout.registrationRequired, true);
+  assert.ok(guestBody.checkout.approvalUrl);
+  const guestOrder = prepare('SELECT user_id, buyer_email FROM orders WHERE id = ?').get(
+    guestBody.checkout.orderId
+  ) as { user_id: string; buyer_email: string };
+  assert.equal(guestOrder.user_id, 'usr_guest_checkout');
+  assert.equal(guestOrder.buyer_email, guestEmail);
 
   const userId = createUser({ email: `pay-ext-route-${Date.now()}@test.local` });
   const session = sessionHeaders(userId);
@@ -846,6 +884,55 @@ test('el webhook público procesa un evento verificado a través de la ruta Next
   );
 });
 
+test('el webhook de una compra invitada prepara el registro sin conceder acceso', async () => {
+  const email = `guest-webhook-${Date.now()}@test.local`;
+  const checkout = await createCheckout({
+    buyerEmail: email,
+    productIds: [productId('taller-escuela-padres-homeschoolers')],
+    appUrl: 'http://127.0.0.1:3100',
+  });
+  const order = prepare('SELECT total_cents, paypal_order_id FROM orders WHERE id = ?').get(
+    checkout.orderId
+  ) as { total_cents: number; paypal_order_id: string };
+  const event = captureCompletedEvent({
+    eventId: `WH-GUEST-ROUTE-${Date.now()}`,
+    orderId: checkout.orderId,
+    paypalOrderId: order.paypal_order_id,
+    captureId: `CAP-GUEST-ROUTE-${Date.now()}`,
+    amount: Number(order.total_cents),
+  });
+  const response = await webhookPOST(
+    new NextRequest('http://127.0.0.1:3100/api/paypal/webhook', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'paypal-transmission-id': `tx-guest-route-${Date.now()}`,
+        'paypal-transmission-time': new Date().toISOString(),
+        'paypal-cert-url': 'https://example.test/cert',
+        'paypal-auth-algo': 'SHA256withRSA',
+        'paypal-transmission-sig': 'signature',
+      },
+      body: JSON.stringify(event),
+    })
+  );
+  assert.equal(response.status, 200);
+  const guestOrder = prepare(
+    'SELECT status, registration_status FROM orders WHERE id = ?'
+  ).get(checkout.orderId) as { status: string; registration_status: string };
+  assert.equal(guestOrder.status, 'paid');
+  assert.equal(guestOrder.registration_status, 'pending');
+  const registration = prepare(
+    'SELECT status FROM checkout_registrations WHERE order_id = ?'
+  ).get(checkout.orderId) as { status: string } | undefined;
+  assert.equal(registration?.status, 'pending');
+  assert.equal(
+    listUserEntitlements(GUEST_CHECKOUT_USER_ID).filter(
+      (right) => right.effectiveStatus === 'active'
+    ).length,
+    0
+  );
+});
+
 test('el administrador puede fijar el precio pendiente y habilitar la compra', async () => {
   const adminId = createUser({
     email: `pay-ext-admin-${Date.now()}@test.local`,
@@ -914,7 +1001,11 @@ test('las migraciones de SQLite incluyen el estado de precio y el adaptador loca
   const migration = prepare('SELECT MAX(version) AS version FROM schema_migrations').get() as {
     version: number;
   };
-  assert.ok(Number(migration.version) >= 8);
+  assert.ok(Number(migration.version) >= 9);
+  const registrationTable = prepare(
+    "SELECT COUNT(*) AS total FROM sqlite_master WHERE type = 'table' AND name = 'checkout_registrations'"
+  ).get() as { total: number };
+  assert.equal(Number(registrationTable.total), 1);
   const column = prepare(
     "SELECT COUNT(*) AS total FROM pragma_table_info('products') WHERE name = 'price_status'"
   ).get() as { total: number };
@@ -928,4 +1019,47 @@ test('la configuración pública no expone el secreto de PayPal', async () => {
   assert.equal('clientSecret' in body, false);
   assert.equal('paypalClientId' in body, false);
   assert.equal(typeof body.paypalConfigured, 'boolean');
+});
+
+test('un invitado captura con el token de PayPal y no recibe acceso hasta registrarse', async () => {
+  const email = `guest-capture-${Date.now()}@test.local`;
+  const checkout = await createCheckout({
+    buyerEmail: email,
+    productIds: [productId('taller-escuela-padres-homeschoolers')],
+    appUrl: 'http://127.0.0.1:3100',
+  });
+  const paypalOrderId = checkout.approvalUrl?.split('/').pop() || '';
+  assert.ok(paypalOrderId);
+  await assert.rejects(
+    () =>
+      captureCheckout({
+        user: null,
+        orderId: checkout.orderId,
+        paypalOrderId: 'TOKEN-AJENO',
+      }),
+    /no existe/i
+  );
+  const captured = await captureCheckout({
+    user: null,
+    orderId: checkout.orderId,
+    paypalOrderId,
+  });
+  assert.equal(captured.status, 'paid');
+  const order = prepare('SELECT user_id, registration_status FROM orders WHERE id = ?').get(
+    checkout.orderId
+  ) as { user_id: string; registration_status: string };
+  assert.equal(order.user_id, GUEST_CHECKOUT_USER_ID);
+  assert.equal(order.registration_status, 'pending');
+  assert.equal(
+    listUserEntitlements(GUEST_CHECKOUT_USER_ID).filter(
+      (right) => right.effectiveStatus === 'active'
+    ).length,
+    0
+  );
+  const url = registrationUrlForOrder(checkout.orderId);
+  const token = new URL(url).searchParams.get('token');
+  assert.ok(token);
+  const view = getRegistrationView(token);
+  assert.equal(view.status, 'pending');
+  assert.equal(view.accountExists, false);
 });
