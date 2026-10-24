@@ -29,8 +29,13 @@ function CheckoutCancelPageInner() {
       <Card variant="surface" padding="lg" style={{ width: 'min(520px, 100%)' }}>
         <h1 style={{ marginTop: 0, fontSize: '1.25rem' }}>Compra cancelada</h1>
         <p style={{ color: 'var(--text-secondary)' }}>{mensaje}</p>
+        <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem', lineHeight: 1.55 }}>
+          Tu carrito se conserva. Puedes reintentar el pago sin crear cargos duplicados por la
+          misma orden.
+        </p>
         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-          <Link href="/catalogo"><Button variant="primary-gold" size="sm">Volver al catálogo</Button></Link>
+          <Link href="/checkout"><Button variant="primary-gold" size="sm">Volver al checkout</Button></Link>
+          <Link href="/catalogo"><Button variant="secondary" size="sm">Ir al catálogo</Button></Link>
           <Link href="/dashboard"><Button variant="secondary" size="sm">Ir a mi portal</Button></Link>
         </div>
       </Card>

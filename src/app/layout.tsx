@@ -29,7 +29,9 @@ import '@/styles/lesson-workspace.css';
 import '@/styles/meetings.css';
 import '@/styles/admin-workspace.css';
 import '@/styles/portal-shell.css';
+import '@/styles/storefront.css';
 import { AuthProvider } from '@/lib/auth/authContext';
+import { CartProvider } from '@/lib/cart/cartContext';
 
 /**
  * Evita que una compilación local con APP_URL=http://localhost:3000 publique
@@ -137,9 +139,9 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        <CartProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </CartProvider>
       </body>
     </html>
   );

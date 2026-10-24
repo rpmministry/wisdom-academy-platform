@@ -604,9 +604,42 @@ function ensureE2EAdmin(db: SqliteDatabase): void {
   `).run(adminEmail, timestamp, timestamp);
 }
 
+/**
+ * Fixture exclusivo de pruebas E2E: administrador delegado con permisos
+ * financieros explícitos. Permite validar la vista de pagos sin conceder
+ * control total de la plataforma.
+ */
+function ensureE2EFinance(db: SqliteDatabase): void {
+  const email = 'e2e.finanzas@wisdomacademy.test';
+  const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
+  if (existing) return;
+  const timestamp = nowIso();
+  const userId = 'usr_e2e_finance';
+  const password = process.env.WISDOM_E2E_PASSWORD || 'E2eWisdom!2026-test';
+  db.prepare(`
+    INSERT INTO users
+      (id, email, email_verified, display_name, username, password_hash, password_updated_at,
+       must_change_password, status, is_minor, created_at, updated_at)
+    VALUES (?, ?, 1, 'Analista Financiero E2E', 'e2e_finanzas', ?, ?, 0, 'active', 0, ?, ?)
+  `).run(userId, email, hashPasswordSync(password), timestamp, timestamp, timestamp);
+  db.prepare(`
+    INSERT OR IGNORE INTO user_roles
+      (id, user_id, role_code, granted_by, granted_at)
+    VALUES ('ur_e2e_finance', ?, 'delegated_admin', 'seed_e2e', ?)
+  `).run(userId, timestamp);
+  const grant = db.prepare(`
+    INSERT OR IGNORE INTO user_permissions
+      (id, user_id, permission_code, granted_by, granted_at)
+    VALUES (?, ?, ?, 'seed_e2e', ?)
+  `);
+  grant.run('up_e2e_finance_orders_read', userId, 'orders.read', timestamp);
+  grant.run('up_e2e_finance_products_read', userId, 'products.read', timestamp);
+}
+
 function seedE2EStudent(db: SqliteDatabase): void {
   if (process.env.WISDOM_E2E !== '1') return;
   ensureE2EAdmin(db);
+  ensureE2EFinance(db);
 
   const existing = db
     .prepare('SELECT id FROM users WHERE email = ?')

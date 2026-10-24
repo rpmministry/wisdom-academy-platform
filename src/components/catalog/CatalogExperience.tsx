@@ -9,8 +9,10 @@ import { apiFetch, errorMessage } from '@/lib/api/client';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { WisdomIcon } from '@/components/ui/WisdomIcon';
+import { PublicHeader } from '@/components/layout/PublicHeader';
 import { AcademySections } from '@/components/marketing/AcademySections';
 import { SchoolPortalModal } from '@/components/catalog/SchoolPortalModal';
+import { useCart } from '@/lib/cart/cartContext';
 import {
   HOMESCHOOL_OFFER_DESCRIPTION,
   HOMESCHOOL_OFFER_LABEL,
@@ -58,17 +60,6 @@ interface CatalogProduct {
   guideUrl: string | null;
   contentStatus: 'available' | 'upcoming';
 }
-
-interface CheckoutState {
-  orderId: string;
-  status: string;
-  totalCents: number;
-  currency: string;
-  approvalUrl?: string | null;
-  freeAccessGranted?: boolean;
-}
-
-const CATEGORIES = ['Todos', 'Programas y grados', 'Talleres', 'Cursos', 'Recursos gratuitos'];
 
 const TYPE_LABEL: Record<string, string> = {
   course: 'Curso',
@@ -140,14 +131,8 @@ function OfertaAnualHomeschool({
 
 export function CatalogExperience({ home = false }: { home?: boolean }) {
   const router = useRouter();
-  const {
-    usuario,
-    sesionLista,
-    tienePermiso,
-    refrescarSesion,
-    temaOscuro,
-    alternarTema,
-  } = useAuth();
+  const { usuario } = useAuth();
+  const { addItem, hasItem } = useCart();
   const [productos, setProductos] = useState<CatalogProduct[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -157,25 +142,33 @@ export function CatalogExperience({ home = false }: { home?: boolean }) {
   const [schoolModalOpen, setSchoolModalOpen] = useState(false);
   const [orden, setOrden] = useState<'recomendados' | 'precio-asc' | 'precio-desc' | 'nombre'>('recomendados');
   const [seleccionado, setSeleccionado] = useState<CatalogProduct | null>(null);
-  const [codigo, setCodigo] = useState('');
-  const [comprando, setComprando] = useState(false);
-  const [resultado, setResultado] = useState<CheckoutState | null>(null);
+  const [cartNotice, setCartNotice] = useState<string | null>(null);
   const hasLoaded = useRef(false);
-  const checkoutKey = useRef<string>('');
 
-  const nuevoCheckoutKey = (productId: string): string => {
-    const random =
-      typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
-        ? crypto.randomUUID()
-        : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-    return `shop-${productId}-${random}`.slice(0, 100);
-  };
+  useEffect(() => {
+    if (!cartNotice) return;
+    const timer = window.setTimeout(() => setCartNotice(null), 4000);
+    return () => window.clearTimeout(timer);
+  }, [cartNotice]);
+
+  useEffect(() => {
+    if (!seleccionado) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setSeleccionado(null);
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [seleccionado]);
 
   const cargar = useCallback(async () => {
     if (!hasLoaded.current) setCargando(true);
     setError(null);
     try {
-      const response = await apiFetch<{ productos: CatalogProduct[] }>('/api/catalog');
+      const response = await apiFetch<{ productos: CatalogProduct[] }>('/api/catalog', {
+        // El catálogo agrega productos, recursos y programas; en redes lentas o
+        // servidores en arranque merece más margen que una mutación puntual.
+        timeoutMs: 45_000,
+      });
       setProductos(response.productos);
       hasLoaded.current = true;
     } catch (err) {
@@ -209,6 +202,14 @@ export function CatalogExperience({ home = false }: { home?: boolean }) {
     if (!categoryOptions.includes(categoria)) setCategoria('Todos');
   }, [categoria, categoryOptions]);
 
+  // El portal elegido se refleja en la URL para conservarlo al recargar y
+  // permitir enlaces directos al Portal Escolar o a Cursos y Talleres.
+  useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get('portal');
+    if (requested === 'escolar') setPortalActivo('school');
+    if (requested === 'cursos') setPortalActivo('pro');
+  }, []);
+
   const filtrados = useMemo(() => {
     const term = busqueda.trim().toLowerCase();
     const list = portalProducts.filter((product) => {
@@ -226,113 +227,50 @@ export function CatalogExperience({ home = false }: { home?: boolean }) {
     return list;
   }, [busqueda, categoria, orden, portalProducts]);
 
+  const agregarAlCarrito = (producto: CatalogProduct): boolean => {
+    if (esProductoGuia(producto) || esProximamente(producto) || esPrecioPendiente(producto)) {
+      return false;
+    }
+    const result = addItem({
+      productId: producto.id,
+      slug: producto.slug,
+      name: producto.name,
+      priceCents: producto.priceCents,
+      currency: producto.currency,
+      coverImage: producto.coverImage,
+      category: producto.category,
+    });
+    if (result.ok) {
+      setCartNotice(`«${producto.name}» se agregó al carrito.`);
+      return true;
+    }
+    if (result.reason === 'exists') {
+      setCartNotice(`«${producto.name}» ya está en tu carrito.`);
+    } else if (result.reason === 'limit') {
+      setCartNotice('El carrito admite hasta 20 productos. Retira uno para continuar.');
+    } else {
+      setCartNotice('No fue posible agregar este producto al carrito.');
+    }
+    return false;
+  };
+
   const abrirCompra = (producto: CatalogProduct) => {
     if (esProductoGuia(producto) || esProximamente(producto) || esPrecioPendiente(producto)) return;
-    if (!sesionLista) return;
-    if (!usuario) {
-      router.push('/login');
-      return;
-    }
-    setResultado(null);
-    setCodigo('');
-    checkoutKey.current = nuevoCheckoutKey(producto.id);
     setSeleccionado(producto);
   };
 
-  const comprar = async () => {
-    if (!seleccionado || esPrecioPendiente(seleccionado)) return;
-    setComprando(true);
-    setError(null);
-    try {
-      if (!checkoutKey.current) checkoutKey.current = nuevoCheckoutKey(seleccionado.id);
-      const response = await apiFetch<{ checkout: CheckoutState }>('/api/checkout', {
-        body: {
-          productIds: [seleccionado.id],
-          codigoDescuento: codigo.trim() || undefined,
-        },
-        headers: { 'Idempotency-Key': checkoutKey.current },
-      });
-      const checkout = response.checkout;
-      setResultado(checkout);
-      if (checkout.approvalUrl) {
-        window.location.assign(checkout.approvalUrl);
-        return;
-      }
-      await refrescarSesion();
-      await cargar();
-    } catch (err) {
-      setError(errorMessage(err));
-    } finally {
-      setComprando(false);
-    }
+  const comprarAhora = (producto: CatalogProduct) => {
+    if (esPrecioPendiente(producto) || esProximamente(producto)) return;
+    if (!hasItem(producto.id)) agregarAlCarrito(producto);
+    setSeleccionado(null);
+    router.push('/checkout');
   };
 
   const collage = productos.slice(0, 3);
 
   return (
     <main className="wa-catalog-page">
-      <header className="wa-catalog-header">
-        <Link href="/" className="wa-catalog-brand" aria-label="Wisdom Academy">
-          <Image
-            src="/brand/svg/wisdom-logo-horizontal-black.svg"
-            alt="Wisdom Academy"
-            width={168}
-            height={32}
-            priority
-            className="wa-logo-for-light"
-          />
-          <Image
-            src="/brand/svg/wisdom-logo-horizontal-white.svg"
-            alt=""
-            width={168}
-            height={32}
-            priority
-            className="wa-logo-for-dark"
-          />
-        </Link>
-        <nav className="wa-catalog-nav">
-          {home ? (
-            <>
-              <a href="#academia" className="wa-landing-anchor">Academia</a>
-              <a href="#metodo" className="wa-landing-anchor">Método</a>
-              <a href="#programas" className="wa-landing-anchor">Programas</a>
-              <a href="#preguntas" className="wa-landing-anchor">Preguntas</a>
-            </>
-          ) : (
-            <Link href="/" style={{ textDecoration: 'none' }}>
-              <Button variant="secondary" size="sm">Inicio</Button>
-            </Link>
-          )}
-          <button
-            type="button"
-            className="wa-theme-toggle"
-            onClick={alternarTema}
-            aria-label={temaOscuro ? 'Activar modo claro' : 'Activar modo oscuro'}
-            title={temaOscuro ? 'Activar modo claro' : 'Activar modo oscuro'}
-          >
-            <WisdomIcon name={temaOscuro ? 'sun' : 'moon'} size={16} color="current" />
-          </button>
-          {usuario ? (
-            <>
-              <Link href="/mi-acceso" style={{ textDecoration: 'none' }}>
-                <Button variant="secondary" size="sm">Mi acceso</Button>
-              </Link>
-              {tienePermiso('admin.access') && (
-                <Link href="/admin" style={{ textDecoration: 'none' }}>
-                  <Button variant="secondary" size="sm">Panel</Button>
-                </Link>
-              )}
-              <Link href="/dashboard" style={{ textDecoration: 'none' }}>
-                <Button variant="primary-navy" size="sm">Mi portal</Button>
-              </Link>
-            </>
-          ) : (
-            <Link href="/login" style={{ textDecoration: 'none' }}>
-              <Button variant="primary-gold" size="sm">Iniciar sesión</Button>
-            </Link>
-          )}
-        </nav>
-      </header>
+      <PublicHeader home={home} />
 
       <section className={`wa-catalog-hero${home ? ' wa-home-hero' : ''}`}>
         <div>
@@ -444,8 +382,12 @@ export function CatalogExperience({ home = false }: { home?: boolean }) {
         <Tabs.Root
           value={portalActivo}
           onValueChange={(value) => {
-            setPortalActivo(value as 'school' | 'pro');
+            const next = value === 'school' ? 'school' : 'pro';
+            setPortalActivo(next);
             setCategoria('Todos');
+            const url = new URL(window.location.href);
+            url.searchParams.set('portal', next === 'school' ? 'escolar' : 'cursos');
+            window.history.replaceState(null, '', url.toString());
           }}
           className="wa-portal-tabs"
         >
@@ -543,6 +485,12 @@ export function CatalogExperience({ home = false }: { home?: boolean }) {
             >
               Reintentar
             </Button>
+          </div>
+        )}
+
+        {cartNotice && (
+          <div className="wa-checkout-notice" role="status" aria-live="polite">
+            {cartNotice}
           </div>
         )}
 
@@ -696,9 +644,20 @@ export function CatalogExperience({ home = false }: { home?: boolean }) {
                           <Button variant="primary-gold" size="sm">Acceder</Button>
                         </Link>
                       ) : (
-                        <Button variant="primary-navy" size="sm" onClick={() => abrirCompra(producto)}>
-                          {producto.priceCents === 0 ? 'Obtener' : 'Comprar'}
-                        </Button>
+                        <div className="wa-course-buy-actions">
+                          <Button variant="primary-navy" size="sm" onClick={() => abrirCompra(producto)}>
+                            {producto.priceCents === 0 ? 'Obtener' : 'Comprar'}
+                          </Button>
+                          <button
+                            type="button"
+                            className="wa-course-cart-add"
+                            aria-label={`Agregar ${producto.name} al carrito`}
+                            title="Agregar al carrito"
+                            onClick={() => agregarAlCarrito(producto)}
+                          >
+                            <WisdomIcon name="shopping-cart" size={15} color="current" />
+                          </button>
+                        </div>
                       )}
                     </div>
                   </div>
@@ -789,91 +748,78 @@ export function CatalogExperience({ home = false }: { home?: boolean }) {
 
       {seleccionado && (
         <div
-          role="dialog"
-          aria-modal="true"
-          aria-label={`Comprar ${seleccionado.name}`}
-          style={{ position: 'fixed', inset: 0, background: 'rgba(8, 15, 30, 0.65)', display: 'grid', placeItems: 'center', padding: '1rem', zIndex: 100 }}
-          onClick={(event) => {
+          className="wa-course-modal-backdrop"
+          role="presentation"
+          onMouseDown={(event) => {
             if (event.target === event.currentTarget) setSeleccionado(null);
           }}
         >
-          <div style={{ width: 'min(560px, 100%)', borderRadius: 20, background: 'var(--bg-surface)', overflow: 'hidden', boxShadow: 'var(--shadow-overlay)' }}>
-            <div style={{ position: 'relative', aspectRatio: '16 / 7' }}>
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="wa-course-modal-title"
+            className="wa-course-modal"
+          >
+            <div className="wa-course-modal-cover">
               <Image src={seleccionado.coverImage} alt="" fill sizes="560px" />
               <div className="wa-course-cover-overlay" />
-              <div style={{ position: 'absolute', left: '1rem', bottom: '0.8rem', color: '#fff' }}>
+              <button
+                type="button"
+                className="wa-course-modal-close"
+                onClick={() => setSeleccionado(null)}
+                aria-label="Cerrar ficha de compra"
+              >
+                <WisdomIcon name="close" size={18} color="#fff" />
+              </button>
+              <div className="wa-course-modal-title">
                 <Badge variant="gold" size="sm">{seleccionado.category}</Badge>
-                <h2 style={{ margin: '0.4rem 0 0', fontFamily: 'var(--wa-font-display)', fontSize: '1.35rem' }}>{seleccionado.name}</h2>
+                <h2 id="wa-course-modal-title">{seleccionado.name}</h2>
               </div>
             </div>
-            <div style={{ padding: '1.1rem' }}>
+            <div className="wa-course-modal-body">
               {seleccionado.annualOffer ? (
                 <OfertaAnualHomeschool producto={seleccionado} contexto="modal" />
               ) : (
-                <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.82rem' }}>
+                <p className="wa-course-modal-price">
                   Total:{' '}
-                  <strong style={{ color: 'var(--text-primary)' }}>
+                  <strong>
                     {seleccionado.pricePending
                       ? 'Precio por definir'
                       : formatoPrecio(seleccionado.priceCents, seleccionado.currency)}
                   </strong>
                   {seleccionado.metadata.offerPeriod ? (
-                    <span style={{ color: 'var(--text-secondary)' }}>
-                      {' '}· {seleccionado.metadata.offerPeriod}
-                    </span>
+                    <span> · {seleccionado.metadata.offerPeriod}</span>
                   ) : null}
                 </p>
               )}
-              <p style={{ margin: '0.4rem 0 0.8rem', fontSize: '0.72rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+              <p className="wa-course-modal-includes">
                 Incluye: {seleccionado.resources.map((resource) => resource.title).join(' · ')}
               </p>
-              <label style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', fontSize: '0.75rem', fontWeight: 650 }}>
-                Código de descuento (opcional)
-                <input
-                  value={codigo}
-                  onChange={(event) => setCodigo(event.target.value)}
-                  placeholder="WA-PROMO-…"
-                  autoComplete="off"
-                  style={{ minHeight: 42, padding: '0.55rem 0.7rem', borderRadius: 9, border: '1px solid var(--border-default)', background: 'var(--bg-surface)', color: 'var(--text-primary)', textTransform: 'uppercase' }}
-                />
-              </label>
-              {resultado && (
-                <div style={{ marginTop: '0.8rem', padding: '0.7rem', borderRadius: 10, background: 'var(--brand-primary-soft)', fontSize: '0.78rem' }}>
-                  {resultado.status === 'free' ? (
-                    <>
-                      <strong>Acceso gratuito registrado.</strong>
-                      <div style={{ marginTop: '0.4rem' }}>
-                        <Link href="/mi-acceso"><Button variant="primary-gold" size="sm">Ver mi acceso</Button></Link>
-                      </div>
-                    </>
-                  ) : resultado.status === 'paid' ? (
-                    <>
-                      <strong>Pago confirmado.</strong>
-                      <div style={{ marginTop: '0.4rem' }}>
-                        <Link href="/mi-acceso"><Button variant="primary-gold" size="sm">Ver mi acceso</Button></Link>
-                      </div>
-                    </>
-                  ) : (
-                    <span>Orden creada. Redirigiendo a PayPal…</span>
-                  )}
-                </div>
-              )}
-              <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end', flexWrap: 'wrap', marginTop: '0.9rem' }}>
-                <Button variant="secondary" size="sm" onClick={() => setSeleccionado(null)} disabled={comprando}>
-                  Cancelar
+              <p className="wa-course-modal-note">
+                El código de descuento y el importe definitivo se confirman en el checkout. La
+                compra concede acceso únicamente a los productos incluidos en la orden pagada.
+              </p>
+              <div className="wa-course-modal-actions">
+                <Button variant="secondary" size="sm" onClick={() => setSeleccionado(null)}>
+                  Seguir explorando
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => agregarAlCarrito(seleccionado)}
+                  disabled={seleccionado.pricePending}
+                >
+                  <WisdomIcon name="shopping-cart" size={15} />
+                  Agregar al carrito
                 </Button>
                 <Button
                   variant="primary-gold"
                   size="sm"
-                  onClick={comprar}
-                  disabled={comprando || seleccionado.pricePending}
-                  cargando={comprando}
+                  onClick={() => comprarAhora(seleccionado)}
+                  disabled={seleccionado.pricePending}
                 >
-                  {seleccionado.pricePending
-                    ? 'Precio por definir'
-                    : seleccionado.priceCents === 0
-                      ? 'Confirmar acceso'
-                      : 'Pagar con PayPal'}
+                  {seleccionado.priceCents === 0 ? 'Obtener ahora' : 'Comprar ahora'}
+                  <WisdomIcon name="arrow-right" size={15} />
                 </Button>
               </div>
             </div>

@@ -315,6 +315,58 @@ function markOrderPaid(input: {
   });
 }
 
+export interface CheckoutQuote {
+  items: Array<{
+    productId: string;
+    slug: string;
+    title: string;
+    unitPriceCents: number;
+    currency: string;
+  }>;
+  subtotalCents: number;
+  discountCents: number;
+  totalCents: number;
+  currency: string;
+  discountName: string | null;
+}
+
+/**
+ * Cotización sin efectos secundarios. El cliente la usa solo para mostrar el
+ * resumen; la orden y el cobro vuelven a validar catálogo, moneda y descuento.
+ */
+export function quoteCheckout(input: {
+  user: AuthUser;
+  productIds: string[];
+  discountCode?: string | null;
+}): CheckoutQuote {
+  const productIds = [...new Set(input.productIds)];
+  const { products } = loadPublishedProducts(productIds);
+  const currency = paypalConfig().currency;
+  const subtotalCents = products.reduce((total, product) => total + product.priceCents, 0);
+  const discount = input.discountCode?.trim()
+    ? validateDiscountForUser({
+        code: input.discountCode,
+        userId: input.user.id,
+        products,
+      })
+    : null;
+  const discountCents = Math.min(subtotalCents, discount?.discountCents ?? 0);
+  return {
+    items: products.map((product) => ({
+      productId: product.id,
+      slug: product.slug,
+      title: product.name,
+      unitPriceCents: product.priceCents,
+      currency: product.currency,
+    })),
+    subtotalCents,
+    discountCents,
+    totalCents: Math.max(0, subtotalCents - discountCents),
+    currency,
+    discountName: discount?.discountName ?? null,
+  };
+}
+
 export interface CheckoutResult {
   orderId: string;
   status: OrderStatus;

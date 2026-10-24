@@ -802,14 +802,12 @@
 }
 
 @media (max-width: 1080px) {
-  .wa-portal-account-copy {
+  .wa-portal-actions .wa-account-copy {
     display: none;
   }
 
-  .wa-portal-account {
-    padding: 0.2rem;
-    border: 0;
-    background: transparent;
+  .wa-portal-actions .wa-account-trigger {
+    padding: 0.18rem;
   }
 
   .wa-portal-nav a {
@@ -818,9 +816,7 @@
 }
 
 @media (max-width: 1200px) {
-  .wa-portal-nav,
-  .wa-portal-account,
-  .wa-portal-logout {
+  .wa-portal-nav {
     display: none;
   }
 
@@ -843,6 +839,28 @@
   .wa-portal-mobile-nav {
     display: grid;
     gap: 0.1rem;
+  }
+
+  .wa-portal-mobile-theme {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    width: 100%;
+    min-height: 40px;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--wa-radius-md);
+    background: var(--bg-subtle);
+    color: var(--text-secondary);
+    font: inherit;
+    font-size: 0.76rem;
+    font-weight: 650;
+    cursor: pointer;
+  }
+
+  .wa-portal-mobile-theme:hover {
+    color: var(--text-primary);
+    border-color: var(--border-default);
   }
 
   .wa-portal-mobile-nav a {
@@ -888,6 +906,25 @@
   .wa-portal-mobile-user small {
     font-size: 0.66rem;
     color: var(--text-muted);
+  }
+
+  .wa-portal-mobile-account-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 38px;
+    padding: 0.35rem 0.6rem;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--wa-radius-md);
+    background: var(--bg-subtle);
+    color: var(--text-secondary);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .wa-portal-mobile-account-link:hover {
+    color: var(--text-primary);
+    border-color: var(--border-default);
   }
 }
 

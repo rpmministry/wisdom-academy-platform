@@ -64,3 +64,46 @@ Fecha: 2026-10-22. Alcance: catálogo dual, vista previa del Portal Escolar y po
 - Catálogo: 4 productos escolares y 5 de cursos/talleres.
 - Modal: 2 niveles, 9 y 11 materias respectivamente.
 - Playwright sin errores de página en portal, catálogo, modal y modo oscuro.
+
+## 5. Actualización 2026-10-24: encabezados, cuenta y checkout
+
+### Encabezado compartido
+
+- `PublicHeader` reemplaza las copias de encabezado del catálogo, login y
+  checkout. En escritorio mantiene la navegación de marca; por debajo de
+  1180 px agrupa los enlaces en un panel móvil.
+- El carrito y la cuenta permanecen visibles en todos los tamaños. El botón de
+  cuenta nunca se oculta ni se mueve fuera del viewport.
+- El menú móvil se cierra con Escape, al navegar y al cambiar de ruta.
+- La matriz 320×740, 360×800, 375×812, 390×844, 430×932, 768×1024, 1024×768,
+  844×390, 1280×800 y 1440×900 se comprueba en Playwright sin desbordamiento
+  global ni controles fuera de pantalla.
+
+### Perfil y salida
+
+- `AccountMenu` es un patrón único para portal y CRM administrativo:
+  `aria-haspopup`, `aria-expanded`, foco visible, Escape, clic fuera, flechas,
+  Home/End y cierre al navegar.
+- Opciones existentes: **Mi cuenta**, **Mi portal**, **Mi acceso**,
+  **Administración** (solo con permiso), **Cambiar contraseña**, **Canjear
+  código** y **Cerrar sesión**.
+- `/mi-cuenta` muestra identidad, rol, estado e historial de compras. No ofrece
+  edición de datos institucionales que el backend no permita.
+- La salida usa `/api/auth/logout`. Si el servidor no confirma la invalidación,
+  se muestra un error y no se simula una salida exitosa.
+- El middleware de rutas privadas conserva `next`, y el login regresa al punto
+  solicitado sin bucles.
+
+### Checkout
+
+- El carrito vive en el navegador y sobrevive al login. El acceso se presenta
+  dentro del checkout, no como una redirección genérica que pierda productos.
+- El resumen del pedido distingue subtotal, descuento y total del servidor.
+- El botón de pago se deshabilita si PayPal no está configurado o la
+  cotización falla; el usuario recibe una explicación explícita.
+- «Comprar ahora» y «Agregar al carrito» son acciones separadas y visibles.
+- El resultado del pago se verifica en `/checkout/return`; el navegador no
+  declara el pago.
+
+Los detalles técnicos y de permisos están en
+[`CHECKOUT_Y_CRM_FINANCIERO.md`](CHECKOUT_Y_CRM_FINANCIERO.md).

@@ -208,9 +208,10 @@ export interface AuthContextType {
   accesoContenidoGlobal: boolean;
   temaOscuro: boolean;
   idiomaIngles: boolean;
+  paypalConfigured: boolean;
   autenticar: (usuarioOCorreo: string, contrasenia: string) => Promise<ResultadoAutenticacion>;
   iniciarSesionGoogle: (credential: string) => Promise<ResultadoAutenticacion>;
-  cerrarSesion: () => Promise<void>;
+  cerrarSesion: () => Promise<{ exito: boolean; mensaje?: string }>;
   refrescarSesion: () => Promise<UsuarioCuenta | null>;
   tienePermiso: (permiso: string) => boolean;
   alternarTema: () => void;
@@ -281,6 +282,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   >(PROFESORES_IA_SEMILLA);
   const [temaOscuro, setTemaOscuro] = useState(false);
   const [idiomaIngles, setIdiomaIngles] = useState(false);
+  const [paypalConfigured, setPaypalConfigured] = useState(false);
   const csrfRef = useRef<string | null>(null);
 
   const puedeCon = useCallback((user: UsuarioCuenta | null, permiso: string): boolean => {
@@ -324,6 +326,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const response = await apiFetch<SessionResponse>('/api/auth/session');
       csrfRef.current = response.csrfToken;
       setApiCsrfToken(response.csrfToken);
+      setPaypalConfigured(Boolean(response.paypalConfigured));
       adoptarUsuario(response.usuario);
       // La lista administrativa se carga en segundo plano: nunca debe bloquear
       // el acceso ni la primera pintura del panel.
@@ -332,6 +335,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch {
       csrfRef.current = null;
       setApiCsrfToken(null);
+      setPaypalConfigured(false);
       adoptarUsuario(null);
       setUsuariosRegistrados([]);
       return null;
@@ -416,13 +420,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const cerrarSesion = useCallback(async () => {
     try {
       await apiFetch('/api/auth/logout', { method: 'POST' });
+      csrfRef.current = null;
+      setApiCsrfToken(null);
+      adoptarUsuario(null);
+      setUsuariosRegistrados([]);
+      return { exito: true };
     } catch {
-      // La cookie se limpia igualmente en el cliente.
+      // Si el servidor no confirmó la invalidación, se conserva la sesión
+      // visible y se informa del fallo en lugar de simular una salida exitosa.
+      return {
+        exito: false,
+        mensaje:
+          'No se pudo cerrar la sesión en el servidor. Revisa tu conexión e inténtalo nuevamente.',
+      };
     }
-    csrfRef.current = null;
-    setApiCsrfToken(null);
-    adoptarUsuario(null);
-    setUsuariosRegistrados([]);
   }, [adoptarUsuario]);
 
   const alternarTema = useCallback(() => {
@@ -667,6 +678,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       accesoContenidoGlobal,
       temaOscuro,
       idiomaIngles,
+      paypalConfigured,
       autenticar,
       iniciarSesionGoogle,
       cerrarSesion,
@@ -700,6 +712,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       accesoContenidoGlobal,
       temaOscuro,
       idiomaIngles,
+      paypalConfigured,
       autenticar,
       iniciarSesionGoogle,
       cerrarSesion,

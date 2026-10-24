@@ -59,6 +59,9 @@ export type IconName =
   | 'refresh'
   | 'users'
   | 'receipt'
+  | 'shopping-cart'
+  | 'credit-card'
+  | 'filter'
   | 'activity';
 
 export interface WisdomIconProps {
@@ -344,6 +347,23 @@ export const WisdomIcon: React.FC<WisdomIconProps> = ({
             <path d="M8 15h5" />
           </>
         );
+      case 'shopping-cart':
+        return (
+          <>
+            <circle cx="9" cy="20" r="1" />
+            <circle cx="19" cy="20" r="1" />
+            <path d="M2 3h2l2.4 12.2a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L22 7H5" />
+          </>
+        );
+      case 'credit-card':
+        return (
+          <>
+            <rect width="20" height="14" x="2" y="5" rx="2" />
+            <line x1="2" x2="22" y1="10" y2="10" />
+          </>
+        );
+      case 'filter':
+        return <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />;
       case 'activity':
         return <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />;
       default:

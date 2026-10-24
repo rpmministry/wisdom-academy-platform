@@ -18,8 +18,17 @@ export default function ChangePasswordPage() {
   const [mensaje, setMensaje] = useState<{ tipo: 'exito' | 'error'; texto: string } | null>(null);
   const [enviando, setEnviando] = useState(false);
 
+  const destinoSolicitado = (): string | null => {
+    if (typeof window === 'undefined') return null;
+    const raw = new URLSearchParams(window.location.search).get('next');
+    if (!raw || !raw.startsWith('/') || raw.startsWith('//')) return null;
+    return raw.slice(0, 2000);
+  };
+
   useEffect(() => {
-    if (sesionLista && !usuario) router.replace('/login');
+    if (!sesionLista || usuario) return;
+    const actual = `${window.location.pathname}${window.location.search}`;
+    router.replace(`/login?next=${encodeURIComponent(actual)}`);
   }, [sesionLista, usuario, router]);
 
   const enviar = async (event: React.FormEvent) => {
@@ -41,8 +50,9 @@ export default function ChangePasswordPage() {
         usuarioActualizado?.permisos?.includes('admin.access') ||
         tienePermiso('admin.access');
       setMensaje({ tipo: 'exito', texto: 'Contraseña actualizada. Redirigiendo…' });
+      const destino = destinoSolicitado();
       setTimeout(() => {
-        router.push(esAdmin ? '/admin?tab=crm' : '/dashboard');
+        router.push(destino || (esAdmin ? '/admin?tab=crm' : '/dashboard'));
       }, 800);
     } catch (error) {
       setMensaje({ tipo: 'error', texto: errorMessage(error) });

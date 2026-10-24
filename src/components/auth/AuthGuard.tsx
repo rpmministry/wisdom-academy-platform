@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth/authContext';
 
 interface AuthGuardProps {
@@ -12,19 +12,21 @@ interface AuthGuardProps {
 
 export const AuthGuard: React.FC<AuthGuardProps> = ({ children, requireAdmin = false }) => {
   const router = useRouter();
+  const pathname = usePathname();
   const { usuario, sesionLista, tienePermiso } = useAuth();
   const autorizado = Boolean(usuario) && (!requireAdmin || tienePermiso('admin.access'));
 
   useEffect(() => {
     if (!sesionLista) return;
     if (!usuario) {
-      router.replace('/login');
+      const requested = `${window.location.pathname}${window.location.search}`;
+      router.replace(`/login?next=${encodeURIComponent(requested)}`);
       return;
     }
     if (requireAdmin && !tienePermiso('admin.access')) {
       router.replace('/dashboard');
     }
-  }, [requireAdmin, router, sesionLista, usuario, tienePermiso]);
+  }, [pathname, requireAdmin, router, sesionLista, usuario, tienePermiso]);
 
   if (!sesionLista || !autorizado) {
     return (

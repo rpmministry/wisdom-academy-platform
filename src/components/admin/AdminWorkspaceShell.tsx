@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { WisdomIcon } from '@/components/ui/WisdomIcon';
+import { AccountMenu } from '@/components/layout/AccountMenu';
 import type { TabItem } from '@/components/ui/Tabs';
 
 interface AdminWorkspaceShellProps {
@@ -214,9 +215,12 @@ export const AdminWorkspaceShell: React.FC<AdminWorkspaceShellProps> = ({
                 <WisdomIcon name={themeDark ? 'sun' : 'moon'} size={17} color="current" />
               </button>
             )}
-            <span className="wa-aw-top-avatar" title={userName || 'Administrador'}>
-              {initials(userName)}
-            </span>
+            <AccountMenu
+              className="wa-account-admin"
+              triggerClassName="wa-aw-top-avatar"
+              showName={false}
+              roleLabel={roleLabel || 'Administrador'}
+            />
           </div>
         </header>
 

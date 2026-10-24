@@ -9,6 +9,7 @@ import {
   createCheckout,
   handlePayPalWebhook,
   listOrders,
+  quoteCheckout,
   refundOrder,
 } from '../../src/server/domain/checkout';
 import {
@@ -344,4 +345,48 @@ test('el listado administrativo refleja las órdenes reales', () => {
   const list = listOrders();
   assert.ok(list.length >= 3);
   assert.ok(list.every((order) => typeof order.userEmail === 'string'));
+});
+
+test('la cotización valida varios productos y descuentos sin crear órdenes', () => {
+  const userId = createUser({ email: 'pay-quote@test.local' });
+  const owner = actor(
+    createUser({ email: 'pay-quote-owner@test.local', roles: ['platform_owner'] })
+  );
+  const created = createDiscount({
+    actor: owner,
+    name: 'Descuento cotización',
+    kind: 'fixed',
+    value: 500,
+    resourceIds: [resourceId('taller-python-ia-jovenes')],
+    codeCount: 1,
+  });
+  const before = Number(
+    (prepare('SELECT COUNT(*) AS total FROM orders').get() as { total: number }).total
+  );
+  const quote = quoteCheckout({
+    user: actor(userId),
+    productIds: [
+      productId('curso-python-ia-jovenes'),
+      productId('taller-liderazgo-cristiano'),
+    ],
+    discountCode: created.codes[0],
+  });
+  assert.equal(quote.subtotalCents, 3500);
+  assert.equal(quote.discountCents, 500);
+  assert.equal(quote.totalCents, 3000);
+  assert.equal(quote.items.length, 2);
+  const after = Number(
+    (prepare('SELECT COUNT(*) AS total FROM orders').get() as { total: number }).total
+  );
+  assert.equal(after, before);
+
+  assert.throws(
+    () =>
+      quoteCheckout({
+        user: actor(userId),
+        productIds: [productId('curso-python-ia-jovenes')],
+        discountCode: 'CODIGO-INEXISTENTE',
+      }),
+    /código|descuento|inválido/i
+  );
 });

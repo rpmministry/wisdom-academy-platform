@@ -12,6 +12,7 @@ import { WisdomIcon } from '@/components/ui/WisdomIcon';
 import { Tabs } from '@/components/ui/Tabs';
 import type { TabItem } from '@/components/ui/Tabs';
 import { AdminOverview } from '@/components/admin/AdminOverview';
+import { FinancePanel } from '@/components/crm/FinancePanel';
 
 type Tab =
   | 'resumen'
@@ -366,17 +367,17 @@ const TAB_TITLES: Record<Tab, string> = {
   auditoria: 'Auditoría de seguridad',
 };
 
-const CRM_TABS: Array<{ id: Tab; label: string }> = [
-  { id: 'resumen', label: 'Dirección' },
-  { id: 'academia', label: 'Academia' },
-  { id: 'programas', label: 'Programas' },
-  { id: 'usuarios', label: 'Usuarios y accesos' },
-  { id: 'productos', label: 'Catálogo' },
-  { id: 'descuentos', label: 'Descuentos' },
-  { id: 'regalos', label: 'Regalos' },
-  { id: 'invitaciones', label: 'Fundadores / inversores' },
-  { id: 'ordenes', label: 'Pagos' },
-  { id: 'auditoria', label: 'Auditoría' },
+const CRM_TABS: Array<{ id: Tab; label: string; permission: string | null }> = [
+  { id: 'resumen', label: 'Dirección', permission: null },
+  { id: 'academia', label: 'Academia', permission: null },
+  { id: 'programas', label: 'Programas', permission: null },
+  { id: 'usuarios', label: 'Usuarios y accesos', permission: 'users.read' },
+  { id: 'productos', label: 'Catálogo', permission: 'products.read' },
+  { id: 'descuentos', label: 'Descuentos', permission: 'discounts.read' },
+  { id: 'regalos', label: 'Regalos', permission: 'gifts.read' },
+  { id: 'invitaciones', label: 'Fundadores / inversores', permission: 'invitations.read' },
+  { id: 'ordenes', label: 'Pagos', permission: 'orders.read' },
+  { id: 'auditoria', label: 'Auditoría', permission: 'audit.read' },
 ];
 
 const ACADEMIC_MODULES: Array<{
@@ -566,15 +567,28 @@ export function CrmDashboard({
     void cargarTodo();
   }, [sesionLista, usuario, cargarTodo]);
 
+  const visibleCrmTabs = useMemo(
+    () =>
+      CRM_TABS.filter(
+        (item) => !item.permission || tienePermiso(item.permission)
+      ),
+    [tienePermiso]
+  );
+
   useEffect(() => {
     const requested = new URLSearchParams(window.location.search).get('crm');
-    if (requested && CRM_TABS.some((item) => item.id === requested)) {
-      setTab(requested as Tab);
+    if (requested && visibleCrmTabs.some((item) => item.id === requested)) {
+      if (tab !== requested) setTab(requested as Tab);
+      return;
     }
-  }, []);
+    if (!visibleCrmTabs.some((item) => item.id === tab)) {
+      setTab(visibleCrmTabs[0]?.id || 'resumen');
+    }
+  }, [tab, visibleCrmTabs]);
 
   const selectTab = (id: string) => {
     const next = id as Tab;
+    if (!visibleCrmTabs.some((item) => item.id === next)) return;
     setTab(next);
     setNotice(null);
     setError(null);
@@ -587,8 +601,9 @@ export function CrmDashboard({
     );
   };
 
-  const crmTabItems: TabItem[] = CRM_TABS.map((item) => ({
-    ...item,
+  const crmTabItems: TabItem[] = visibleCrmTabs.map((item) => ({
+    id: item.id,
+    label: item.label,
     icono: <WisdomIcon name={TAB_ICONS[item.id]} size={14} color="current" />,
   }));
 
@@ -665,7 +680,7 @@ export function CrmDashboard({
     return <p>Debes iniciar sesión.</p>;
   }
 
-  const tabs = CRM_TABS;
+  const tabs = visibleCrmTabs;
 
   const academicPrograms = useMemo(() => {
     const resourcePrograms = resources
@@ -1813,55 +1828,10 @@ export function CrmDashboard({
       )}
 
       {tab === 'ordenes' && (
-        <Card variant="surface" padding="md">
-          <h2 style={{ marginTop: 0, fontSize: '1.0625rem' }}>Órdenes y pagos ({orders.length})</h2>
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.75rem' }}>
-              <thead>
-                <tr style={{ textAlign: 'left', color: 'var(--text-muted)' }}>
-                  <th style={{ padding: '0.5rem' }}>Orden</th>
-                  <th style={{ padding: '0.5rem' }}>Usuario</th>
-                  <th style={{ padding: '0.5rem' }}>Productos</th>
-                  <th style={{ padding: '0.5rem' }}>Total</th>
-                  <th style={{ padding: '0.5rem' }}>Estado</th>
-                  <th style={{ padding: '0.5rem' }}>Fecha</th>
-                  <th style={{ padding: '0.5rem' }}>Acción</th>
-                </tr>
-              </thead>
-              <tbody>
-                {orders.map((order) => (
-                  <tr key={order.id} style={{ borderTop: '1px solid var(--border-subtle)' }}>
-                    <td style={{ padding: '0.5rem', fontFamily: 'var(--wa-font-mono)' }}>{order.id.slice(0, 14)}</td>
-                    <td style={{ padding: '0.5rem' }}>{order.userEmail}</td>
-                    <td style={{ padding: '0.5rem' }}>{order.items.map((item) => item.title).join(' · ')}</td>
-                    <td style={{ padding: '0.5rem' }}>{money(order.totalCents)}</td>
-                    <td style={{ padding: '0.5rem' }}>{order.status}</td>
-                    <td style={{ padding: '0.5rem' }}>{fecha(order.paidAt || order.createdAt)}</td>
-                    <td style={{ padding: '0.5rem' }}>
-                      {(order.status === 'paid' || order.status === 'free') && (
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          disabled={busy}
-                          onClick={() => {
-                            if (!window.confirm('¿Procesar el reembolso completo? Los derechos de esta compra serán revocados.')) return;
-                            void ejecutar(() => apiFetch(`/api/admin/orders/${order.id}/refund`, { method: 'POST' }), 'Reembolso procesado.');
-                          }}
-                        >
-                          Reembolsar
-                        </Button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: 0 }}>
-            Un reembolso o reversión revoca únicamente los derechos originados por esa compra. Los
-            regalos, becas o compras independientes conservan su vigencia.
-          </p>
-        </Card>
+        <FinancePanel
+          products={products.map((product) => ({ id: product.id, name: product.name }))}
+          canRefund={tienePermiso('orders.refund')}
+        />
       )}
 
       {tab === 'auditoria' && (

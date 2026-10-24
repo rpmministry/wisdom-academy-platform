@@ -3,10 +3,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth/authContext';
 import { WisdomIcon } from '@/components/ui/WisdomIcon';
-import { Button } from '@/components/ui/Button';
+import { AccountMenu } from '@/components/layout/AccountMenu';
+import { CartWidget } from '@/components/cart/CartWidget';
 
 interface NavItem {
   href: string;
@@ -50,34 +51,9 @@ const NAV_ITEMS: NavItem[] = [
   },
 ];
 
-function roleLabel(role?: string | null): string {
-  if (role === 'ADMIN') return 'Administración';
-  if (role === 'TEACHER') return 'Docencia';
-  if (role === 'STUDENT') return 'Estudiante';
-  return 'Cuenta Wisdom';
-}
-
-function initials(name?: string | null): string {
-  if (!name) return 'WA';
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join('');
-}
-
 export const PortalShell: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const pathname = usePathname();
-  const router = useRouter();
-  const {
-    usuario,
-    tienePermiso,
-    accesoContenidoGlobal,
-    temaOscuro,
-    alternarTema,
-    cerrarSesion,
-  } = useAuth();
+  const { usuario, tienePermiso, accesoContenidoGlobal, temaOscuro, alternarTema } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [hydrated, setHydrated] = useState(false);
 
@@ -113,11 +89,6 @@ export const PortalShell: React.FC<{ children: React.ReactNode }> = ({ children 
     pathname === '/aula' ||
     /^\/recurso\/[^/]+\/?$/.test(pathname) ||
     /^\/cursos\/[^/]+\/?$/.test(pathname);
-
-  const logout = async () => {
-    await cerrarSesion();
-    router.push('/login');
-  };
 
   const resolveHref = (item: NavItem) =>
     item.href === '/mi-acceso' && isAdmin
@@ -190,26 +161,20 @@ export const PortalShell: React.FC<{ children: React.ReactNode }> = ({ children 
             >
               <WisdomIcon name={temaOscuro ? 'sun' : 'moon'} size={16} color="current" />
             </button>
+            <CartWidget />
             {usuario && (
-              <span className="wa-portal-account">
-                <span className="wa-portal-avatar" aria-hidden="true">
-                  {initials(usuario.nombreCompleto)}
-                </span>
-                <span className="wa-portal-account-copy">
-                  <strong>{usuario.nombreCompleto}</strong>
-                  <small>{roleLabel(usuario.rol)}</small>
-                </span>
-              </span>
+              <AccountMenu
+                roleLabel={
+                  usuario.rol === 'STUDENT'
+                    ? 'Estudiante'
+                    : usuario.rol === 'ADMIN'
+                      ? 'Administración'
+                      : usuario.rol === 'TEACHER'
+                        ? 'Docencia'
+                        : 'Cuenta Wisdom'
+                }
+              />
             )}
-            <button
-              type="button"
-              className="wa-portal-icon-button wa-portal-logout"
-              onClick={() => void logout()}
-              aria-label="Cerrar sesión"
-              title="Cerrar sesión"
-            >
-              <WisdomIcon name="log-out" size={16} color="current" />
-            </button>
             <button
               type="button"
               className="wa-portal-icon-button wa-portal-mobile-toggle"
@@ -241,15 +206,23 @@ export const PortalShell: React.FC<{ children: React.ReactNode }> = ({ children 
               })}
               {isAdmin && <Link href="/admin">Administración</Link>}
             </nav>
+            <button
+              type="button"
+              className="wa-portal-mobile-theme"
+              onClick={alternarTema}
+            >
+              <WisdomIcon name={temaOscuro ? 'sun' : 'moon'} size={17} color="current" />
+              {temaOscuro ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+            </button>
             {usuario && (
               <div className="wa-portal-mobile-foot">
                 <span className="wa-portal-mobile-user">
                   <strong>{usuario.nombreCompleto}</strong>
-                  <small>{roleLabel(usuario.rol)}</small>
+                  <small>{usuario.correo}</small>
                 </span>
-                <Button variant="secondary" size="sm" onClick={() => void logout()}>
-                  Cerrar sesión
-                </Button>
+                <Link href="/mi-cuenta" className="wa-portal-mobile-account-link">
+                  Gestionar cuenta
+                </Link>
               </div>
             )}
           </div>

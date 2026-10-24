@@ -56,9 +56,12 @@
 
 - Página de inicio, propuesta académica y catálogo de cursos, talleres y programas.
 - Catálogo responsive con filtros, orden, precios, disponibilidad y estado de precio.
+- Encabezado público compartido, carrito con contador y menú de cuenta accesible en móvil, tableta y escritorio.
+- Carrito persistente para varios productos con retirada, subtotal y continuidad al checkout.
+- Checkout con login integrado (sin perder el carrito), cotización del servidor, códigos de descuento y PayPal Sandbox/Live.
 - Guía de bienvenida descargable y recursos de acceso gratuito.
-- Checkout con PayPal Sandbox/Live, resumen de compra y referencia de captura.
 - Página de retorno que confirma la captura en el servidor, nunca por el navegador.
+- Perfil `/mi-cuenta` con identidad, accesos e historial de compras.
 
 ### Aula virtual y academia
 
@@ -74,6 +77,7 @@
 - Usuarios, roles, permisos RBAC y sesiones revocables.
 - Productos, precios, moneda, publicación y recursos incluidos.
 - Órdenes, capturas, reembolsos y conciliación.
+- Módulo financiero dentro del CRM: cobros, neto, pendientes, fallos, evolución, productos, códigos, detalle y CSV, con permiso `orders.read`.
 - Códigos de descuento, regalos, invitaciones y accesos globales.
 - Año lectivo, matrículas, calificaciones y reportes.
 - Auditoría de acciones administrativas y panel de resumen.
@@ -223,11 +227,12 @@ Resultados de la sesión de validación:
 
 | Comando | Resultado |
 |---|---|
-| `npm test` | **168 aprobadas, 0 fallos** |
-| `npm run test:payments` | **27 aprobadas, 0 fallos** |
-| Playwright (catálogo) | **4 aprobadas, 0 fallos** |
-| `npm run build` | Correcto, 18 páginas |
-| PayPal Sandbox real | Orden `3TY92249470992444`, captura `9S879207H39589335`, `10.00 USD` |
+| `npm test` | **174 aprobadas, 0 fallos** |
+| `npm run test:platform` | **71 aprobadas, 0 fallos** |
+| `npm run test:payments` | **28 aprobadas, 0 fallos** |
+| Playwright (suite completa) | **50 aprobadas, 0 fallos** |
+| `npm run build` | Correcto, 19 páginas prerenderizadas |
+| PayPal Sandbox real | Orden `3TY92249470992444`, captura `9S879207H39589335`, `10.00 USD` (evidencia del 23/10/2026) |
 
 Los detalles y evidencias están en [docs/PAYPAL_TESTING.md](docs/PAYPAL_TESTING.md).
 
@@ -282,6 +287,8 @@ Ver [docs/PAYPAL_DEPLOYMENT.md](docs/PAYPAL_DEPLOYMENT.md).
 | [docs/PAYPAL_DEPLOYMENT.md](docs/PAYPAL_DEPLOYMENT.md) | Producción, rollback y seguridad |
 | [docs/DEPLOY_FREE_HOSTING.md](docs/DEPLOY_FREE_HOSTING.md) | Hosting gratuito con volumen persistente |
 | [docs/PAYPAL_ACCEPTANCE.md](docs/PAYPAL_ACCEPTANCE.md) | Condiciones de aceptación y evidencias |
+| [docs/CHECKOUT_Y_CRM_FINANCIERO.md](docs/CHECKOUT_Y_CRM_FINANCIERO.md) | Carrito, checkout, permisos y módulo financiero del CRM |
+| [docs/UX_PORTALES_Y_NAVEGACION.md](docs/UX_PORTALES_Y_NAVEGACION.md) | Encabezados responsive, perfil y patrones de navegación |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Arquitectura, módulos, datos y flujo de pagos |
 
 ## Seguridad

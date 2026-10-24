@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -8,6 +8,7 @@ import { useAuth } from '@/lib/auth/authContext';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { WisdomIcon } from '@/components/ui/WisdomIcon';
+import { PublicHeader } from '@/components/layout/PublicHeader';
 import { apiFetch } from '@/lib/api/client';
 import type { RolUsuario } from '@/lib/auth/types';
 
@@ -39,8 +40,6 @@ export default function LoginPage() {
     iniciarSesionGoogle,
     tienePermiso,
     usuario,
-    temaOscuro,
-    alternarTema,
   } = useAuth();
   const [identificador, setIdentificador] = useState('');
   const [contrasenia, setContrasenia] = useState('');
@@ -51,16 +50,39 @@ export default function LoginPage() {
   const [googleClientId, setGoogleClientId] = useState<string | null>(null);
   const [googleListo, setGoogleListo] = useState(false);
 
+  /**
+   * Solo acepta rutas internas absolutas. Así el parámetro `next` conserva el
+   * checkout o el recurso solicitado sin habilitar redirecciones externas.
+   */
+  const destinoSolicitado = useCallback((): string | null => {
+    if (typeof window === 'undefined') return null;
+    const raw = new URLSearchParams(window.location.search).get('next');
+    if (!raw || !raw.startsWith('/') || raw.startsWith('//')) return null;
+    return raw.slice(0, 2000);
+  }, []);
+
+  const redirigiendo = useRef(false);
   const irAlPortal = useCallback(
     (requiereCambio = false, rol?: RolUsuario) => {
+      if (redirigiendo.current) return;
+      redirigiendo.current = true;
+      const destino = destinoSolicitado();
       if (requiereCambio) {
-        router.push('/cambiar-contrasena');
+        router.replace(
+          destino
+            ? `/cambiar-contrasena?next=${encodeURIComponent(destino)}`
+            : '/cambiar-contrasena'
+        );
+        return;
+      }
+      if (destino) {
+        router.replace(destino);
         return;
       }
       const esAdmin = rol === 'ADMIN' || tienePermiso('admin.access');
-      router.push(esAdmin ? '/admin?tab=crm' : '/dashboard');
+      router.replace(esAdmin ? '/admin?tab=crm' : '/dashboard');
     },
-    [router, tienePermiso]
+    [destinoSolicitado, router, tienePermiso]
   );
 
   useEffect(() => {
@@ -157,39 +179,7 @@ export default function LoginPage() {
 
   return (
     <div className="wa-auth-page">
-      <header className="wa-catalog-header wa-auth-header">
-        <Link href="/" className="wa-catalog-brand" aria-label="Wisdom Academy — Inicio">
-          <Image
-            src="/brand/svg/wisdom-logo-horizontal-black.svg"
-            alt="Wisdom Academy"
-            width={168}
-            height={32}
-            priority
-            className="wa-logo-for-light"
-          />
-          <Image
-            src="/brand/svg/wisdom-logo-horizontal-white.svg"
-            alt=""
-            width={168}
-            height={32}
-            priority
-            className="wa-logo-for-dark"
-          />
-        </Link>
-        <nav className="wa-catalog-nav" aria-label="Navegación pública">
-          <Link href="/" className="wa-landing-anchor">Inicio</Link>
-          <Link href="/catalogo#programas" className="wa-landing-anchor">Catálogo</Link>
-          <button
-            type="button"
-            className="wa-theme-toggle"
-            onClick={alternarTema}
-            aria-label={temaOscuro ? 'Activar modo claro' : 'Activar modo oscuro'}
-            title={temaOscuro ? 'Activar modo claro' : 'Activar modo oscuro'}
-          >
-            <WisdomIcon name={temaOscuro ? 'sun' : 'moon'} size={16} color="current" />
-          </button>
-        </nav>
-      </header>
+      <PublicHeader minimal showLogin={false} />
 
       <main className="wa-auth-main">
         <div className="wa-auth-shell">

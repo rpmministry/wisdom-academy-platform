@@ -26,6 +26,17 @@ const adminLogin = async (page: import('@playwright/test').Page) => {
   expect(response.ok()).toBeTruthy();
 };
 
+const financeLogin = async (page: import('@playwright/test').Page) => {
+  const response = await page.request.post('/api/auth/login', {
+    data: {
+      identificador: 'e2e.finanzas@wisdomacademy.test',
+      contrasenia: process.env.WISDOM_E2E_PASSWORD || 'E2eWisdom!2026-test',
+    },
+    headers: { origin },
+  });
+  expect(response.ok()).toBeTruthy();
+};
+
 test.describe('RBAC y navegación administrativa', () => {
   test('un visitante anónimo no entra al panel', async ({ page }) => {
     await page.goto('/admin');
@@ -64,5 +75,39 @@ test.describe('RBAC y navegación administrativa', () => {
     });
     await expect(page.locator('.wa-crm-embedded-tabs')).toBeVisible();
     await expect(page.locator('.wa-crm-sidebar')).toHaveCount(0);
+  });
+
+  test('sin permiso de pagos no se muestran las finanzas ni se puede consultar la API', async ({
+    page,
+  }) => {
+    await adminLogin(page);
+    await page.goto('/admin?tab=crm&crm=ordenes', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('.wa-crm-embedded-tabs')).toBeVisible({ timeout: 120_000 });
+    await expect(page.getByRole('tab', { name: /^Pagos$/i })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: /Evoluci.n de cobros/i })).toHaveCount(0);
+    const response = await page.request.get('/api/admin/finance');
+    expect(response.status()).toBe(403);
+  });
+
+  test('un analista con permiso de pagos consulta el módulo financiero', async ({ page }) => {
+    await financeLogin(page);
+    await page.goto('/admin?tab=crm&crm=ordenes', { waitUntil: 'domcontentloaded' });
+    const financeTab = page.getByRole('tab', { name: /^Pagos$/i });
+    await expect(financeTab).toBeVisible({ timeout: 120_000 });
+    await financeTab.click();
+    await expect(page.getByRole('heading', { name: /Evoluci.n de cobros/i })).toBeVisible({
+      timeout: 60_000,
+    });
+    await expect(page.getByText(/Cobros confirmados/i).first()).toBeVisible();
+    await expect(page.getByText(/Neto despu.s de reembolsos/i)).toBeVisible();
+    await expect(page.getByRole('button', { name: /Exportar CSV/i })).toBeDisabled();
+    await expect(financeTab).toHaveAttribute('aria-selected', 'true');
+    const response = await page.request.get('/api/admin/finance');
+    expect(response.status()).toBe(200);
+    const payload = (await response.json()) as {
+      reporte: { summary: { capturedCents: number; pendingOrders: number } };
+    };
+    expect(payload.reporte.summary.capturedCents).toBe(0);
+    expect(payload.reporte.summary.pendingOrders).toBe(0);
   });
 });
