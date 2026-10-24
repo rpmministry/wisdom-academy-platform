@@ -63,4 +63,69 @@ test.describe('Cursos y talleres — experiencia de estudiante', () => {
     const link = page.locator('a[href="/catalogo#programas"]').first();
     await expect(link).toBeVisible();
   });
+
+  test('el aula homeschool conserva visor y pestañas en una pantalla móvil pequeña', async ({ page }) => {
+    test.setTimeout(180_000);
+    await page.setViewportSize({ width: 320, height: 740 });
+
+    const pageErrors: string[] = [];
+    page.on('pageerror', (error) => pageErrors.push(error.message));
+
+    await page.goto('/aula?recurso=programa-homeschool-8-egb', {
+      waitUntil: 'domcontentloaded',
+    });
+
+    await expect(page.locator('.wa-platzi-classroom')).toBeVisible({ timeout: 60_000 });
+    await expect(page.locator('.wa-openmaic-stage').first()).toBeVisible({ timeout: 60_000 });
+    await expect(page.locator('.wa-slide-card').first()).toBeVisible({ timeout: 60_000 });
+
+    const panel = page.locator('.wa-platzi-right-panel');
+    await expect(panel).toBeVisible();
+    const tablist = panel.getByRole('tablist', {
+      name: 'Herramientas del aula Platzi y Moodle',
+    });
+    await expect(tablist).toBeVisible();
+
+    for (const name of [/Ruta/, /Profesor IA/, /Moodle/, /Apuntes/]) {
+      await expect(panel.getByRole('tab', { name })).toBeVisible();
+    }
+
+    const mobileLayout = await page.evaluate(() => {
+      const stage = document.querySelector<HTMLElement>('.wa-openmaic-stage');
+      const tablistElement = document.querySelector<HTMLElement>(
+        '.wa-platzi-right-panel [role="tablist"]',
+      );
+      const labels = Array.from(
+        document.querySelectorAll<HTMLElement>(
+          '.wa-platzi-right-panel [role="tablist"] [role="tab"] > span:last-child',
+        ),
+      );
+
+      return {
+        stageOverflowY: stage ? getComputedStyle(stage).overflowY : '',
+        tabColumns: tablistElement
+          ? getComputedStyle(tablistElement).gridTemplateColumns.trim().split(/\\s+/).length
+          : 0,
+        clippedLabels: labels.some(
+          (label) =>
+            getComputedStyle(label).textOverflow === 'ellipsis' &&
+            label.scrollWidth > label.clientWidth + 1,
+        ),
+        horizontalOverflow:
+          document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+      };
+    });
+
+    expect(mobileLayout.stageOverflowY).not.toBe('hidden');
+    expect(mobileLayout.tabColumns).toBe(2);
+    expect(mobileLayout.clippedLabels).toBe(false);
+    expect(mobileLayout.horizontalOverflow).toBe(false);
+
+    await panel.getByRole('tab', { name: /Profesor IA/ }).click();
+    await expect(panel.getByRole('tab', { name: /Profesor IA/ })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    expect(pageErrors).toEqual([]);
+  });
 });
