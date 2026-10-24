@@ -104,7 +104,7 @@ test.describe('Cursos y talleres — experiencia de estudiante', () => {
       return {
         stageOverflowY: stage ? getComputedStyle(stage).overflowY : '',
         tabColumns: tablistElement
-          ? getComputedStyle(tablistElement).gridTemplateColumns.trim().split(/\\s+/).length
+          ? getComputedStyle(tablistElement).gridTemplateColumns.trim().split(/\s+/).length
           : 0,
         clippedLabels: labels.some(
           (label) =>
