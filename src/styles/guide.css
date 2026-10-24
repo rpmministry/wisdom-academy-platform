@@ -36,6 +36,21 @@
   height: auto;
 }
 
+.wa-guide-brand-logo--dark,
+.wa-guide-closing-icon--dark {
+  display: none;
+}
+
+[data-theme='dark'] .wa-guide-brand-logo--light,
+[data-theme='dark'] .wa-guide-closing-icon--light {
+  display: none;
+}
+
+[data-theme='dark'] .wa-guide-brand-logo--dark,
+[data-theme='dark'] .wa-guide-closing-icon--dark {
+  display: block;
+}
+
 .wa-guide-actions {
   display: flex;
   align-items: center;
@@ -567,6 +582,10 @@
   padding: 0 0.85rem 0.75rem;
   font-size: 0.8rem;
   line-height: 1.65;
+}
+
+.wa-guide-closing-icon {
+  flex-shrink: 0;
 }
 
 .wa-guide-closing {

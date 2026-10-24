@@ -564,6 +564,7 @@ export function CatalogExperience({ home = false }: { home?: boolean }) {
               const proximamente = esProximamente(producto);
               const precioPendiente = esPrecioPendiente(producto);
               const ofertaAnual = producto.annualOffer;
+              const periodo = producto.metadata.offerPeriod?.trim();
 
               return (
                 <article
@@ -664,7 +665,7 @@ export function CatalogExperience({ home = false }: { home?: boolean }) {
                                 ? 'Inscripción al publicar los materiales'
                                 : producto.priceCents === 0
                                 ? 'Acceso inmediato'
-                                : 'Pago seguro con PayPal'}
+                                : `Pago seguro con PayPal${periodo ? ` · ${periodo}` : ''}`}
                             </small>
                           </>
                         )}
@@ -816,6 +817,11 @@ export function CatalogExperience({ home = false }: { home?: boolean }) {
                       ? 'Precio por definir'
                       : formatoPrecio(seleccionado.priceCents, seleccionado.currency)}
                   </strong>
+                  {seleccionado.metadata.offerPeriod ? (
+                    <span style={{ color: 'var(--text-secondary)' }}>
+                      {' '}· {seleccionado.metadata.offerPeriod}
+                    </span>
+                  ) : null}
                 </p>
               )}
               <p style={{ margin: '0.4rem 0 0.8rem', fontSize: '0.72rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>

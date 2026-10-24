@@ -199,6 +199,16 @@ WISDOM_BACKUP_DIR=/data/backups
 
 No uses el disco efímero de una función serverless.
 
+## Programa de Teología N2N
+
+El programa de Teología se importa con:
+
+```bash
+npm run import:n2n-semester-1
+```
+
+El importador es idempotente y publica el Semestre 1 con clases, materiales, repasos y evaluaciones. El producto queda activo en el catálogo a **USD 50 por semestre**. En la imagen Docker el importador se ejecuta automáticamente la primera vez (`RUN_N2N_IMPORT=1`) y deja un marcador persistente en `/data`.
+
 ## Pruebas
 
 ```bash

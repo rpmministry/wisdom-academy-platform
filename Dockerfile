@@ -22,6 +22,7 @@ ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 ENV WISDOM_DB_PATH=/data/wisdom.db
 ENV WISDOM_BACKUP_DIR=/data/backups
+ENV RUN_N2N_IMPORT=1
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends gosu \

@@ -492,6 +492,46 @@ function ensureAssessments(programId: string, moduleId: string): void {
   }
 }
 
+function ensureN2nProductPricing(programId: string): void {
+  const program = prepare('SELECT resource_id FROM course_programs WHERE id = ?').get(programId) as
+    | { resource_id: string }
+    | undefined;
+  if (!program) throw new Error('No se encontro el recurso del programa N2N.');
+
+  const product = prepare(`
+    SELECT p.id, p.metadata_json
+    FROM products p
+    JOIN product_resources pr ON pr.product_id = p.id
+    WHERE pr.resource_id = ?
+    LIMIT 1
+  `).get(program.resource_id) as { id: string; metadata_json: string } | undefined;
+  if (!product) throw new Error('No se encontro el producto del programa N2N.');
+
+  let metadata: Record<string, unknown> = {};
+  try {
+    const parsed = JSON.parse(product.metadata_json);
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+      metadata = parsed as Record<string, unknown>;
+    }
+  } catch {
+    metadata = {};
+  }
+
+  metadata.billingPeriod = 'semester';
+  metadata.offerLabel = 'USD 50 por semestre';
+  metadata.offerPeriod = 'por semestre';
+  metadata.offerDescription =
+    'Precio de USD 50 por semestre del Programa de Teologia. El acceso se habilita al confirmar el pago.';
+
+  prepare(`
+    UPDATE products
+    SET price_cents = 5000, currency = 'USD', price_status = 'defined',
+        status = 'published', metadata_json = ?, updated_at = ?
+    WHERE id = ?
+  `).run(JSON.stringify(metadata), nowIso(), product.id);
+  console.log('= Producto N2N activado: USD 50 por semestre.');
+}
+
 function main(): void {
   prepare('SELECT 1').get();
   const programId = ensureProgram();
@@ -516,6 +556,7 @@ function main(): void {
 
   ensureReviews(programId, semester1);
   ensureAssessments(programId, semester1);
+  ensureN2nProductPricing(programId);
 
   const newMeetings = ensureDefaultWeeklyMeetings(
     programId,

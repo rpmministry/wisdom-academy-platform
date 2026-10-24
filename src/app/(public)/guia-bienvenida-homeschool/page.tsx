@@ -37,7 +37,15 @@ export default function GuiaBienvenidaHomeschoolPage() {
             width={220}
             height={26}
             priority
-            className="wa-guide-brand-logo"
+            className="wa-guide-brand-logo wa-guide-brand-logo--light"
+          />
+          <Image
+            src="/brand/svg/wisdom-logo-horizontal-on-dark.svg"
+            alt="Wisdom Academy"
+            width={220}
+            height={26}
+            priority
+            className="wa-guide-brand-logo wa-guide-brand-logo--dark"
           />
         </Link>
         <div className="wa-guide-actions">
@@ -568,6 +576,14 @@ export default function GuiaBienvenidaHomeschoolPage() {
                   alt=""
                   width={40}
                   height={40}
+                  className="wa-guide-closing-icon wa-guide-closing-icon--light"
+                />
+                <Image
+                  src="/brand/svg/wisdom-icon-on-dark.svg"
+                  alt=""
+                  width={40}
+                  height={40}
+                  className="wa-guide-closing-icon wa-guide-closing-icon--dark"
                 />
                 <div>
                   <strong>Bienvenido a Wisdom Academy.</strong>
