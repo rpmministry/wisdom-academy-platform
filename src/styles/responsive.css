@@ -1300,3 +1300,129 @@ iframe {
   }
 }
 
+
+
+/* -------------------------------------------------------------------------- */
+/* 10. ESTABILIDAD DEL AULA EN MÓVILES                                        */
+/* Corrige la cascada: el overflow:hidden global de escritorio se aplicaba    */
+/* después de las reglas móviles y recortaba contenido del visor OpenMAIC.    */
+/* No altera tokens, paleta, marca ni comportamiento pedagógico.               */
+/* -------------------------------------------------------------------------- */
+
+@media (max-width: 700px) {
+  .wa-platzi-classroom {
+    height: auto !important;
+    min-height: 100svh;
+    max-height: none !important;
+    overflow: visible !important;
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .wa-classroom-content {
+    flex-direction: column !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  .wa-classroom-main {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    padding: 0.5rem !important;
+  }
+
+  .wa-classroom-stage {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  .wa-openmaic-viewer {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  /* En modo normal, el escenario crece junto a la diapositiva: no recortar. */
+  .wa-openmaic-stage {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    overflow: visible !important;
+    padding: 8px !important;
+    overscroll-behavior: auto;
+  }
+
+  /* El zoom manual conserva un viewport desplazable. */
+  .wa-openmaic-stage--zoomed {
+    max-height: calc(100dvh - 180px) !important;
+    overflow: auto !important;
+    overscroll-behavior: contain;
+  }
+
+  .wa-platzi-right-panel {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    flex: 0 0 auto !important;
+    overflow: visible !important;
+  }
+
+  .wa-platzi-right-panel > div:last-child {
+    flex: 0 0 auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  /* Las cuatro herramientas se presentan en dos columnas legibles. */
+  .wa-platzi-right-panel [role='tablist'] {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.375rem !important;
+    padding: 0.5rem !important;
+  }
+
+  .wa-platzi-right-panel [role='tablist'] [role='tab'] {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 48px !important;
+    padding: 0.5rem 0.375rem !important;
+    gap: 0.3rem !important;
+    white-space: normal !important;
+    overflow: visible !important;
+  }
+
+  .wa-platzi-right-panel [role='tablist'] [role='tab'] > span:last-child {
+    max-width: 100% !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    overflow-wrap: anywhere;
+    line-height: 1.25;
+    text-align: center;
+  }
+
+  .wa-platzi-right-panel [role='tablist'] [role='tab']:focus-visible {
+    outline: 3px solid var(--brand-gold);
+    outline-offset: 1px;
+  }
+
+  .wa-platzi-right-panel,
+  .wa-classroom-stage {
+    scroll-margin-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+  }
+}
