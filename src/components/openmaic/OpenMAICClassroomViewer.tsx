@@ -883,6 +883,7 @@ export const OpenMAICClassroomViewer: React.FC<OpenMAICClassroomViewerProps> = (
           <button
             onClick={() => onCambiarDiapositiva(Math.max(1, diapositivaActual - 1))}
             title="Volver a la diapositiva anterior"
+            aria-label="Volver a la diapositiva anterior"
             style={{
               background: 'transparent',
               border: 'none',
@@ -926,6 +927,8 @@ export const OpenMAICClassroomViewer: React.FC<OpenMAICClassroomViewerProps> = (
                   key={r}
                   onClick={() => onCambiarRitmo(r)}
                   title={`Ritmo de clase: ${r}`}
+                  aria-label={`Ritmo de clase: ${r}`}
+                  aria-pressed={ritmoAprendizaje === r}
                   style={{
                     padding: '2px 6px',
                     fontSize: '0.6875rem',
@@ -948,6 +951,8 @@ export const OpenMAICClassroomViewer: React.FC<OpenMAICClassroomViewerProps> = (
             <button
               onClick={onToggleTeatro}
               title={modoTeatro ? 'Salir del Modo Teatro' : 'Modo Teatro / Enfoque'}
+              aria-label={modoTeatro ? 'Salir del Modo Teatro' : 'Activar Modo Teatro o Enfoque'}
+              aria-pressed={Boolean(modoTeatro)}
               style={{
                 background: modoTeatro ? 'var(--brand-primary)' : 'var(--bg-subtle)',
                 color: modoTeatro ? 'var(--text-on-brand)' : 'var(--text-primary)',
@@ -1031,7 +1036,8 @@ export const OpenMAICClassroomViewer: React.FC<OpenMAICClassroomViewerProps> = (
           position: 'relative',
           backgroundColor: 'var(--bg-canvas)',
           overflowY: 'auto',
-        }}
+          '--wa-zoom-manual': zoomManual,
+        } as React.CSSProperties}
       >
         {/* MARCO ESCALADO: conserva el tamaño del lienzo en el layout */}
         <div
@@ -1146,6 +1152,8 @@ export const OpenMAICClassroomViewer: React.FC<OpenMAICClassroomViewerProps> = (
                   key={idx}
                   onClick={() => handleSeleccionarPaso(idx)}
                   title={`Paso ${idx + 1}: ${paso.titulo}`}
+                  aria-label={`Paso ${idx + 1}: ${paso.titulo}`}
+                  aria-pressed={esActivo}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -1449,6 +1457,8 @@ export const OpenMAICClassroomViewer: React.FC<OpenMAICClassroomViewerProps> = (
           <button
             onClick={() => setSilenciado(!silenciado)}
             title={silenciado ? 'Activar audio' : 'Silenciar'}
+            aria-label={silenciado ? 'Activar audio de la clase' : 'Silenciar audio de la clase'}
+            aria-pressed={silenciado}
             style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '0.875rem' }}
           >
             {silenciado ? '🔇' : '🔊'}
@@ -1458,6 +1468,7 @@ export const OpenMAICClassroomViewer: React.FC<OpenMAICClassroomViewerProps> = (
           <button
             onClick={handleCiclarVelocidad}
             title="Velocidad de reproducción de la profesora"
+            aria-label={`Velocidad de reproducción: ${velocidadVoz} por uno`}
             style={{
               background: 'var(--bg-subtle)',
               border: '1px solid var(--border-subtle)',
@@ -1478,6 +1489,7 @@ export const OpenMAICClassroomViewer: React.FC<OpenMAICClassroomViewerProps> = (
             onClick={() => onCambiarDiapositiva(Math.max(1, diapositivaActual - 1))}
             disabled={diapositivaActual === 1}
             title="Diapositiva anterior"
+            aria-label="Diapositiva anterior"
             style={{
               background: 'transparent',
               border: 'none',
@@ -1494,6 +1506,8 @@ export const OpenMAICClassroomViewer: React.FC<OpenMAICClassroomViewerProps> = (
           <button
             onClick={handleTogglePlayPasoAPaso}
             title={estaReproduciendo ? 'Pausar' : 'Reproducir paso a paso'}
+            aria-label={estaReproduciendo ? 'Pausar la clase' : 'Reproducir la clase paso a paso'}
+            aria-pressed={estaReproduciendo}
             style={{
               background: 'var(--brand-gold)',
               color: 'var(--text-on-gold)',
@@ -1516,6 +1530,7 @@ export const OpenMAICClassroomViewer: React.FC<OpenMAICClassroomViewerProps> = (
             onClick={() => onCambiarDiapositiva(Math.min(totalDiapositivas, diapositivaActual + 1))}
             disabled={diapositivaActual === totalDiapositivas}
             title="Siguiente diapositiva"
+            aria-label="Siguiente diapositiva"
             style={{
               background: 'transparent',
               border: 'none',
@@ -1532,6 +1547,8 @@ export const OpenMAICClassroomViewer: React.FC<OpenMAICClassroomViewerProps> = (
           <button
             onClick={() => setModoLapiz(!modoLapiz)}
             title="Activar lápiz para anotar en pantalla"
+            aria-label={modoLapiz ? 'Desactivar lápiz de anotación' : 'Activar lápiz de anotación'}
+            aria-pressed={modoLapiz}
             style={{
               background: modoLapiz ? 'var(--brand-gold)' : 'transparent',
               color: modoLapiz ? 'var(--text-on-brand)' : 'var(--text-secondary)',
@@ -1551,6 +1568,7 @@ export const OpenMAICClassroomViewer: React.FC<OpenMAICClassroomViewerProps> = (
           <button
             onClick={onAbrirModalIA}
             title="Hacer una pregunta a Gemini 3.8 Flash sobre esta clase"
+            aria-label="Preguntar al Profesor IA sobre esta clase"
             className="wa-openmaic-ai-btn"
             style={{
               background: 'var(--brand-gold)',
@@ -1659,6 +1677,8 @@ export const OpenMAICClassroomViewer: React.FC<OpenMAICClassroomViewerProps> = (
           <button
             onClick={() => reproducirDesdePaso(pasoActivo, velocidadVoz)}
             title="Repetir este paso pedagógico"
+            aria-label="Repetir este paso pedagógico"
+            aria-pressed={estaReproduciendo}
             style={{
               background: 'transparent',
               border: 'none',
@@ -1674,9 +1694,12 @@ export const OpenMAICClassroomViewer: React.FC<OpenMAICClassroomViewerProps> = (
 
         {/* COMUNIDAD DE COMPAÑEROS DE CLASE VIRTUALES (DANIEL / LUCAS) */}
         {intervencion.companero && (
-          <div
+          <button
+            type="button"
             onClick={() => setDialogoCompaneroActivo(!dialogoCompaneroActivo)}
             title={`Pregunta de tu compañero ${intervencion.companero.nombre}`}
+            aria-label={`Pregunta de tu compañero ${intervencion.companero.nombre}`}
+            aria-pressed={dialogoCompaneroActivo}
             className="wa-speechbar-companion"
             style={{
               display: 'flex',
@@ -1688,18 +1711,21 @@ export const OpenMAICClassroomViewer: React.FC<OpenMAICClassroomViewerProps> = (
               padding: '4px 8px',
               cursor: 'pointer',
               flexShrink: 0,
+              fontFamily: 'var(--wa-font-sans)',
+              color: 'var(--text-primary)',
+              textAlign: 'left',
             }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={intervencion.companero.avatar}
-              alt={intervencion.companero.nombre}
+              alt=""
               style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'cover' }}
             />
             <span style={{ fontSize: '0.6875rem', fontWeight: 600, color: 'var(--text-primary)' }}>
               {intervencion.companero.nombre}
             </span>
-          </div>
+          </button>
         )}
       </div>
 

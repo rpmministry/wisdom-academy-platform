@@ -229,6 +229,16 @@
   max-height: calc(100dvh - var(--wa-portal-header-height));
 }
 
+/* En una sola columna el aula crece con su contenido y el panel académico
+   queda debajo; una altura fija comprimía la clase a unos pocos píxeles. */
+@media (max-width: 1100px) {
+  .wa-portal-content .wa-platzi-classroom {
+    height: auto;
+    max-height: none;
+    min-height: calc(100dvh - var(--wa-portal-header-height));
+  }
+}
+
 .wa-portal-content .wa-classroom-header {
   position: relative;
   top: auto;

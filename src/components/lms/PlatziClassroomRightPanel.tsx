@@ -19,7 +19,7 @@
  * ==============================================================================
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { ProgressBar } from '@/components/ui/ProgressBar';
@@ -347,6 +347,34 @@ export const PlatziClassroomRightPanel: React.FC<PlatziClassroomRightPanelProps>
     },
   ];
 
+  // Referencias para la navegación por teclado entre pestañas (patrón ARIA).
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+
+  const manejarTecladoPestanas = (
+    evento: React.KeyboardEvent<HTMLButtonElement>,
+    indice: number,
+  ) => {
+    let destino = indice;
+    if (evento.key === 'ArrowRight' || evento.key === 'ArrowDown') {
+      destino = (indice + 1) % tabs.length;
+    } else if (evento.key === 'ArrowLeft' || evento.key === 'ArrowUp') {
+      destino = (indice - 1 + tabs.length) % tabs.length;
+    } else if (evento.key === 'Home') {
+      destino = 0;
+    } else if (evento.key === 'End') {
+      destino = tabs.length - 1;
+    } else {
+      return;
+    }
+
+    evento.preventDefault();
+    const siguiente = tabs[destino];
+    if (!siguiente) return;
+    setTabActiva(siguiente.id);
+    // El foco se mueve tras el render de la pestaña recién seleccionada.
+    window.requestAnimationFrame(() => tabRefs.current[destino]?.focus());
+  };
+
   if (colapsado) {
     return (
       <aside
@@ -371,6 +399,7 @@ export const PlatziClassroomRightPanel: React.FC<PlatziClassroomRightPanelProps>
         <button
           onClick={onToggleColapsar}
           title="Expandir Panel Lateral de Clase"
+          aria-label="Expandir el panel de ruta académica"
           style={{
             background: 'var(--bg-subtle)',
             border: '1px solid var(--border-subtle)',
@@ -439,6 +468,7 @@ export const PlatziClassroomRightPanel: React.FC<PlatziClassroomRightPanelProps>
         <button
           onClick={onToggleColapsar}
           title="Colapsar panel"
+          aria-label="Colapsar el panel de ruta académica"
           style={{
             background: 'transparent',
             border: 'none',
@@ -482,14 +512,26 @@ export const PlatziClassroomRightPanel: React.FC<PlatziClassroomRightPanelProps>
           width: '100%',
         }}
       >
-        {tabs.map((tab) => {
+        {tabs.map((tab, index) => {
           const esActiva = tab.id === tabActiva;
           return (
             <button
               key={tab.id}
+              id={`wa-tab-${tab.id}`}
               role="tab"
               aria-selected={esActiva}
+              aria-controls="wa-tabpanel-clase"
+              aria-label={
+                tab.id === 'actividades'
+                  ? `Moodle, ${quizCompletado ? 'completado 10 de 10' : '1 actividad pendiente'}`
+                  : tab.label
+              }
+              tabIndex={esActiva ? 0 : -1}
+              ref={(elemento) => {
+                tabRefs.current[index] = elemento;
+              }}
               onClick={() => setTabActiva(tab.id)}
+              onKeyDown={(evento) => manejarTecladoPestanas(evento, index)}
               title={`${tab.titulo} • ${tab.subtitulo}`}
               style={{
                 display: 'flex',
@@ -511,10 +553,11 @@ export const PlatziClassroomRightPanel: React.FC<PlatziClassroomRightPanelProps>
                 transition: 'background-color 0.15s ease, color 0.15s ease',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+              <div aria-hidden="true" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                 <span style={{ display: 'inline-flex' }}>{tab.icono}</span>
                 {tab.badge && (
                   <span
+                    aria-hidden="true"
                     style={{
                       fontSize: '0.5625rem',
                       fontFamily: 'var(--wa-font-mono)',
@@ -571,6 +614,9 @@ export const PlatziClassroomRightPanel: React.FC<PlatziClassroomRightPanelProps>
       {/* CUERPO INTERACTIVO SEGÚN PESTAÑA ACTIVA                             */}
       {/* -------------------------------------------------------------------- */}
       <div
+        id="wa-tabpanel-clase"
+        role="tabpanel"
+        aria-labelledby={`wa-tab-${tabActiva}`}
         style={{
           flex: 1,
           overflowY: 'auto',
@@ -881,6 +927,7 @@ export const PlatziClassroomRightPanel: React.FC<PlatziClassroomRightPanelProps>
                 value={inputChat}
                 onChange={(e) => setInputChat(e.target.value)}
                 placeholder="Pregunta lo que sea al Profesor IA..."
+                aria-label="Pregunta al Profesor IA"
                 disabled={enviandoPregunta}
                 style={{
                   flex: 1,
@@ -1069,6 +1116,7 @@ export const PlatziClassroomRightPanel: React.FC<PlatziClassroomRightPanelProps>
               value={apuntesTexto}
               onChange={(e) => handleGuardarApuntes(e.target.value)}
               placeholder="Escribe tus notas, reflexiones y fórmulas de la clase aquí..."
+              aria-label="Apuntes de la lección"
               style={{
                 flex: 1,
                 minHeight: '260px',
