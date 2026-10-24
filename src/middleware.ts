@@ -23,6 +23,7 @@ export const config = {
     '/aula/:path*',
     '/contenidos/:path*',
     '/mi-acceso/:path*',
+    '/mi-cuenta/:path*',
     '/recurso/:path*',
     '/admin/:path*',
   ],
