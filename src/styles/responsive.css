@@ -225,6 +225,20 @@ iframe {
 /*    de ruta académica se apila debajo, a ancho completo.                    */
 /* -------------------------------------------------------------------------- */
 
+/* WCAG 2.2: ningún control esencial queda por debajo de 32 px en escritorio. */
+.wa-openmaic-controls button,
+.wa-openmaic-mediabar button,
+.wa-zoom-controls button,
+.wa-speechbar-bubble button {
+  min-height: 32px;
+}
+
+.wa-openmaic-mediabar button,
+.wa-zoom-controls button,
+.wa-speechbar-bubble button {
+  min-width: 32px;
+}
+
 @media (max-width: 1100px) {
   .wa-platzi-classroom {
     height: auto;
@@ -232,10 +246,14 @@ iframe {
     min-height: 100vh;
     min-height: 100dvh;
     overflow: visible;
+    /* Reserva espacio para el disparador flotante de recursos (701-1279 px). */
+    padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
   }
 
   .wa-classroom-content {
     flex-direction: column !important;
+    height: auto !important;
+    min-height: 0 !important;
     overflow: visible !important;
   }
 
@@ -253,11 +271,111 @@ iframe {
 
   .wa-openmaic-viewer {
     height: auto !important;
-    min-height: min(680px, calc(100dvh - 112px)) !important;
+    min-height: 0 !important;
   }
 
+  /* La diapositiva fluye con el ancho real disponible y crece en vertical.
+     El lienzo fijo solo se conserva por encima de 1100 px. */
   .wa-openmaic-stage {
-    overflow-y: auto !important;
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    overflow: visible !important;
+  }
+
+  .wa-openmaic-stage--zoomed {
+    max-height: calc(100dvh - 180px) !important;
+    overflow: auto !important;
+    overscroll-behavior: contain;
+  }
+
+  .wa-platzi-classroom .wa-slide-frame {
+    width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+  }
+
+  .wa-platzi-classroom .wa-openmaic-stage .wa-slide-canvas {
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
+    max-width: none !important;
+    transform: scale(var(--wa-zoom-manual, 1)) !important;
+    transform-origin: top left !important;
+    overflow: visible !important;
+    padding: clamp(14px, 2vw, 22px) !important;
+  }
+
+  .wa-platzi-classroom .wa-openmaic-stage .wa-slide-title,
+  .wa-platzi-classroom .wa-openmaic-stage .wa-explanation-text {
+    display: block !important;
+    -webkit-line-clamp: unset !important;
+    overflow: visible !important;
+  }
+
+  .wa-platzi-classroom .wa-openmaic-stage .wa-slide-title {
+    overflow-wrap: anywhere;
+  }
+
+  /* iOS no amplía la página al enfocar campos con 16 px. */
+  .wa-platzi-right-panel input,
+  .wa-platzi-right-panel textarea,
+  .wa-platzi-right-panel select,
+  .wa-openmaic-chat-modal textarea {
+    font-size: 1rem !important;
+  }
+
+  /* En lectura fluida la explicación no necesita recorte ni altura artificial. */
+  .wa-platzi-classroom .wa-slide-canvas .wa-copy-card p {
+    font-size: 0.9375rem !important;
+  }
+
+  .wa-platzi-classroom .wa-slide-canvas .wa-copy-card li {
+    font-size: 0.8125rem !important;
+  }
+
+  .wa-platzi-classroom .wa-slide-steps button {
+    min-height: 44px;
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.75rem !important;
+  }
+
+  .wa-platzi-classroom .wa-explanation-link {
+    min-height: 44px;
+    padding: 0.5rem !important;
+  }
+
+  /* Objetivos táctiles cómodos en teléfonos y tablets. */
+  .wa-openmaic-controls button,
+  .wa-openmaic-mediabar button,
+  .wa-zoom-controls button,
+  .wa-speechbar-bubble button,
+  .wa-speechbar-companion {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .wa-zoom-controls span {
+    min-width: 44px !important;
+    font-size: 0.75rem !important;
+  }
+
+  .wa-openmaic-ai-btn {
+    min-height: 44px !important;
+  }
+
+  /* Acciones del panel académico: misma comodidad táctil que las pestañas. */
+  .wa-platzi-right-panel button {
+    min-height: 44px;
+  }
+
+  .wa-platzi-right-panel > div:first-child > button {
+    min-width: 44px;
+    min-height: 44px;
   }
 
   .wa-platzi-right-panel {
@@ -267,6 +385,13 @@ iframe {
     max-height: none !important;
     border-left: none !important;
     border-top: 1px solid var(--border-default);
+    overflow: visible !important;
+  }
+
+  .wa-platzi-right-panel > div:last-child {
+    flex: 0 0 auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
     overflow: visible !important;
   }
 
@@ -381,8 +506,8 @@ iframe {
   }
 
   .wa-header-tutoring {
-    min-width: 40px;
-    min-height: 40px;
+    min-width: 44px;
+    min-height: 44px;
     padding-left: 0.625rem !important;
     padding-right: 0.625rem !important;
   }
@@ -444,7 +569,7 @@ iframe {
   .wa-openmaic-ai-btn {
     flex: 1 1 100%;
     justify-content: center;
-    min-height: 36px;
+    min-height: 44px;
   }
 
   /* Subtítulos del profesor: texto a ancho completo, sin columnas de 1 palabra. */
@@ -493,7 +618,7 @@ iframe {
   }
 
   .wa-openmaic-controls button {
-    min-height: 32px;
+    min-height: 44px;
   }
 
   .wa-slide-card {
@@ -1246,9 +1371,12 @@ iframe {
 }
 
 /* A 100% no hay barras: la diapositiva está ajustada. Las barras solo aparecen
-   cuando el estudiante amplía deliberadamente con el control de zoom. */
-.wa-openmaic-stage {
-  overflow: hidden !important;
+   cuando el estudiante amplía deliberadamente con el control de zoom.
+   El recorte se limita a escritorio; en una columna el escenario fluye. */
+@media (min-width: 1101px) {
+  .wa-openmaic-stage {
+    overflow: hidden !important;
+  }
 }
 
 .wa-openmaic-stage--zoomed {
@@ -1300,3 +1428,91 @@ iframe {
   }
 }
 
+
+
+/* -------------------------------------------------------------------------- */
+/* 10. AJUSTES DEL AULA EN MÓVILES                                            */
+/* El flujo natural y la altura elástica viven en la sección <=1100px. Aquí   */
+/* solo se ajustan densidad, objetivos táctiles y pestañas.                   */
+/* -------------------------------------------------------------------------- */
+
+@media (max-width: 700px) {
+  .wa-platzi-classroom {
+    min-height: 100svh;
+    overflow: visible !important;
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .wa-classroom-main {
+    padding: 0.5rem !important;
+  }
+
+  .wa-openmaic-stage {
+    padding: 8px !important;
+  }
+
+  /* La tipografía de lectura del lienzo móvil conserva un tamaño legible. */
+  .wa-platzi-classroom .wa-slide-canvas--phone .wa-copy-card p {
+    font-size: 0.875rem !important;
+  }
+
+  .wa-platzi-classroom .wa-slide-canvas--phone .wa-copy-card li {
+    font-size: 0.78125rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .wa-platzi-classroom .wa-slide-canvas--phone .wa-slide-steps button {
+    min-height: 44px;
+    font-size: 0.75rem !important;
+  }
+
+  /* En 320 px el badge del orquestador no debe comprimir el texto de ayuda. */
+  .wa-chat-modal-banner {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.5rem;
+  }
+
+  /* La altura dinámica evita que la barra del navegador tape el pie del modal. */
+  .wa-modal-dialog {
+    max-height: calc(100dvh - 16px) !important;
+  }
+
+  /* Las cuatro herramientas se presentan en dos columnas legibles. */
+  .wa-platzi-right-panel [role='tablist'] {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.375rem !important;
+    padding: 0.5rem !important;
+  }
+
+  .wa-platzi-right-panel [role='tablist'] [role='tab'] {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 48px !important;
+    padding: 0.5rem 0.375rem !important;
+    gap: 0.3rem !important;
+    white-space: normal !important;
+    overflow: visible !important;
+  }
+
+  .wa-platzi-right-panel [role='tablist'] [role='tab'] > span:last-child {
+    max-width: 100% !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    overflow-wrap: anywhere;
+    line-height: 1.25;
+    text-align: center;
+  }
+
+  .wa-platzi-right-panel [role='tablist'] [role='tab']:focus-visible {
+    outline: 3px solid var(--brand-gold);
+    outline-offset: 1px;
+  }
+
+  .wa-platzi-right-panel,
+  .wa-classroom-stage {
+    scroll-margin-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+  }
+}

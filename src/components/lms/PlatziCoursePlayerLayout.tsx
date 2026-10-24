@@ -57,6 +57,12 @@ function normalizarClave(value: string): string {
     .trim();
 }
 
+/** Respeta la preferencia del estudiante de reducir el movimiento. */
+function comportamientoScrollPreferido(): ScrollBehavior {
+  if (typeof window === 'undefined') return 'auto';
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+}
+
 interface PlatziCoursePlayerLayoutProps {
   resource?: { slug: string; title: string } | null;
 }
@@ -545,7 +551,7 @@ export const PlatziCoursePlayerLayout: React.FC<PlatziCoursePlayerLayoutProps> =
         <button
           type="button"
           className="wa-mobile-dock-item"
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          onClick={() => window.scrollTo({ top: 0, behavior: comportamientoScrollPreferido() })}
           aria-label="Volver al inicio de la clase"
         >
           <WisdomIcon name="book" size={20} />
@@ -555,7 +561,9 @@ export const PlatziCoursePlayerLayout: React.FC<PlatziCoursePlayerLayoutProps> =
           type="button"
           className="wa-mobile-dock-item"
           onClick={() =>
-            document.getElementById('wa-ruta-academica')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            document
+              .getElementById('wa-ruta-academica')
+              ?.scrollIntoView({ behavior: comportamientoScrollPreferido(), block: 'start' })
           }
           aria-label="Abrir la ruta académica y el temario"
         >

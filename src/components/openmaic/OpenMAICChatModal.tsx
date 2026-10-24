@@ -131,9 +131,13 @@ export const OpenMAICChatModal: React.FC<OpenMAICChatModalProps> = ({
       subtitulo={`Lección activa: ${materia} • Diapositiva ${diapositivaNumero}`}
       anchoMaximo="680px"
     >
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--carbon-space-2x)' }}>
+      <div
+        className="wa-openmaic-chat-modal"
+        style={{ display: 'flex', flexDirection: 'column', gap: 'var(--carbon-space-2x)' }}
+      >
         {/* Banner de andamiaje socrático */}
         <div
+          className="wa-chat-modal-banner"
           style={{
             padding: 'var(--carbon-space-2x)',
             backgroundColor: 'var(--bg-subtle)',

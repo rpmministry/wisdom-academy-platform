@@ -148,6 +148,7 @@ export const Modal: React.FC<ModalProps> = ({
       <div
         ref={dialogoRef}
         tabIndex={-1}
+        className="wa-modal-dialog"
         style={{
           backgroundColor: 'var(--bg-elevated)',
           color: 'var(--text-primary)',
