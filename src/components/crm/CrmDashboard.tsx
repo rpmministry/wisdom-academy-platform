@@ -1103,7 +1103,7 @@ export function CrmDashboard({
             </Button>
           </Card>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(260px, 0.85fr) minmax(320px, 1.15fr)', gap: '1rem', alignItems: 'start' }}>
+          <div className="wa-crm-users-grid">
           <Card variant="surface" padding="md">
             <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem' }}>
               <input

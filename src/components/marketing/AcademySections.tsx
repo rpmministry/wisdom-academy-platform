@@ -217,7 +217,7 @@ export function AcademySections() {
       <section className="wa-home-cta">
         <div className="wa-home-container">
           <div>
-            <span className="wa-catalog-kicker" style={{ background: 'rgba(255,255,255,0.12)', borderColor: 'rgba(255,255,255,0.25)', color: '#fff' }}>
+            <span className="wa-catalog-kicker">
               <WisdomIcon name="sparkles" size={13} color="current" /> El siguiente paso
             </span>
             <h2>Tu formación no debería elegir entre excelencia y propósito.</h2>
