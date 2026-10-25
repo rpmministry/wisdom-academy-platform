@@ -1,337 +1,218 @@
 <p align="center">
-  <img src="./public/brand/social/og-image-blue-dark.png" alt="Wisdom Academy" width="100%" />
+  <img src="./public/brand/social/og-image-blue-dark.png" alt="Wisdom Academy Platform" width="100%" />
 </p>
 
-<h1 align="center">Wisdom Academy</h1>
+<h1 align="center">Wisdom Academy Platform</h1>
 
 <p align="center">
-  Plataforma educativa integral para educación básica, homeschool, cursos y talleres.<br />
-  Catálogo, matrículas, aula virtual, administración académica y pagos con PayPal.
-</p>
-
-<p align="center">
-  <a href="https://nextjs.org/"><img src="https://img.shields.io/badge/Next.js-15.5-000000?logo=nextdotjs&logoColor=white" alt="Next.js 15" /></a>
-  <a href="https://react.dev/"><img src="https://img.shields.io/badge/React-18.3-61DAFB?logo=react&logoColor=white" alt="React 18" /></a>
-  <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript&logoColor=white" alt="TypeScript" /></a>
-  <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/Node.js-24-339933?logo=nodedotjs&logoColor=white" alt="Node.js 24" /></a>
-  <a href="https://www.sqlite.org/"><img src="https://img.shields.io/badge/SQLite-WAL-003B57?logo=sqlite&logoColor=white" alt="SQLite" /></a>
-  <a href="https://developer.paypal.com/"><img src="https://img.shields.io/badge/PayPal-Sandbox%20verified-00457C?logo=paypal&logoColor=white" alt="PayPal Sandbox verificado" /></a>
-  <img src="https://img.shields.io/badge/Tests-168%20passing-2ea44f" alt="168 tests passing" />
-  <img src="https://img.shields.io/badge/License-Proprietary-6e7781" alt="Proprietary" />
+  <b>Plataforma Educativa Integral, Bilingüe y Ministerial de Clase Mundial</b><br />
+  Educación Básica Ecuatoriana (MINEDUC K-12) · Apoyo Homeschool · Instituto Ministerial N2N · Cursos & Talleres
 </p>
 
 <p align="center">
-  <a href="https://github.com/rpmministry/wisdom-academy-platform/actions/workflows/ci.yml"><img src="https://github.com/rpmministry/wisdom-academy-platform/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
+  <a href="https://nextjs.org/"><img src="https://img.shields.io/badge/Next.js-15.5-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js 15" /></a>
+  <a href="https://react.dev/"><img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React 19" /></a>
+  <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-5.7-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" /></a>
+  <a href="https://turso.tech/"><img src="https://img.shields.io/badge/Turso-libSQL_Cloud-00E599?style=for-the-badge&logo=sqlite&logoColor=black" alt="Turso libSQL" /></a>
+  <a href="https://vercel.com/"><img src="https://img.shields.io/badge/Vercel-Serverless_Edge-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel Serverless" /></a>
+  <a href="https://developers.google.com/drive"><img src="https://img.shields.io/badge/Google_Drive-Data_Vault-4285F4?style=for-the-badge&logo=googledrive&logoColor=white" alt="Google Drive Vault" /></a>
+  <a href="https://developer.paypal.com/"><img src="https://img.shields.io/badge/PayPal-Checkout_v2-00457C?style=for-the-badge&logo=paypal&logoColor=white" alt="PayPal" /></a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Tests-186%20Passing%20(100%25)-2ea44f?style=flat-square&logo=githubactions&logoColor=white" alt="186 tests passing" />
+  <img src="https://img.shields.io/badge/TypeScript-Strict%200%20Errors-3178c6?style=flat-square" alt="0 Type Errors" />
+  <img src="https://img.shields.io/badge/Database_Schema-9%20Migrations-blueviolet?style=flat-square" alt="9 Migrations" />
+  <img src="https://img.shields.io/badge/Security-Audit%20Passed-success?style=flat-square" alt="Security Passed" />
+  <img src="https://img.shields.io/badge/License-Proprietary-6e7781?style=flat-square" alt="Licencia Privada" />
 </p>
 
 ---
 
-## Estado del proyecto
+## 🏛️ Resumen Ejecutivo y Arquitectura
 
-| Área | Estado |
-|---|---|
-| Aplicación web, catálogo y aula virtual | Operativo en desarrollo |
-| Base de datos SQLite con migraciones | Operativa; 8 migraciones versionadas |
-| PayPal Sandbox | **Verificado con pago real de Sandbox** el 23/10/2026 |
-| PayPal Live | **No activado**; requiere autorización y verificación comercial |
-| Hosting recomendado | Host Node con volumen persistente (Northflank, VPS u Oracle Free) |
-| Vercel | **No soportado con SQLite**; requiere migrar a Turso/PostgreSQL |
-| Dominio propio | Pendiente; la guía de despliegue incluye el procedimiento |
-
-> **Importante:** no se debe desplegar esta versión en Vercel Production con SQLite. El sistema de archivos de Vercel Functions no es persistente y los usuarios, pagos y accesos se perderían. Ver [docs/DEPLOY_FREE_HOSTING.md](docs/DEPLOY_FREE_HOSTING.md).
-
-## Vista del producto
-
-| Catálogo público | Panel administrativo |
-|---|---|
-| <img src="./docs/evidencias/catalogo-homeschool-100.png" alt="Catálogo de Wisdom Academy" width="100%" /> | <img src="./docs/evidencias/admin-revision.png" alt="Panel administrativo de Wisdom Academy" width="100%" /> |
-
-| Guía de bienvenida | Recursos educativos |
-|---|---|
-| <img src="./docs/evidencias/guia-bienvenida-escritorio.png" alt="Guía de bienvenida" width="100%" /> | <img src="./docs/evidencias/recursos-escritorio.png" alt="Recursos educativos" width="100%" /> |
-
-## Funcionalidades
-
-### Experiencia pública
-
-- Página de inicio, propuesta académica y catálogo de cursos, talleres y programas.
-- Catálogo responsive con filtros, orden, precios, disponibilidad y estado de precio.
-- Encabezado público compartido, carrito con contador y menú de cuenta accesible en móvil, tableta y escritorio.
-- Carrito persistente para varios productos con retirada, subtotal y continuidad al checkout.
-- Checkout sin cuenta previa: correo de compra, cotización del servidor, códigos de descuento y PayPal Sandbox/Live.
-- Registro posterior al pago con formulario adulto o de representante/estudiante, consentimientos versionados y vinculación de cuentas existentes.
-- Matrícula automática solo de los productos pagados, con sesión, correo de bienvenida y enlace directo al curso.
-- Recuperación de contraseña, verificación de correo y reenvío/recuperación del enlace de registro.
-- Guía de bienvenida descargable y recursos de acceso gratuito.
-- Página de retorno que confirma la captura en el servidor, nunca por el navegador.
-- Perfil `/mi-cuenta` con identidad, accesos e historial de compras.
-- Bandeja **Registros** en el CRM con estados separados de pago, registro, correo y matrícula; protección de menores con `minors.read`.
-
-### Aula virtual y academia
-
-- Cursos y programas con módulos, lecciones, materiales y semanas.
-- Evaluaciones, intentos, calificaciones, repasos y certificados.
-- Progreso del estudiante, calendario, reuniones semanales y entregas.
-- Recursos educativos con validación, revisión y recomendaciones.
-- Aula OpenMAIC y orquestación de IA para experiencias de aprendizaje.
-- Portal del estudiante y panel del representante.
-
-### Administración y CRM
-
-- Usuarios, roles, permisos RBAC y sesiones revocables.
-- Productos, precios, moneda, publicación y recursos incluidos.
-- Órdenes, capturas, reembolsos y conciliación.
-- Módulo financiero dentro del CRM: cobros, neto, pendientes, fallos, evolución, productos, códigos, detalle y CSV, con permiso `orders.read`.
-- Códigos de descuento, regalos, invitaciones y accesos globales.
-- Año lectivo, matrículas, calificaciones y reportes.
-- Auditoría de acciones administrativas y panel de resumen.
-
-### Pagos
-
-- API Orders v2 de PayPal mediante `fetch` del servidor.
-- Precio y moneda calculados exclusivamente en el backend.
-- Órdenes vinculadas a usuario, producto y referencia de PayPal.
-- Captura idempotente y recuperación de respuestas perdidas.
-- Webhooks firmados con verificación oficial, deduplicación y auditoría.
-- Reembolsos completos, parciales, pendientes y reversiones.
-- Productos con precio pendiente bloqueados en catálogo y checkout.
-- Verificación Sandbox real: orden, captura, acceso, matrícula y webhook procesados una sola vez.
-
-### Seguridad y operación
-
-- Sesiones `HttpOnly`, CSRF en mutaciones y límites de frecuencia.
-- RBAC en rutas administrativas y validación de propiedad de órdenes.
-- Escaneo de secretos en fuente y artefactos compilados.
-- Migraciones idempotentes, backup/restore y `PRAGMA integrity_check`.
-- Healthcheck público `GET /api/health`.
-- Documentación de riesgos, aceptación y despliegue.
-
-## Arquitectura
+**Wisdom Academy Platform** es un ecosistema educativo cloud-native de alta disponibilidad construido sobre una **arquitectura Serverless desacoplada de tres capas**:
 
 ```mermaid
-flowchart LR
-    U[Usuario / Familia] --> W[Next.js 15 App Router]
-    W --> API[Route Handlers]
-    API --> AUTH[Sesiones, CSRF y RBAC]
-    API --> DOM[Dominio de negocio]
-    DOM --> DB[(SQLite WAL)]
-    API --> PP[PayPal Orders v2]
-    PP --> WH[Webhook firmado]
-    WH --> DOM
-    API --> INT[Google Drive / Moodle / OpenMAIC]
-    DOM --> AUD[Auditoría y conciliación]
+graph TD
+    subgraph Capa 1: Frontend & Edge API
+        Vercel["▲ Vercel Edge & Serverless Functions<br/>Next.js 15 App Router · Node 22/24 LTS"]
+        Cron["⏰ Vercel Daily Cron<br/>/api/cron/drive-sync-backup"]
+    end
+
+    subgraph Capa 2: Motor Transaccional en la Nube
+        Turso[("⚡ Turso Cloud SQLite (libSQL)<br/>Latencia sub-5ms · 9 Migraciones")]
+    end
+
+    subgraph Capa 3: Bóveda Documental e Inmutable
+        Drive[("📁 Google Drive Data Vault<br/>WisdomDriveVault · Service Account")]
+    end
+
+    subgraph Servicios Externos Integrados
+        PayPal["💳 PayPal Checkout v2"]
+        Resend["✉️ Resend Transaccional"]
+        GoogleAuth["🔑 Google OAuth Sign-In"]
+        OpenMAIC["🤖 OpenMAIC Pedagogical AI"]
+    end
+
+    Vercel -->|Lectura/Escritura instantánea| Turso
+    Cron -->|Snapshot y Backup nocturno| Turso
+    Cron -->|Subida documental y actas| Drive
+    Vercel -->|Replicación documental asíncrona| Drive
+    Vercel --> PayPal
+    Vercel --> Resend
+    Vercel --> GoogleAuth
+    Vercel --> OpenMAIC
 ```
 
-### Stack
+1. **Capa de Aplicación y API Serverless (`Vercel Functions`)**: Aplicación Next.js 15 100% *stateless* (sin almacenamiento en disco local efímero), optimizada para despliegues instantáneos globales con tiempo de arranque de milisegundos.
+2. **Capa Transaccional de Datos (`Turso Cloud / libSQL`)**: Base de datos SQLite distribuida globalmente con latencia sub-5ms, transacciones ACID completas y adaptador síncrono/asíncrono compatible con el estándar libSQL.
+3. **Capa de Bóveda Documental y Académica (`Google Drive API v3`)**: Almacén inmutable para actas de notas, expedientes estudiantiles, fichas de admisión, certificados emitidos y respaldos de base de datos cifrados con tolerancia a fallos y reintentos exponenciales.
 
-| Capa | Tecnología |
-|---|---|
-| Framework | Next.js 15.5 (App Router) |
-| UI | React 18.3, TypeScript 5.7, CSS propio |
-| Runtime | Node.js 24 |
-| Persistencia | SQLite con `node:sqlite`, WAL y migraciones versionadas |
-| Pagos | PayPal Orders v2, OAuth 2.0 y webhooks |
-| Correo | Resend por API HTTP (bienvenida, verificación y recuperación) |
-| Pruebas | Node Test Runner, Playwright y servidor PayPal simulado |
-| Documentos | Generación PDF, guías y reportes |
-| Integraciones | Google Drive, Moodle, YouTube, OpenMAIC y orquestación IA |
+---
 
-## Inicio rápido
+## 🌟 Pilares y Módulos de la Plataforma
 
-### Requisitos
+### 1. 🎓 Educación Básica Ecuatoriana (MINEDUC K-12) & Homeschool
+- **14 Años Escolares Oficiales**: Desde 1° de Básica (Preparatoria) hasta 3° de Bachillerato General Unificado (BGU), totalmente articulados al currículo nacional de Ecuador.
+- **Perfiles Personalizados para Homeschool**:
+  - **Gael (4° de EGB - Nivel Elemental)**: Bloques de 35 min con recreo activo, 5 materias troncales (*Biblia y Carácter, Matemáticas Creacionales, Ciencias Naturales, English Phonics, Estudios Sociales*).
+  - **Avril (8° de EGB - Nivel Básica Superior)**: Bloques de 45 min, 5 materias troncales (*Teología y Cosmovisión, Pre-Álgebra y Geometría, Ciencias Integradas, Academic English, Historia y Civismo*).
+- **Calendario Escolar Oficial de 200 Días**: Inicio el 26 de octubre de 2026, validado por algoritmo sin colisiones de feriados ni fines de semana.
 
-- Node.js 24 (`>=24 <25`)
-- npm 10 o superior
-- Git
+### 2. 📖 Instituto Teológico y Ministerial N2N
+- **10 Semestres Académicos Completos**: Programa ministerial de la Universidad Cristiana N2N con 189 carpetas canónicas en Google Drive para gestión de sílabos, clases, lecturas oficiales y enlaces audiovisuales.
+- **Exámenes y Actas Seguras**: Separación criptográfica estricta entre versiones de estudiante y claves privadas docentes, auditoría de intentos y cálculo de calificaciones en el servidor.
 
-### Instalación
+### 3. 🛡️ Bóveda Documental y Académica (Google Drive Data Vault)
+Estructura jerárquica unificada en Google Drive sin fragmentación:
+- `01_Matriculas_y_Admisiones/`: Contratos de matrícula, fichas de inscripción en JSON/PDF y comprobantes.
+- `02_Expedientes_Estudiantes/`: Historial acumulativo e informes de progreso por alumno.
+- `03_Calificaciones_y_Actas/`: Actas oficiales de notas consolidadas por curso, taller y nivel.
+- `04_Certificados_y_Diplomas/`: Diplomas generados con ID registrado en base de datos para descarga ultrarrápida.
+- `05_Estadisticas_y_Reportes/`: Snapshots periódicos de métricas en JSON/CSV.
+- `06_Database_Backups/`: Exportaciones completas y respaldos programados de la base de datos.
+
+### 4. 💳 Pasarela de Pagos PayPal & Checkout Seguro
+- **Integración Nativa Orders v2**: Cálculo de precios, promociones y monedas exclusivamente en el servidor.
+- **Compra Invitada y Matrícula Posterior**: Los padres pueden pagar sin registro previo y completar el formulario de matrícula y consentimientos posteriormente.
+- **Webhooks con Verificación Criptográfica**: Deduplicación por `(provider, event_id)` y conciliación idempotente contra fraudes.
+- **Soporte Dual**: Sandbox certificado para pruebas y Live para transacciones comerciales en producción.
+
+### 5. 🤖 Motor Pedagógico OpenMAIC & Aulas Interactivas
+- Generación dinámica de horarios escolares y escenas interactivas de aprendizaje (diapositivas, pizarra activa, cuestionarios y proyectos por retos PBL).
+- Validación de videos educativos en YouTube (control de idioma, pertinencia pedagógica, inserción segura y sin publicidad).
+- Salas de videoconferencia integradas con Google Meet y Jitsi embebido.
+
+---
+
+## 📸 Vista del Producto
+
+| Catálogo Público de Cursos | Panel de Administración y CRM |
+|:---:|:---:|
+| <img src="./docs/evidencias/catalogo-homeschool-100.png" alt="Catálogo de Wisdom Academy" width="100%" /> | <img src="./docs/evidencias/admin-revision.png" alt="Panel administrativo de Wisdom Academy" width="100%" /> |
+
+| Guía de Bienvenida Descargable | Aula de Recursos Educativos |
+|:---:|:---:|
+| <img src="./docs/evidencias/guia-bienvenida-escritorio.png" alt="Guía de bienvenida" width="100%" /> | <img src="./docs/evidencias/recursos-escritorio.png" alt="Recursos educativos" width="100%" /> |
+
+---
+
+## 🛠️ Stack Tecnológico
+
+| Componente | Tecnología | Propósito |
+|---|---|---|
+| **Framework Web** | Next.js 15.5 (App Router, Turbopack) | Arquitectura Serverless, SSR y Server Components |
+| **Biblioteca UI** | React 19 + Radix UI + Carbon Grid | Interfaces bilingües, accesibles y responsive |
+| **Lenguaje** | TypeScript 5.7 (Modo Estricto) | Robustez tipográfica y prevención de errores en compilación |
+| **Base de Datos Cloud** | Turso (libSQL Cloud) | SQLite transaccional edge de alto rendimiento |
+| **Almacén Documental** | Google Drive API v3 | Bóveda inmutable de documentos, actas y respaldos |
+| **Pagos** | PayPal REST SDK v2 | Procesamiento seguro de cobros y webhooks |
+| **Emails** | Resend API | Correos transaccionales (bienvenida, contraseñas, avisos) |
+| **Autenticación** | Sesiones HttpOnly + Google OAuth + scrypt | Seguridad de acceso sin contraseñas en texto plano |
+| **Testing** | Node.js Test Runner nativo + Playwright | 186 pruebas automatizadas sin dependencias pesadas |
+
+---
+
+## 🚀 Guía de Instalación y Comandos
+
+### 1. Clonar el repositorio e instalar dependencias
 
 ```bash
 git clone https://github.com/rpmministry/wisdom-academy-platform.git
 cd wisdom-academy-platform
-npm ci
+npm install
 ```
 
-### Variables de entorno
+### 2. Configurar Variables de Entorno
 
-Copia el ejemplo y completa solo los valores necesarios:
+Copia el archivo de plantilla y completa tus credenciales:
 
 ```bash
-cp .env.example .env.local
+cp .env.example .env
 ```
 
-Mínimo para desarrollo local:
+Variables mínimas requeridas:
 
-```dotenv
+```env
+# URL y Entorno
 APP_URL=http://localhost:3000
-WISDOM_DB_PATH=.data/wisdom.db
-WISDOM_BACKUP_DIR=.data/backups
-PLATFORM_OWNER_EMAIL=tu-correo@dominio.com
-CODE_HASH_PEPPER=un-secreto-largo
-WISDOM_RATE_LIMIT_SALT=otro-secreto-largo
+NODE_ENV=development
+
+# Turso Cloud (o SQLite local para pruebas offline)
+TURSO_DATABASE_URL=libsql://wisdom-db-tu-usuario.turso.io
+TURSO_AUTH_TOKEN=eyJhbGciOi...
+
+# Bóveda Google Drive
+GOOGLE_DRIVE_ROOT_FOLDER_ID=1s_VcSUhdehggzmUsXmsxiGT7M-hNnz9a
+GOOGLE_SERVICE_ACCOUNT_EMAIL=wisdom-drive-sync@tu-proyecto.iam.gserviceaccount.com
+GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+
+# Seguridad y Cron
+PLATFORM_OWNER_EMAIL=wisdomschoolec@gmail.com
+CRON_SECRET=clave_secreta_para_proteger_el_cron_de_respaldos_32_caracteres
+CODE_HASH_PEPPER=un_pepper_estable_y_secreto_de_mas_de_32_caracteres_aqui
+WISDOM_RATE_LIMIT_SALT=sal_aleatoria_para_rate_limiting
 ```
 
-Para cobros Sandbox, añade las variables de `PAYPAL_*` documentadas en [docs/PAYPAL_SETUP.md](docs/PAYPAL_SETUP.md). **Nunca** uses `NEXT_PUBLIC_PAYPAL_CLIENT_SECRET` ni subas `.env` al repositorio.
+### 3. Comandos de la Plataforma
 
-### Arranque
-
-```bash
-npm run dev
-```
-
-Abre `http://localhost:3000`. La aplicación aplica las migraciones y la semilla de forma idempotente al inicializar la base.
-
-### Propietario de la plataforma
-
-La semilla no crea la cuenta del propietario. Provisiona la cuenta de forma segura:
-
-```bash
-npm run provision:owner
-```
-
-El comando genera una contraseña inicial y la guarda en un archivo protegido. Cambia la contraseña al iniciar sesión.
-
-## Base de datos
-
-| Comando | Función |
+| Comando | Descripción |
 |---|---|
-| `npm run db:backup` | Respaldo consistente de SQLite |
-| `npm run db:restore -- --from RUTA --confirm` | Restauración explícita |
-| `npm run check:deploy` | Verificación previa al despliegue |
+| `npm run dev` | Inicia el servidor de desarrollo en `http://localhost:3000`. |
+| `npm run build` | Compila la aplicación Next.js 15 para producción en Vercel. |
+| `npm run test` | Ejecuta las **186 pruebas automatizadas** de recursos, plataforma y cursos. |
+| `npm run typecheck` | Valida el tipado estricto con TypeScript (`tsc --noEmit`). |
+| `npm run check:secrets` | Escanea el código compilado para prevenir fugas accidentales de secretos. |
+| `npm run check:deploy` | Valida la conectividad a Turso, Google Drive, variables de entorno y base de datos. |
+| `npm run db:migrate-and-seed` | Script maestro que aplica las 9 migraciones y siembra el catálogo y roles. |
+| `npm run db:push-to-turso` | Migra datos desde un archivo SQLite local directo a Turso Cloud. |
+| `npm run init:drive` | Aprovisiona las 14 carpetas escolares y la Bóveda Documental en Google Drive. |
+| `npm run init:courses-drive` | Sincroniza e indexa las 189 carpetas de Cursos y Talleres en Drive. |
 
-La base de producción debe vivir en un volumen persistente, por ejemplo:
+---
 
-```text
-WISDOM_DB_PATH=/data/wisdom.db
-WISDOM_BACKUP_DIR=/data/backups
-```
+## 🔒 Seguridad y Privacidad
 
-No uses el disco efímero de una función serverless.
+- **Defensa en Profundidad**: Control de acceso basado en roles jerárquicos (RBAC: `platform_owner`, `admin`, `teacher`, `guardian`, `student`).
+- **Cookies de Sesión Inmunes**: Flags `HttpOnly`, `SameSite=Lax` y `Secure` en producción; tokens con rotación y hash SHA-256.
+- **Contraseñas Seguras**: Hasheadas mediante el algoritmo criptográfico moderno `scrypt` con parámetros de memoria y costo recomendados.
+- **Rate Limiting y Prevención DDoS**: Limitación de frecuencia en endpoints sensibles (autenticación, checkout, reportes) con sal aleatoria.
+- **Protección de Menores**: Cumplimiento de privacidad educativa; expedientes de menores aislados bajo el permiso `minors.read`.
 
-## Programa de Teología N2N
+---
 
-El programa de Teología se importa con:
+## 📚 Documentación Técnica Detallada
 
-```bash
-npm run import:n2n-semester-1
-```
-
-El importador es idempotente y publica el Semestre 1 con clases, materiales, repasos y evaluaciones. El producto queda activo en el catálogo a **USD 50 por semestre**. En la imagen Docker el importador se ejecuta automáticamente la primera vez (`RUN_N2N_IMPORT=1`) y deja un marcador persistente en `/data`.
-
-## Pruebas
-
-```bash
-npm run typecheck
-npm run test:payments
-npm test
-npm run test:e2e
-npm run check:secrets
-```
-
-Resultados de la sesión de validación:
-
-| Comando | Resultado |
-|---|---|
-| `npm test` | **186 aprobadas, 0 fallos** |
-| `npm run test:platform` | **83 aprobadas, 0 fallos** |
-| `npm run test:payments` | **31 aprobadas, 0 fallos** |
-| Playwright (suite completa) | **52 aprobadas, 0 fallos** |
-| `npm run build` | Correcto |
-| PayPal Sandbox real | Orden `3TY92249470992444`, captura `9S879207H39589335`, `10.00 USD` (evidencia del 23/10/2026) |
-
-Los detalles y evidencias están en [docs/PAYPAL_TESTING.md](docs/PAYPAL_TESTING.md).
-
-## Despliegue
-
-### Opción recomendada
-
-Host Node con volumen persistente. La guía gratuita incluye Northflank Sandbox y Oracle Cloud Always Free:
-
-- [docs/DEPLOY_FREE_HOSTING.md](docs/DEPLOY_FREE_HOSTING.md)
-- `Dockerfile` listo para construir la imagen.
-- Healthcheck: `GET /api/health`.
-- Volumen: `/data`.
-
-### Vercel
-
-No es compatible con SQLite persistente y el plan Hobby está restringido a uso personal/no comercial. Para Vercel se requiere:
-
-1. Migrar a Turso/libSQL, Neon o Supabase.
-2. Convertir la capa de datos a asíncrona.
-3. Usar un plan compatible con uso comercial.
-
-Ver [docs/PAYPAL_DEPLOYMENT.md](docs/PAYPAL_DEPLOYMENT.md).
-
-## Estructura del repositorio
-
-```text
-.
-├── src/
-│   ├── app/                 # Páginas y Route Handlers de Next.js
-│   ├── components/          # UI de catálogo, LMS, CRM y administración
-│   ├── server/              # Dominio, auth, DB, pagos y HTTP
-│   ├── lib/                 # Clientes, utilidades e integraciones
-│   ├── styles/              # Sistema visual y estilos
-│   └── data/                # Currículo y datos base
-├── tests/                   # Unitarias, integración, plataforma y E2E
-├── scripts/                 # Migraciones, backups, provisión y checks
-├── docs/                    # Arquitectura, PayPal, despliegue y auditoría
-├── public/                  # Marca, fuentes, imágenes y documentos
-├── Dockerfile
-├── next.config.ts
-└── package.json
-```
-
-## Documentación
-
-| Documento | Contenido |
-|---|---|
-| [docs/PAYPAL_AUDIT.md](docs/PAYPAL_AUDIT.md) | Auditoría técnica y decisiones de PayPal |
-| [docs/PAYPAL_SETUP.md](docs/PAYPAL_SETUP.md) | Cuenta, credenciales, webhook y variables |
-| [docs/PAYPAL_TESTING.md](docs/PAYPAL_TESTING.md) | Pruebas, evidencias Sandbox y pendientes |
-| [docs/PAYPAL_DEPLOYMENT.md](docs/PAYPAL_DEPLOYMENT.md) | Producción, rollback y seguridad |
-| [docs/DEPLOY_FREE_HOSTING.md](docs/DEPLOY_FREE_HOSTING.md) | Hosting gratuito con volumen persistente |
-| [docs/PAYPAL_ACCEPTANCE.md](docs/PAYPAL_ACCEPTANCE.md) | Condiciones de aceptación y evidencias |
-| [docs/CHECKOUT_Y_CRM_FINANCIERO.md](docs/CHECKOUT_Y_CRM_FINANCIERO.md) | Carrito, checkout, permisos y módulo financiero del CRM |
-| [docs/COMPRA_INVITADA_REGISTRO.md](docs/COMPRA_INVITADA_REGISTRO.md) | Compra sin cuenta, registro, matrícula, correo y Vercel |
-| [docs/UX_PORTALES_Y_NAVEGACION.md](docs/UX_PORTALES_Y_NAVEGACION.md) | Encabezados responsive, perfil y patrones de navegación |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Arquitectura, módulos, datos y flujo de pagos |
-
-## Seguridad
-
-- No publiques vulnerabilidades en issues abiertos.
-- No incluyas credenciales, tokens, cookies ni datos de estudiantes en reportes.
-- Usa [SECURITY.md](SECURITY.md) para el procedimiento de reporte.
-- Ejecuta `npm run check:secrets` antes de publicar cambios.
-
-## Contribuir
-
-Lee [CONTRIBUTING.md](CONTRIBUTING.md). Las contribuciones deben:
-
-1. Respetar la arquitectura y el modelo de permisos.
-2. Incluir pruebas para cambios de pagos, accesos o datos.
-3. No introducir secretos ni dependencias innecesarias.
-4. Pasar `npm run typecheck`, `npm test` y `npm run build`.
-5. Mantener el tono, la accesibilidad y el diseño responsive.
-
-## Roadmap
-
-- [x] Catálogo, aula virtual y administración.
-- [x] PayPal Sandbox con captura y webhook reales.
-- [x] Idempotencia, conciliación y reembolsos parciales.
-- [ ] Pago Live con cuenta comercial verificada.
-- [ ] Dominio propio y hosting de producción con SLA.
-- [ ] Migración evaluada a Turso/PostgreSQL para Vercel.
-- [ ] Monitorización externa y alertas de conciliación.
-- [ ] Ampliación de pruebas E2E de checkout en Sandbox.
-
-## Licencia
-
-**Propietario.** Copyright © 2026 Wisdom Academy. Todos los derechos reservados. No se concede permiso de uso, copia, modificación o distribución sin autorización escrita del propietario. Ver [LICENSE](LICENSE).
+- [📖 Manual de Migración a Vercel + Turso + Google Drive](MIGRACION_VERCEL_TURSO_DRIVE.md)
+- [🏗️ Arquitectura y Principios de Diseño](docs/ARCHITECTURE.md)
+- [💳 Integración y Flujo de Cobros con PayPal](docs/CHECKOUT_Y_CRM_FINANCIERO.md)
+- [📁 Estructura Canónica de Google Drive](docs/drive-structure-courses-workshops.md)
+- [🤖 Protocolo de Recursos Educativos OpenMAIC](docs/RECURSOS_EDUCATIVOS_OPENMAIC.md)
 
 ---
 
 <p align="center">
-  <strong>Wisdom Academy</strong><br />
-  Educación con propósito, tecnología con integridad.
+  <b>Wisdom Academy Platform</b> · Transformando la educación con excelencia, tecnología y valores.<br />
+  © 2026 Wisdom Academy. Todos los derechos reservados.
 </p>

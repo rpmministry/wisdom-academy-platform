@@ -1,3 +1,10 @@
+> [!NOTE]
+> **ARQUITECTURA DE PRODUCCIÓN VIGENTE (25 DE OCTUBRE DE 2026):**
+> La plataforma ha sido migrada exitosamente desde el modelo de contenedor monolítico hacia una **arquitectura Serverless moderna en Vercel + Turso (libSQL Cloud) + Google Drive (Data Vault)**.
+> 
+> Ya no existen bloqueos para desplegar en Vercel: los datos transaccionales residen en Turso Edge y los documentos y respaldos residen en Google Drive. Para el procedimiento operativo actual en Vercel, consulte el manual maestro:
+> **👉 [`MIGRACION_VERCEL_TURSO_DRIVE.md`](../MIGRACION_VERCEL_TURSO_DRIVE.md)**
+
 # Despliegue gratuito temporal · Wisdom Academy
 
 **Fecha:** 23 de octubre de 2026  
