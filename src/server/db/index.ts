@@ -18,3 +18,12 @@ export function db() {
 
 export { prepare, withTransaction };
 export { nowIso, closeDb, resetDbForTests, getDatabasePath, openRawDatabase } from './sqlite';
+export {
+  isTursoConfigured,
+  getTursoClient,
+  getTursoConfig,
+  executeAsync,
+  executeMultipleAsync,
+  applyTursoMigrations,
+} from './turso';
+export { MIGRATIONS, type Migration } from './migrations';

@@ -4,7 +4,7 @@
   "description": "Plataforma educativa integral y bilingüe (español/inglés) de Wisdom Academy para educación básica, apoyo homeschool, cursos y talleres.",
   "private": true,
   "engines": {
-    "node": ">=24 <25"
+    "node": ">=22 <25"
   },
   "overrides": {
     "postcss": "^8.5.31"
@@ -32,10 +32,13 @@
     "db:backup": "tsx scripts/backup-database.ts",
     "db:restore": "tsx scripts/restore-database.ts",
     "check:deploy": "tsx scripts/check-deployment.ts",
-    "resources:audit": "tsx scripts/audit-educational-resources.ts"
+    "resources:audit": "tsx scripts/audit-educational-resources.ts",
+    "db:migrate-and-seed": "tsx scripts/db-migrate-and-seed.ts",
+    "db:push-to-turso": "tsx scripts/import-local-sqlite-to-turso.ts"
   },
   "dependencies": {
     "@carbon/grid": "^11.23.0",
+    "@libsql/client": "^0.18.0",
     "@radix-ui/react-accordion": "^1.3.1",
     "@radix-ui/react-dialog": "^1.3.1",
     "@radix-ui/react-tabs": "^1.2.1",

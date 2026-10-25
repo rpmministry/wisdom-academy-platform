@@ -772,6 +772,11 @@ function seedE2EStudent(db: SqliteDatabase): void {
  * del creador: esa cuenta solo se aprovisiona con el procedimiento seguro.
  */
 export function seedFoundation(db: SqliteDatabase): void {
+  try {
+    const existing = db.prepare("SELECT code FROM roles WHERE code = 'platform_owner' LIMIT 1").get();
+    if (existing) return;
+  } catch {}
+
   db.exec('BEGIN IMMEDIATE');
   try {
     insertPermissionRows(db);

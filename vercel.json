@@ -1,0 +1,23 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "regions": ["iad1"],
+  "functions": {
+    "src/app/api/cron/**": {
+      "maxDuration": 60
+    },
+    "src/app/api/admin/**": {
+      "maxDuration": 60
+    },
+    "src/app/api/courses/**": {
+      "maxDuration": 30
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/drive-sync-backup",
+      "schedule": "0 4 * * *"
+    }
+  ]
+}
+

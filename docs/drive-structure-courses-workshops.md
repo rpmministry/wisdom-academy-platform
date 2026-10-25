@@ -1,6 +1,6 @@
 # Estructura real de Google Drive — Cursos y Talleres
 
-Generado: 2026-10-22T14:45:29.781Z
+Generado: 2026-10-25T14:07:14.320Z
 
 ## Resultado de la ejecución
 
@@ -401,45 +401,3 @@ Generado: 2026-10-22T14:45:29.781Z
 - `02_CLAVE_PRIVADA_DOCENTE` solo debe ser accesible por personal académico autorizado.
 - Si la carpeta padre hereda permisos amplios, guarda los originales con respuestas en una ubicación privada de administración fuera del árbol visible para estudiantes y registra su ID en los metadatos protegidos del curso.
 - Los informes individuales de calificaciones no se almacenan en la carpeta compartida del curso.
-
-## Registro del programa en la plataforma
-
-- ID interno del programa: `prg_W0ZTQgeW5azqtp9qi326oA`
-- Slug: `curso-teologico-universidad-cristiana-n2n`
-- Título: Curso teológico — Universidad Cristiana N2N
-- Estado: `draft` (no visible para estudiantes hasta publicarlo)
-- Portada configurada: `/brand/social/og-image-blue-dark.png`
-- Carpeta del programa: [1qPSiVMyEqtHaReDuq6vE5uPs7xVR50YH](https://drive.google.com/drive/folders/1qPSiVMyEqtHaReDuq6vE5uPs7xVR50YH)
-
-### Carpetas de semestre vinculadas
-
-| Semestre | ID del módulo | Carpeta de Drive |
-| --- | --- | --- |
-| Semestre 01 | `mod_1_i326oA_20261022` | `1EHhHkbVOfkjrgitBYC80Kc8HzIl0JyVP` |
-| Semestre 02 | `mod_2_i326oA_20261022` | `1ctsPFIK_MtE0AhMNYfnofg6LLPikUrJR` |
-| Semestre 03 | `mod_3_i326oA_20261022` | `1JOwHsPKzGHU61A09ZpU9ElfZ2NCJIilO` |
-| Semestre 04 | `mod_4_i326oA_20261022` | `1ZBTVWGKB1Y8wkuIlmAPVG4B1tYZm2O9t` |
-| Semestre 05 | `mod_5_i326oA_20261022` | `12hgVDalAzbhbRLzXHksu1fJ6PV7yDuTb` |
-| Semestre 06 | `mod_6_i326oA_20261022` | `1OxyHkiRAORbITqrA_ZIGZOJS3nU3oOeo` |
-| Semestre 07 | `mod_7_i326oA_20261022` | `1Yi-pUBp7GaXQ7oorwmR55aXblmkapSa6` |
-| Semestre 08 | `mod_8_i326oA_20261022` | `1gwtTDYd7G1xSCaoelSfmk58nz6RaIgeO` |
-| Semestre 09 | `mod_9_i326oA_20261022` | `14o2ZK9S0KD0Z-l2VMr26KrJUnArn9Vna` |
-| Semestre 10 | `mod_10_i326oA_20261022` | `1rHLN7Jc9Hb-zAuRP9UIdKvze3iHIxdh-` |
-
-### Privacidad
-
-- La carpeta `02_CLAVE_PRIVADA_DOCENTE` solo debe ser accesible por personal académico autorizado.
-- Si el padre hereda permisos de estudiantes, usa una carpeta privada de administración externa al árbol del curso y registra su ID en la ficha del examen.
-- Los informes individuales se guardan en el expediente privado del estudiante, no en esta carpeta compartida.
-
-## Actualización — Semestre 1 cargado
-
-- Título actual: **Programa de Teología | Universidad Cristiana N2N**.
-- Slug actual: `programa-de-teologia-n2n`.
-- Estado actual: `published`.
-- Portada actual: `/brand/n2n/online-mid1-2022.jpg`.
-- Logotipo actual: `/brand/n2n/n2ncu-logo-2021.svg`.
-- Semestre 1: 32 sesiones, 2 repasos y 5 evaluaciones oficiales cargadas.
-- Los PDF oficiales se conservan en `00_GESTION_E_INDICE_DE_MATERIALES/01_DOCUMENTOS_ORIGINALES/` y se sirven a los estudiantes mediante proxy autenticado, sin compartir públicamente la carpeta.
-- Los semestres 2-10 conservan su carpeta, pero su contenido está pendiente de carga.
-- Regla de avance: el Semestre 2 se habilita cuando el estudiante completa las 32 sesiones y aprueba los 5 exámenes con 60% o más.

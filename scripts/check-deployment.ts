@@ -57,38 +57,64 @@ function checkWritableDirectory(target: string, label: string): void {
   }
 }
 
-// 1. Runtime compatible con node:sqlite.
+// 1. Runtime compatible con Node 22+ y Turso / node:sqlite.
 const nodeMajor = Number(process.versions.node.split('.')[0]);
 add(
-  nodeMajor >= 24 ? 'OK' : 'FAIL',
+  nodeMajor >= 22 ? 'OK' : 'FAIL',
   'Runtime Node.js',
-  `Node ${process.versions.node}${nodeMajor >= 24 ? '' : ' (se requiere Node 24 o superior)'}`
+  `Node ${process.versions.node}${nodeMajor >= 22 ? '' : ' (se requiere Node 22 o superior)'}`
 );
 
-// 2. Ubicación y persistencia de SQLite.
-if (env.VERCEL === '1' && env.VERCEL_ENV === 'production') {
+// 2. Ubicación y persistencia (Turso Cloud libSQL o SQLite local).
+const tursoUrl = env.TURSO_DATABASE_URL?.trim() || '';
+const tursoToken = env.TURSO_AUTH_TOKEN?.trim() || '';
+const isTurso = Boolean(tursoUrl && (tursoUrl.startsWith('libsql://') || tursoUrl.startsWith('https://') || tursoUrl.startsWith('http://')));
+
+if (isTurso) {
+  add('OK', 'Persistencia Serverless (Turso)', `Conectado a ${tursoUrl.replace(/:[^:@]+@/, ':***@')}`);
+  if (!tursoToken) {
+    add('WARN', 'TURSO_AUTH_TOKEN', 'No se ha configurado token de autenticación para Turso.');
+  } else {
+    add('OK', 'TURSO_AUTH_TOKEN', 'Token de autenticación configurado.');
+  }
+} else if (env.VERCEL === '1' && env.VERCEL_ENV === 'production') {
   add(
     'FAIL',
     'Persistencia en Vercel',
-    'Vercel Production no ofrece un sistema de archivos persistente para SQLite. Usa un host con volumen persistente o migra la base de datos.'
+    'Vercel Production requiere TURSO_DATABASE_URL y TURSO_AUTH_TOKEN para persistencia serverless.'
   );
+} else {
+  const dbPath = env.WISDOM_DB_PATH?.trim() || path.join(projectRoot, '.data', 'wisdom.db');
+  if (dbPath === ':memory:') {
+    add('FAIL', 'Ruta de SQLite', 'WISDOM_DB_PATH no puede ser :memory: en un despliegue real.');
+  } else {
+    const absoluteDb = path.resolve(projectRoot, dbPath);
+    if (production && /(^|[\\/])(tmp|temp)([\\/]|$)/i.test(absoluteDb)) {
+      add('FAIL', 'Ruta de SQLite', 'La base está en una carpeta temporal: los datos se perderán.');
+    } else {
+      add(
+        'OK',
+        'Ruta de SQLite',
+        `${absoluteDb}${isInsideProject(absoluteDb) ? ' (dentro del proyecto; modo local/desarrollo)' : ''}`
+      );
+    }
+    checkWritableDirectory(path.dirname(absoluteDb), 'Directorio de SQLite');
+  }
 }
 
-const dbPath = env.WISDOM_DB_PATH?.trim() || path.join(projectRoot, '.data', 'wisdom.db');
-if (dbPath === ':memory:') {
-  add('FAIL', 'Ruta de SQLite', 'WISDOM_DB_PATH no puede ser :memory: en un despliegue real.');
+// 2b. Bóveda Google Drive y Vercel Cron
+const cronSecret = env.CRON_SECRET?.trim() || '';
+if (production) {
+  add(cronSecret ? 'OK' : 'WARN', 'CRON_SECRET', cronSecret ? 'Configurado para Vercel Cron Jobs' : 'No definido: el cron de respaldo no estará autenticado.');
+}
+
+const driveRoot = env.GOOGLE_DRIVE_ROOT_FOLDER_ID?.trim() || '';
+const driveEmail = env.GOOGLE_SERVICE_ACCOUNT_EMAIL?.trim() || '';
+const driveKey = env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY || '';
+if (driveRoot && driveEmail && driveKey.includes('BEGIN PRIVATE KEY')) {
+  add('OK', 'Bóveda Google Drive', `Configurada (Raíz: ${driveRoot})`);
 } else {
-  const absoluteDb = path.resolve(projectRoot, dbPath);
-  if (production && /(^|[\\/])(tmp|temp)([\\/]|$)/i.test(absoluteDb)) {
-    add('FAIL', 'Ruta de SQLite', 'La base está en una carpeta temporal: los datos se perderán.');
-  } else {
-    add(
-      'OK',
-      'Ruta de SQLite',
-      `${absoluteDb}${isInsideProject(absoluteDb) ? ' (dentro del proyecto; asegura un volumen persistente)' : ''}`
-    );
-  }
-  checkWritableDirectory(path.dirname(absoluteDb), 'Directorio de SQLite');
+  add('WARN', 'Bóveda Google Drive', 'Faltan credenciales de Google Drive; la bóveda documental operará en modo local.');
 }
 
 // 3. URL pública y cookies.
@@ -243,10 +269,12 @@ try {
 }
 
 // 8. Estado real de la base de datos, sin modificar el esquema.
-const absoluteDbPath = path.resolve(projectRoot, dbPath);
-if (dbPath !== ':memory:' && fs.existsSync(absoluteDbPath)) {
+const dbPathResolved = env.WISDOM_DB_PATH?.trim() || path.join(projectRoot, '.data', 'wisdom.db');
+const dbLocation = isTurso ? 'turso' : path.resolve(projectRoot, dbPathResolved);
+
+if (isTurso || (dbPathResolved !== ':memory:' && fs.existsSync(dbLocation))) {
   try {
-    const database = openRawDatabase(absoluteDbPath);
+    const database = openRawDatabase(dbLocation);
     try {
       const integrity = database.prepare('PRAGMA integrity_check').get() as {
         integrity_check?: string;
@@ -314,15 +342,15 @@ if (dbPath !== ':memory:' && fs.existsSync(absoluteDbPath)) {
   } catch (error) {
     add(
       'FAIL',
-      'Lectura de SQLite',
-      error instanceof Error ? error.message : 'No fue posible leer la base de datos.'
+      'Acceso a base de datos',
+      `Error al abrir la base: ${error instanceof Error ? error.message : 'desconocido'}`
     );
   }
 } else {
   add(
     'WARN',
     'Base de datos',
-    'El archivo aún no existe. Se creará al primer arranque; ejecuta npm run provision:owner antes de abrir el acceso.'
+    `No existe el archivo ${dbLocation}; se creará en el primer arranque con migraciones automáticas.`
   );
 }
 

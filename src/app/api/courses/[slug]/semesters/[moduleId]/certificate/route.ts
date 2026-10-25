@@ -8,6 +8,7 @@ import {
 } from '@/server/domain/coursePrograms';
 import { escapeHtml, renderPrintableHtml } from '@/lib/courses/markdown';
 import { prepare } from '@/server/db';
+import { getWisdomDriveVault, scheduleVaultSync, isVaultConfigured } from '@/lib/drive/wisdomDriveVault';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -71,6 +72,7 @@ export async function GET(
       </div>
     `;
 
+    const fileName = `certificado-${slug}-${moduleId}-${user.id}.html`;
     const html = renderPrintableHtml({
       title: 'Certificado Ministerial de Estudios',
       subtitle: `${program.title} · ${moduleRow.title}`,
@@ -80,6 +82,14 @@ export async function GET(
       downloadName: `certificado-${moduleRow.title.replace(/\s+/g, '-').toLowerCase()}.html`,
       backHref: `/cursos/${slug}`,
     });
+
+    // Write-Through / Async Sync: Sincronización documental en Google Drive Bóveda
+    if (isVaultConfigured()) {
+      scheduleVaultSync(`certificate-${user.id}-${moduleId}`, async () => {
+        const vault = getWisdomDriveVault()!;
+        await vault.uploadCertificate(slug, fileName, html);
+      });
+    }
 
     const download = request.nextUrl.searchParams.get('download') === '1';
     return new NextResponse(html, {

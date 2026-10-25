@@ -1,3 +1,4 @@
+import { Readable } from 'node:stream';
 /**
  * ==============================================================================
  * PROYECTO: Wisdom Academy Platform - Inicializador Curricular en Google Drive
@@ -26,6 +27,7 @@ import { google } from 'googleapis';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 import * as path from 'path';
+import { getWisdomDriveVault, isVaultConfigured, VAULT_FOLDERS } from '../src/lib/drive/wisdomDriveVault';
 
 // Carga las variables de entorno desde el archivo .env en la raíz del proyecto
 dotenv.config();
@@ -311,11 +313,12 @@ export async function inicializarEstructuraGoogleDrive(): Promise<{
   mensajes: string[];
 }> {
   const mensajes: string[] = [];
+  const log = (msg: string) => { Array.prototype.push.call(mensajes, msg); console.log(msg); };
   const rootFolderId = process.env.GOOGLE_DRIVE_ROOT_FOLDER_ID;
   const serviceEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
   const privateKey = process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY;
 
-  mensajes.push('Iniciando proceso de aprovisionamiento de las 14 carpetas escolares en Google Drive...');
+  log('Iniciando proceso de aprovisionamiento de las 14 carpetas escolares en Google Drive...');
 
   // Determina si contamos con credenciales activas de Google Cloud o si ejecutamos en modo desarrollo local
   const tieneCredencialesReales =
@@ -328,7 +331,7 @@ export async function inicializarEstructuraGoogleDrive(): Promise<{
 
   if (tieneCredencialesReales) {
     try {
-      mensajes.push('Autenticando con Google Drive API v3 mediante Cuenta de Servicio (Service Account)...');
+      log('Autenticando con Google Drive API v3 mediante Cuenta de Servicio (Service Account)...');
       
       const auth = new google.auth.JWT({
         email: serviceEmail,
@@ -343,7 +346,7 @@ export async function inicializarEstructuraGoogleDrive(): Promise<{
         fileId: rootFolderId,
         fields: 'id, name',
       });
-      mensajes.push(`Carpeta raíz en Google Drive localizada con éxito: "${rootFolderRes.data.name}" [ID: ${rootFolderRes.data.id}]`);
+      log(`Carpeta raíz en Google Drive localizada con éxito: "${rootFolderRes.data.name}" [ID: ${rootFolderRes.data.id}]`);
 
       // Itera sobre el catálogo de los 14 años escolares
       let contador = 0;
@@ -357,7 +360,7 @@ export async function inicializarEstructuraGoogleDrive(): Promise<{
         let gradoFolderId: string;
         if (busqueda.data.files && busqueda.data.files.length > 0) {
           gradoFolderId = busqueda.data.files[0].id!;
-          mensajes.push(`✓ Carpeta existente: ${grado.codigoCarpeta} [ID: ${gradoFolderId}]`);
+          log(`✓ Carpeta existente: ${grado.codigoCarpeta} [ID: ${gradoFolderId}]`);
         } else {
           // Crea la carpeta del año escolar
           const nuevaCarpeta = await drive.files.create({
@@ -370,7 +373,7 @@ export async function inicializarEstructuraGoogleDrive(): Promise<{
             fields: 'id, name',
           });
           gradoFolderId = nuevaCarpeta.data.id!;
-          mensajes.push(`+ Carpeta creada con éxito: ${grado.codigoCarpeta} [ID: ${gradoFolderId}]`);
+          log(`+ Carpeta creada con éxito: ${grado.codigoCarpeta} [ID: ${gradoFolderId}]`);
         }
 
         // Si tiene subcarpetas de materias, créalas
@@ -389,7 +392,7 @@ export async function inicializarEstructuraGoogleDrive(): Promise<{
                   parents: [gradoFolderId],
                 },
               });
-              mensajes.push(`  + Subcarpeta de materia creada: ${materia}`);
+              log(`  + Subcarpeta de materia creada: ${materia}`);
             }
           }
         }
@@ -415,17 +418,17 @@ export async function inicializarEstructuraGoogleDrive(): Promise<{
                 },
                 media: {
                   mimeType: 'application/json',
-                  body: JSON.stringify(curriculoData, null, 2),
+                  body: Readable.from([JSON.stringify(curriculoData, null, 2)]),
                 },
                 supportsAllDrives: true,
               });
-              mensajes.push(`  + Plantilla curricular inyectada en Google Drive: ${nombreArchivo} para ${grado.estudianteAsignado}`);
+              log(`  + Plantilla curricular inyectada en Google Drive: ${nombreArchivo} para ${grado.estudianteAsignado}`);
             } else {
-              mensajes.push(`  ✓ Plantilla curricular existente en Drive: ${nombreArchivo} para ${grado.estudianteAsignado}`);
+              log(`  ✓ Plantilla curricular existente en Drive: ${nombreArchivo} para ${grado.estudianteAsignado}`);
             }
           } catch (fileQuotaError: any) {
-            mensajes.push(`  ℹ Nota de almacenamiento en Drive para ${grado.estudianteAsignado}: Las Cuentas de Servicio en cuentas personales @gmail.com no disponen de cuota propia para crear archivos JSON/binarios (las carpetas sí se crean con 0 bytes de cuota).`);
-            mensajes.push(`  ✓ ${nombreArchivo} para ${grado.estudianteAsignado} conservado en caché local (.drive_local_cache) para despacho automático.`);
+            log(`  ℹ Nota de almacenamiento en Drive para ${grado.estudianteAsignado}: Las Cuentas de Servicio en cuentas personales @gmail.com no disponen de cuota propia para crear archivos JSON/binarios (las carpetas sí se crean con 0 bytes de cuota).`);
+            log(`  ✓ ${nombreArchivo} para ${grado.estudianteAsignado} conservado en caché local (.drive_local_cache) para despacho automático.`);
           }
         }
 
@@ -451,7 +454,21 @@ export async function inicializarEstructuraGoogleDrive(): Promise<{
         }
       }
 
-      mensajes.push(`✓ Proceso completado: Las 14 carpetas y sus subcarpetas están verificadas en Google Drive.`);
+            // Inicializar Bóveda Documental y Académica (6 carpetas maestras)
+      try {
+        const vault = getWisdomDriveVault();
+        if (vault) {
+          log('Inicializando Bóveda Documental y Académica en Google Drive...');
+          const vaultFolders = await vault.ensureVaultStructure();
+          for (const [vKey, vId] of Object.entries(vaultFolders)) {
+            log(`✓ [Bóveda] ${VAULT_FOLDERS[vKey as keyof typeof VAULT_FOLDERS]} [ID: ${vId}]`);
+          }
+        }
+      } catch (vaultErr: any) {
+        log(`⚠ Advertencia al inicializar Bóveda: ${vaultErr.message}`);
+      }
+
+log(`✓ Proceso completado: Las 14 carpetas y sus subcarpetas están verificadas en Google Drive.`);
 
       return {
         exito: true,
@@ -460,14 +477,14 @@ export async function inicializarEstructuraGoogleDrive(): Promise<{
         mensajes,
       };
     } catch (error: any) {
-      mensajes.push(`Aviso al conectar con Google Drive API: ${error.message}`);
-      mensajes.push('Activando modo de respaldo local para asegurar continuidad del flujo de trabajo...');
+      log(`Aviso al conectar con Google Drive API: ${error.message}`);
+      log('Activando modo de respaldo local para asegurar continuidad del flujo de trabajo...');
     }
   }
 
   // MODO DESARROLLO LOCAL / REPLICA ESTRUCTURAL:
   // Crea la réplica exacta en .drive_local_cache para pruebas offline y validación local inmediata
-  mensajes.push('Operando en MODO DESARROLLO LOCAL (Estructura determinista lista para sincronización en la nube).');
+  log('Operando en MODO DESARROLLO LOCAL (Estructura determinista lista para sincronización en la nube).');
   const basePathLocal = path.join(process.cwd(), '.drive_local_cache');
 
   if (!fs.existsSync(basePathLocal)) {
@@ -495,11 +512,19 @@ export async function inicializarEstructuraGoogleDrive(): Promise<{
       const curriculoData = generarCurriculoAnual(grado.estudianteAsignado);
       const filePath = path.join(gradoPath, 'curriculo_anual.json');
       fs.writeFileSync(filePath, JSON.stringify(curriculoData, null, 2), 'utf-8');
-      mensajes.push(`✓ [Local Cache] Generado curriculo_anual.json para ${grado.estudianteAsignado} en ${grado.codigoCarpeta}`);
+      log(`✓ [Local Cache] Generado curriculo_anual.json para ${grado.estudianteAsignado} en ${grado.codigoCarpeta}`);
     }
   }
 
-  mensajes.push(`✓ Estructura de 14 años escolares verificada con éxito (${carpetasLocales} carpetas).`);
+    // Crear carpetas locales para la Bóveda
+  const vaultBasePath = path.join(basePathLocal, 'Boveda_Wisdom');
+  for (const vFolder of Object.values(VAULT_FOLDERS)) {
+    const p = path.join(vaultBasePath, vFolder);
+    if (!fs.existsSync(p)) fs.mkdirSync(p, { recursive: true });
+  }
+  log(`✓ [Local Mock] 6 carpetas maestras de la Bóveda inicializadas en ${vaultBasePath}`);
+
+log(`✓ Estructura de 14 años escolares verificada con éxito (${carpetasLocales} carpetas).`);
 
   return {
     exito: true,
