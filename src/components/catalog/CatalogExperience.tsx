@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
@@ -10,7 +10,11 @@ import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { WisdomIcon } from '@/components/ui/WisdomIcon';
 import { PublicHeader } from '@/components/layout/PublicHeader';
-import { AcademySections } from '@/components/marketing/AcademySections';
+import {
+  AcademySections,
+  PathwayGatewaySection,
+  WorkshopsFeaturedSection,
+} from '@/components/marketing/AcademySections';
 import { SchoolPortalModal } from '@/components/catalog/SchoolPortalModal';
 import { useCart } from '@/lib/cart/cartContext';
 import {
@@ -29,7 +33,7 @@ interface CatalogResource {
   description: string | null;
 }
 
-interface CatalogProduct {
+export interface CatalogProduct {
   id: string;
   slug: string;
   name: string;
@@ -280,8 +284,8 @@ export function CatalogExperience({ home = false }: { home?: boolean }) {
           <h1 className="wa-catalog-title">
             {home ? (
               <>
-                Aprende. Crea.<br />
-                <span>Lidera tu futuro.</span>
+                Educación escolar organizada y<br />
+                <span>cursos de alta especialización.</span>
               </>
             ) : (
               <>
@@ -292,13 +296,20 @@ export function CatalogExperience({ home = false }: { home?: boolean }) {
           </h1>
           <p className="wa-catalog-lead">
             {home
-              ? 'Educación básica, homeschool, cursos y talleres que integran excelencia académica, tecnología y formación en valores para preparar a cada estudiante para el futuro.'
+              ? 'Wisdom Academy reúne dos propuestas formativas de excelencia: un Portal Escolar con trayectorias académicas estructuradas para familias, y un catálogo de Cursos y Talleres para aprender habilidades prácticas en tecnología, liderazgo, finanzas y artes a tu propio ritmo.'
               : 'Programas de educación básica, apoyo homeschool, cursos y talleres de formación integral, además de recursos digitales. Cada producto enumera exactamente los contenidos que habilita y el acceso se verifica en el servidor.'}
           </p>
           {home && (
             <div className="wa-home-hero-actions">
-              <a href="#programas" style={{ textDecoration: 'none' }}>
-                <Button variant="primary-gold" size="lg">Explorar programas</Button>
+              <a href="#cursos-talleres" style={{ textDecoration: 'none' }}>
+                <Button variant="primary-gold" size="lg">
+                  <WisdomIcon name="sparkles" size={16} /> Explorar Cursos y Talleres
+                </Button>
+              </a>
+              <a href="#portal-escolar" style={{ textDecoration: 'none' }}>
+                <Button variant="secondary" size="lg">
+                  <WisdomIcon name="graduation-cap" size={16} /> Conocer Portal Escolar
+                </Button>
               </a>
               <Link href="/login" style={{ textDecoration: 'none' }}>
                 <Button variant="secondary" size="lg">Ingresar al portal</Button>
@@ -316,7 +327,7 @@ export function CatalogExperience({ home = false }: { home?: boolean }) {
                   document.getElementById('programas')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
               }}
-              placeholder={home ? 'Busca un programa, grado, taller o materia' : 'Busca por curso, materia, grado o taller'}
+              placeholder={home ? 'Busca un curso, taller, programa o materia...' : 'Busca por curso, materia, grado o taller'}
               aria-label="Buscar cursos"
             />
             <button
@@ -329,9 +340,29 @@ export function CatalogExperience({ home = false }: { home?: boolean }) {
               Buscar
             </button>
           </div>
+          {home && (
+            <div className="wa-hero-value-pillars" aria-label="Aspectos destacados de la academia">
+              <div className="wa-hero-value-pill">
+                <WisdomIcon name="sparkles" size={14} color="#b45309" />
+                <span><strong>Cursos y Talleres:</strong> IA, Python, finanzas y liderazgo</span>
+              </div>
+              <div className="wa-hero-value-pill">
+                <WisdomIcon name="graduation-cap" size={14} color="#2563eb" />
+                <span><strong>Portal Escolar:</strong> trayectoria K-12 con tutorías y portafolio</span>
+              </div>
+              <div className="wa-hero-value-pill">
+                <WisdomIcon name="shield" size={14} color="#047857" />
+                <span><strong>Acceso verificado:</strong> contenidos trazables en servidor</span>
+              </div>
+              <div className="wa-hero-value-pill">
+                <WisdomIcon name="clock" size={14} color="#475569" />
+                <span><strong>Flexibilidad:</strong> modalidad 100% online e híbrida</span>
+              </div>
+            </div>
+          )}
           <div className="wa-catalog-stats" aria-busy={cargando}>
             <div><strong>{cargando || error ? '—' : productos.length}</strong>productos publicados</div>
-            <div><strong>{cargando || error ? '—' : productos.reduce((total, product) => total + product.resourceCount, 0)}</strong>recursos formativos</div>
+            <div><strong>2</strong>rutas integradas</div>
             <div><strong>200</strong>días de referencia flexibles</div>
             <div><strong>100%</strong>acceso verificado</div>
           </div>
@@ -365,17 +396,31 @@ export function CatalogExperience({ home = false }: { home?: boolean }) {
         </div>
       </section>
 
+      {home && (
+        <>
+          <PathwayGatewaySection
+            onOpenSchoolModal={() => setSchoolModalOpen(true)}
+            onSelectPortal={(p) => setPortalActivo(p)}
+          />
+          <WorkshopsFeaturedSection
+            productos={productos}
+            onOpenPurchase={abrirCompra}
+            onSelectPortal={(p) => setPortalActivo(p)}
+          />
+        </>
+      )}
+
       <section className="wa-catalog-body" id="programas">
+        <div id="portal-escolar" style={{ position: 'relative', top: '-70px' }} />
         {home && (
           <div className="wa-home-head" style={{ marginTop: 0 }}>
             <span className="wa-catalog-kicker">
-              <WisdomIcon name="book" size={13} /> Dos portales integrados
+              <WisdomIcon name="book" size={13} /> Catálogo Completo e Interactivo
             </span>
-            <h2>Una academia, dos formas de avanzar</h2>
+            <h2>Explora todos los programas y contenidos</h2>
             <p>
-              Elige el Portal Escolar para los itinerarios de educación básica o el Portal de Cursos
-              y Talleres para formación complementaria aplicada. Puedes cambiar de portal sin salir
-              del catálogo.
+              Consulta los grados del Portal Escolar o descubre cursos y talleres individuales.
+              Puedes alternar entre opciones, filtrar por categoría o buscar por tema en cualquier momento.
             </p>
           </div>
         )}
@@ -719,8 +764,9 @@ export function CatalogExperience({ home = false }: { home?: boolean }) {
             </p>
           </div>
           <div className="wa-home-footer-links">
-            <a href="#academia">Academia</a>
-            <a href="#programas">Programas</a>
+            <a href="#cursos-talleres">Cursos y Talleres</a>
+            <a href="#portal-escolar">Portal Escolar</a>
+            <a href="#academia">Rutas de formación</a>
             <a href="#metodo">Método</a>
             <a href="#preguntas">Preguntas</a>
             <Link href="/login">Portal</Link>

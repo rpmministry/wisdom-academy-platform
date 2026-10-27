@@ -1,129 +1,489 @@
-﻿import React from 'react';
+'use client';
+
+import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { WisdomIcon } from '@/components/ui/WisdomIcon';
+import type { CatalogProduct } from '@/components/catalog/CatalogExperience';
 
 const METRICS = [
-  { value: '200', label: 'días de referencia adaptables', detail: 'Calendario configurable por proyecto' },
+  { value: '200', label: 'días de referencia adaptables', detail: 'Calendario escolar configurable' },
   { value: '2.000', label: 'clases modulares', detail: 'Rutas personalizadas por estudiante' },
-  { value: '400', label: 'guías de estudio', detail: 'Objetivos, práctica y evidencia' },
-  { value: '248', label: 'unidades curriculares', detail: 'Itinerarios flexibles, no un temario fijo' },
+  { value: '400', label: 'guías de estudio', detail: 'Objetivos, práctica y evidencia descargable' },
+  { value: '100%', label: 'acceso verificado', detail: 'Derechos protegidos en servidor' },
 ];
 
 const FAQS = [
   {
-    question: '¿Wisdom Academy es solo para familias homeschool?',
+    question: '¿Wisdom Academy es solo una escuela o también una plataforma de cursos?',
     answer:
-      'No. La academia integra dos rutas: itinerarios homeschool flexibles y una escuela abierta de cursos y talleres para jóvenes y adultos en tecnología, liderazgo, finanzas, música y familia. Ambas comparten estándares altos y acompañamiento personalizado.',
+      'Wisdom Academy integra ambas líneas de formación: el Portal Escolar ofrece itinerarios académicos estructurados para educación básica y familias que educan en casa; mientras que Cursos y Talleres es una plataforma abierta de formación continua para jóvenes y adultos que desean dominar habilidades prácticas en tecnología, liderazgo, finanzas y artes.',
   },
   {
-    question: '¿Qué respaldo académico tiene el programa?',
+    question: '¿Qué diferencia existe entre el Portal Escolar y Cursos y Talleres?',
     answer:
-      'El diseño curricular propio se contrasta con referentes internacionales y se adapta a marcos locales cuando la familia o el país lo requieren. Se organiza en unidades, rúbricas y evidencias de portafolio; no dependemos de un único currículo ni de una ubicación fija.',
+      'El Portal Escolar está diseñado como una trayectoria escolar completa (K-12): cuenta con calendario de 200 días de referencia, materias integradas, planificación diaria, rúbricas de evaluación, boletines y portafolio de evidencias. Cursos y Talleres son experiencias formativas modulares e independientes que se cursan al propio ritmo, orientadas a desarrollar competencias profesionales y personales concretas.',
   },
   {
-    question: '¿Los estudiantes aprenden solos con inteligencia artificial?',
+    question: '¿Cómo se combina el acompañamiento humano con la inteligencia artificial?',
     answer:
-      'No. La IA se usa para acompañar la práctica, generar explicaciones y dar retroalimentación inmediata. El diseño pedagógico, la evaluación y las tutorías humanas siguen siendo responsabilidad de la academia y de la familia.',
+      'La inteligencia artificial pedagógica de Wisdom Academy actúa como tutor de apoyo continuo: explica conceptos con analogías, asiste en la práctica guiada y resuelve dudas al instante. El diseño pedagógico, la evaluación de evidencias, la supervisión ética y las tutorías sincrónicas corresponden siempre a los docentes y al equipo directivo de la academia.',
   },
   {
     question: '¿Cómo se accede a los cursos y talleres?',
     answer:
-      'Cada producto enumera los recursos que incluye. Puedes comprar con PayPal, recibir un acceso por regalo o invitación, o ser matriculado por administración. El servidor verifica el derecho antes de entregar cualquier contenido.',
+      'Cada curso o taller enumera con total transparencia sus recursos, horas estimadas y modalidad. Puedes adquirir acceso de forma individual con pago seguro vía PayPal, recibir una invitación o beca, o ser matriculado administrativamente. El backend verifica criptográficamente el derecho de acceso antes de habilitar el contenido.',
   },
   {
-    question: '¿Se puede estudiar desde otro país?',
+    question: '¿Se puede estudiar desde cualquier país?',
     answer:
-      'Sí. La plataforma es bilingüe español/inglés, funciona en modalidad remota y permite adaptar calendario, ritmo y referencias curriculares al proyecto familiar o al país de residencia. Las guías pueden imprimirse o descargarse para estudiar sin conexión.',
+      'Sí. La plataforma funciona 100% en línea con soporte bilingüe (español e inglés) y permite adaptar calendario, horarios y ritmo de estudio al país de residencia o al proyecto de vida de cada estudiante. Las guías de clase pueden descargarse en PDF e imprimirse para estudiar sin conexión.',
   },
   {
-    question: '¿Qué hace diferente a Wisdom Academy?',
+    question: '¿Qué certificación y respaldo ofrece la plataforma?',
     answer:
-      'Integra identidad cristiana, rigor académico y tecnología adaptativa: rutas personalizadas, docentes IA, tutores humanos, portafolio y control de acceso verificable. Los talleres profesionales están diseñados para servir a la sociedad mediante tecnología avanzada. No es un aula virtual aislada; es una academia integral.',
+      'En el Portal Escolar se genera un expediente académico completo con boletines oficiales, rúbricas y portafolio digital de evidencias. En Cursos y Talleres se otorgan certificados digitales de finalización verificables que detallan las competencias adquiridas y la carga horaria completada.',
   },
 ];
 
+const FALLBACK_WORKSHOPS = [
+  {
+    id: 'wk-python-ia',
+    slug: 'curso-python-ia-jovenes',
+    name: 'Programación con IA y Python para Jóvenes',
+    description:
+      'Domina el lenguaje de programación de mayor demanda y aprende a integrar modelos de inteligencia artificial en aplicaciones y proyectos reales.',
+    category: 'Talleres',
+    coverImage: '/images/courses/python-ia.svg',
+    hours: 10,
+    modality: 'Online flexible',
+    tag: 'Tecnología & IA',
+    priceText: '$10 USD',
+    upcoming: true,
+  },
+  {
+    id: 'wk-mayordomia',
+    slug: 'taller-mayordomia-financiera',
+    name: 'Mayordomía Financiera Cristiana',
+    description:
+      'Principios bíblicos y prácticos para la administración del dinero, presupuesto personal y familiar, ahorro e inversión con propósito.',
+    category: 'Talleres',
+    coverImage: '/images/courses/mayordomia.svg',
+    hours: 15,
+    modality: 'Online flexible',
+    tag: 'Finanzas con propósito',
+    priceText: '$15 USD',
+    upcoming: true,
+  },
+  {
+    id: 'wk-liderazgo',
+    slug: 'taller-liderazgo-cristiano',
+    name: 'Liderazgo y Cosmovisión Bíblica',
+    description:
+      'Formación en liderazgo ético, pensamiento crítico, comunicación asertiva y toma de decisiones orientadas a transformar la sociedad.',
+    category: 'Talleres',
+    coverImage: '/images/courses/liderazgo.svg',
+    hours: 25,
+    modality: 'Online flexible',
+    tag: 'Liderazgo & Ética',
+    priceText: '$25 USD',
+    upcoming: true,
+  },
+  {
+    id: 'wk-musica',
+    slug: 'taller-musica-adoracion',
+    name: 'Música para la Adoración',
+    description:
+      'Técnica instrumental y vocal, teoría musical aplicada, armonía y dinámicas de ensamble para el servicio en comunidades y congregaciones.',
+    category: 'Talleres',
+    coverImage: '/images/courses/musica.svg',
+    hours: 30,
+    modality: 'Online flexible',
+    tag: 'Música & Artes',
+    priceText: '$30 USD',
+    upcoming: true,
+  },
+  {
+    id: 'wk-padres',
+    slug: 'taller-escuela-padres-homeschoolers',
+    name: 'Escuela para Padres Homeschoolers',
+    description:
+      'Herramientas pedagógicas, organización del tiempo, manejo de rutinas y acompañamiento emocional para familias que educan en el hogar.',
+    category: 'Talleres',
+    coverImage: '/images/courses/padres.svg',
+    hours: 20,
+    modality: 'Online flexible',
+    tag: 'Familia & Pedagogía',
+    priceText: '$20 USD',
+    upcoming: true,
+  },
+];
+
+interface PathwayGatewayProps {
+  onOpenSchoolModal?: () => void;
+  onSelectPortal?: (portal: 'school' | 'pro') => void;
+}
+
+/**
+ * Sección de entrada estratégica: distingue con claridad las dos grandes
+ * líneas de formación de Wisdom Academy (Portal Escolar vs Cursos y Talleres).
+ */
+export function PathwayGatewaySection({
+  onOpenSchoolModal,
+  onSelectPortal,
+}: PathwayGatewayProps) {
+  const handleSelect = (portal: 'school' | 'pro', targetId: string) => {
+    if (onSelectPortal) onSelectPortal(portal);
+    const element = document.getElementById(targetId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  return (
+    <section className="wa-home-section wa-pathway-gateway-section" id="academia">
+      <div id="dos-caminos" style={{ position: 'relative', top: '-70px' }} />
+      <div className="wa-home-container">
+        <div className="wa-home-head">
+          <span className="wa-catalog-kicker">
+            <WisdomIcon name="award" size={13} /> Dos caminos de formación
+          </span>
+          <h2>Una misma academia, dos opciones adaptadas a tu meta</h2>
+          <p>
+            Wisdom Academy articula dos propuestas formativas diseñadas con el mismo rigor y
+            valores: trayectorias escolares organizadas para familias y cursos especializados para
+            jóvenes y profesionales.
+          </p>
+        </div>
+
+        <div className="wa-pathway-cards-grid">
+          {/* LÍNEA B: CURSOS Y TALLERES (PROTAGONISMO COMERCIAL Y VISUAL) */}
+          <article className="wa-pathway-card wa-pathway-card--pro" id="gateway-cursos">
+            <div className="wa-pathway-card-badge">
+              <Badge variant="gold" size="sm">
+                <WisdomIcon name="sparkles" size={13} /> Formación Continua y Habilidades
+              </Badge>
+              <span className="wa-pathway-card-tag">Jóvenes y Adultos</span>
+            </div>
+
+            <div className="wa-pathway-card-icon wa-pathway-card-icon--pro">
+              <WisdomIcon name="sparkles" size={26} color="#B45309" />
+            </div>
+
+            <h3>Cursos y Talleres para el mundo real</h3>
+            <p className="wa-pathway-card-lead">
+              Adquiere competencias prácticas de alto impacto: Inteligencia Artificial, programación
+              en Python, finanzas personales, liderazgo con cosmovisión bíblica, música y formación familiar.
+            </p>
+
+            <ul className="wa-pathway-card-list">
+              <li>
+                <strong>Aprendizaje práctico:</strong> proyectos aplicados y resolución de problemas reales.
+              </li>
+              <li>
+                <strong>A tu propio ritmo:</strong> contenidos modulares, clases en video y recursos descargables.
+              </li>
+              <li>
+                <strong>Certificación verificable:</strong> diplomas digitales con carga horaria y trazabilidad.
+              </li>
+              <li>
+                <strong>Catálogo en expansión:</strong> nuevas disciplinas, áreas tecnológicas y talleres cada semestre.
+              </li>
+            </ul>
+
+            <div className="wa-pathway-card-actions">
+              <a
+                href="#cursos-talleres"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleSelect('pro', 'cursos-talleres');
+                }}
+                style={{ textDecoration: 'none' }}
+              >
+                <Button variant="primary-gold" size="md">
+                  <WisdomIcon name="sparkles" size={15} /> Explorar Cursos y Talleres
+                </Button>
+              </a>
+              <Link href="/catalogo#programas" style={{ textDecoration: 'none' }}>
+                <Button variant="secondary" size="md">
+                  Ver catálogo completo →
+                </Button>
+              </Link>
+            </div>
+          </article>
+
+          {/* LÍNEA A: PORTAL ESCOLAR (ESTRUCTURADO Y PROFESIONAL) */}
+          <article className="wa-pathway-card wa-pathway-card--school" id="gateway-escolar">
+            <div className="wa-pathway-card-badge">
+              <Badge variant="navy" size="sm">
+                <WisdomIcon name="graduation-cap" size={13} /> Educación Básica y Homeschool
+              </Badge>
+              <span className="wa-pathway-card-tag">Familias y Estudiantes K-12</span>
+            </div>
+
+            <div className="wa-pathway-card-icon wa-pathway-card-icon--school">
+              <WisdomIcon name="graduation-cap" size={26} color="#2563EB" />
+            </div>
+
+            <h3>Portal Escolar con trayectoria organizada</h3>
+            <p className="wa-pathway-card-lead">
+              Itinerarios académicos integrales para familias que educan en el hogar o buscan un
+              soporte escolar riguroso, estructurado por materias, con calendario escolar y acompañamiento continuo.
+            </p>
+
+            <ul className="wa-pathway-card-list">
+              <li>
+                <strong>Planificación diaria:</strong> calendario escolar de 200 días de referencia adaptable a tu país.
+              </li>
+              <li>
+                <strong>Acompañamiento docente:</strong> profesores IA de apoyo continuo y tutores humanos especializados.
+              </li>
+              <li>
+                <strong>Evidencias y reportes:</strong> boletines oficiales, rúbricas de evaluación y portafolio de aprendizaje.
+              </li>
+              <li>
+                <strong>Protección integral:</strong> entorno seguro y confidencialidad de expedientes para menores.
+              </li>
+            </ul>
+
+            <div className="wa-pathway-card-actions">
+              <a
+                href="#portal-escolar"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleSelect('school', 'portal-escolar');
+                }}
+                style={{ textDecoration: 'none' }}
+              >
+                <Button variant="primary-navy" size="md">
+                  <WisdomIcon name="graduation-cap" size={15} /> Conocer programas escolares
+                </Button>
+              </a>
+              {onOpenSchoolModal && (
+                <Button variant="secondary" size="md" onClick={onOpenSchoolModal}>
+                  Vista previa del portal
+                </Button>
+              )}
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+interface WorkshopsFeaturedProps {
+  productos?: CatalogProduct[];
+  onOpenPurchase?: (producto: CatalogProduct) => void;
+  onSelectPortal?: (portal: 'school' | 'pro') => void;
+}
+
+/**
+ * Escaparate destacado de Cursos y Talleres: otorga protagonismo visual
+ * y comercial a la formación continua, mostrando disciplinas reales.
+ */
+export function WorkshopsFeaturedSection({
+  productos = [],
+  onOpenPurchase,
+  onSelectPortal,
+}: WorkshopsFeaturedProps) {
+  const workshopProducts = productos.filter(
+    (p) => p.category === 'Talleres' || p.category === 'Cursos'
+  );
+
+  const items = workshopProducts.length > 0 ? workshopProducts : null;
+
+  return (
+    <section className="wa-home-section wa-home-section--surface wa-workshops-section" id="cursos-talleres">
+      <div className="wa-home-container">
+        <div className="wa-home-head">
+          <span className="wa-catalog-kicker">
+            <WisdomIcon name="sparkles" size={13} /> Cursos y Talleres de Formación Aplicada
+          </span>
+          <h2>Aprende habilidades prácticas para liderar y servir</h2>
+          <p>
+            Explora experiencias de aprendizaje diseñadas para responder a desafíos reales. Talleres
+            intensivos, cursos especializados y proyectos con retroalimentación personalizada.
+          </p>
+        </div>
+
+        <div className="wa-workshops-grid">
+          {items
+            ? items.map((product) => {
+                const upcoming = product.contentStatus === 'upcoming';
+                return (
+                  <article
+                    className="wa-workshop-card"
+                    key={product.id}
+                    data-testid={`featured-workshop-${product.slug}`}
+                  >
+                    <div className="wa-workshop-card-cover">
+                      <Image
+                        src={product.coverImage || '/images/courses/python-ia.svg'}
+                        alt={product.name}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+                      <div className="wa-workshop-card-overlay" />
+                      <span className="wa-workshop-card-category">{product.category}</span>
+                      {upcoming && (
+                        <span className="wa-workshop-card-status">Próximamente disponible</span>
+                      )}
+                    </div>
+
+                    <div className="wa-workshop-card-body">
+                      <div className="wa-workshop-card-meta">
+                        <span>{product.metadata.modality || 'Online flexible'}</span>
+                        {product.metadata.hours && (
+                          <>
+                            <span>·</span>
+                            <span>{product.metadata.hours} horas estimadas</span>
+                          </>
+                        )}
+                      </div>
+
+                      <h3 className="wa-workshop-card-title">{product.name}</h3>
+                      <p className="wa-workshop-card-description">{product.description}</p>
+
+                      <div className="wa-workshop-card-footer">
+                        <div className="wa-workshop-card-price">
+                          {upcoming ? (
+                            <>
+                              <span>Inscripción abierta pronto</span>
+                              <small>Materiales en preparación</small>
+                            </>
+                          ) : (
+                            <>
+                              <span>${(product.priceCents / 100).toFixed(2)} USD</span>
+                              <small>Acceso verificado y certificado</small>
+                            </>
+                          )}
+                        </div>
+
+                        {upcoming ? (
+                          <Link href="/catalogo#programas" style={{ textDecoration: 'none' }}>
+                            <Button variant="secondary" size="sm">
+                              Ver en catálogo
+                            </Button>
+                          </Link>
+                        ) : onOpenPurchase ? (
+                          <Button
+                            variant="primary-gold"
+                            size="sm"
+                            onClick={() => onOpenPurchase(product)}
+                          >
+                            Inscribirse
+                          </Button>
+                        ) : (
+                          <Link href="/catalogo#programas" style={{ textDecoration: 'none' }}>
+                            <Button variant="primary-gold" size="sm">
+                              Inscribirse
+                            </Button>
+                          </Link>
+                        )}
+                      </div>
+                    </div>
+                  </article>
+                );
+              })
+            : FALLBACK_WORKSHOPS.map((workshop) => (
+                <article className="wa-workshop-card" key={workshop.id}>
+                  <div className="wa-workshop-card-cover">
+                    <Image
+                      src={workshop.coverImage}
+                      alt={workshop.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                    <div className="wa-workshop-card-overlay" />
+                    <span className="wa-workshop-card-category">{workshop.tag}</span>
+                    <span className="wa-workshop-card-status">Próximamente disponible</span>
+                  </div>
+
+                  <div className="wa-workshop-card-body">
+                    <div className="wa-workshop-card-meta">
+                      <span>{workshop.modality}</span>
+                      <span>·</span>
+                      <span>{workshop.hours} horas</span>
+                    </div>
+
+                    <h3 className="wa-workshop-card-title">{workshop.name}</h3>
+                    <p className="wa-workshop-card-description">{workshop.description}</p>
+
+                    <div className="wa-workshop-card-footer">
+                      <div className="wa-workshop-card-price">
+                        <span>Inscripción abierta pronto</span>
+                        <small>Materiales en preparación</small>
+                      </div>
+
+                      <Link href="/catalogo#programas" style={{ textDecoration: 'none' }}>
+                        <Button variant="secondary" size="sm">
+                          Ver en catálogo
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                </article>
+              ))}
+        </div>
+
+        {/* NOTA DE EXPANSIÓN Y DESCUBRIMIENTO CONTINUO */}
+        <div className="wa-workshops-expansion-banner">
+          <div className="wa-workshops-expansion-content">
+            <div className="wa-workshops-expansion-icon">
+              <WisdomIcon name="book" size={24} color="#0BAA5E" />
+            </div>
+            <div>
+              <strong>Un catálogo educativo en constante crecimiento</strong>
+              <p>
+                Diseñamos nuevos cursos y talleres cada semestre en áreas de tecnología, ciencias,
+                finanzas, liderazgo ético y humanidades para ampliar horizontes a estudiantes de todas las edades.
+              </p>
+            </div>
+          </div>
+          <Link href="/catalogo#programas" style={{ textDecoration: 'none', flexShrink: 0 }}>
+            <Button
+              variant="secondary"
+              size="md"
+              onClick={() => onSelectPortal && onSelectPortal('pro')}
+            >
+              Explorar todos los cursos →
+            </Button>
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/**
+ * Secciones institucionales complementarias:
+ * Método pedagógico, docentes, métricas, FAQ y llamada a la acción final.
+ */
 export function AcademySections() {
   return (
     <>
-      <section className="wa-home-section" id="academia">
-        <div className="wa-home-container">
-          <div className="wa-home-head">
-            <span className="wa-catalog-kicker">
-              <WisdomIcon name="award" size={13} /> Una academia, múltiples caminos
-            </span>
-            <h2>Educación integral para la vida escolar y profesional</h2>
-            <p>
-              Acompañamos a familias que educan en casa y formamos a jóvenes y adultos que quieren
-              dominar habilidades concretas. La misma exigencia académica, la misma trazabilidad y
-              la misma obsesión por enseñar a pensar.
-            </p>
-          </div>
-          <div className="wa-home-split">
-            <article className="wa-home-route wa-home-route--school">
-              <div className="wa-home-route-icon">
-                <WisdomIcon name="graduation-cap" size={24} color="#2563eb" />
-              </div>
-              <Badge variant="navy" size="sm" style={{ alignSelf: 'flex-start' }}>Homeschool K-12</Badge>
-              <h3>Un itinerario personal, con estándares verificables</h3>
-              <p>
-                Itinerarios K-12 flexibles, con currículo propio contrastado con referentes
-                internacionales, docentes IA y tutorías humanas. Cada estudiante recibe su
-                calendario, su ruta diaria y su portafolio.
-              </p>
-              <ul>
-                <li>Rutas de 9 a 11 áreas con profundización progresiva.</li>
-                <li>Calendario de referencia adaptable a distintos países.</li>
-                <li>Boletines, rúbricas y evidencias para la familia.</li>
-                <li>Protección de expedientes y datos de menores.</li>
-              </ul>
-              <Link href="/login"><Button variant="primary-navy" size="sm">Acceder al portal escolar</Button></Link>
-            </article>
-
-            <article className="wa-home-route wa-home-route--pro">
-              <div className="wa-home-route-icon">
-                <WisdomIcon name="sparkles" size={24} color="#b45309" />
-              </div>
-              <Badge variant="gold" size="sm" style={{ alignSelf: 'flex-start' }}>Cursos y talleres</Badge>
-              <h3>Formación aplicada para el mundo real</h3>
-              <p>
-                Tecnología avanzada, liderazgo, finanzas, música y familia. Talleres diseñados
-                para servir a la sociedad, con proyectos reales y una comunidad que aprende
-                haciendo.
-              </p>
-              <ul>
-                <li>Rutas por curso, taller o programa integral.</li>
-                <li>Compra segura, regalos, invitaciones y becas.</li>
-                <li>Contenido descargable y aprendizaje a tu ritmo.</li>
-                <li>Certificados y recursos con trazabilidad.</li>
-              </ul>
-              <a href="#programas"><Button variant="primary-gold" size="sm">Explorar la oferta</Button></a>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section className="wa-home-section wa-home-section--surface" id="metodo">
+      {/* MÉTODO PEDAGÓGICO */}
+      <section className="wa-home-section" id="metodo">
         <div className="wa-home-container">
           <div className="wa-home-head">
             <span className="wa-catalog-kicker">
               <WisdomIcon name="chalkboard" size={13} /> Método Wisdom
             </span>
-            <h2>Enseñamos a pensar, no solo a aprobar</h2>
+            <h2>Enseñamos a pensar, razonar y aplicar</h2>
             <p>
-              Cada clase sigue un ciclo de cuatro fases que combina claridad conceptual, práctica
-              guiada y evidencia de aprendizaje. El mismo método se adapta a un niño de 8 años y a
-              un profesional que quiere dominar una nueva habilidad.
+              Nuestra metodología activa combina cuatro etapas esenciales para transformar la
+              curiosidad en comprensión sólida y aplicación práctica:
             </p>
           </div>
           <div className="wa-home-method">
             {[
-              ['01', 'Enfoque', 'Una pregunta guía conecta el tema con la vida real y activa la curiosidad.'],
-              ['02', 'Modelo', 'Esquemas visuales y ejemplos resueltos hacen visible el razonamiento.'],
-              ['03', 'Práctica', 'El estudiante aplica, se equivoca, recibe retroalimentación y corrige.'],
-              ['04', 'Evidencia', 'Una síntesis, un proyecto o una evaluación demuestran lo aprendido.'],
+              ['01', 'Enfoque', 'Una pregunta desafiante conecta el tema con situaciones de la vida real y activa la curiosidad.'],
+              ['02', 'Modelo', 'Esquemas visuales y demostraciones paso a paso hacen visible el razonamiento.'],
+              ['03', 'Práctica', 'El estudiante aplica lo aprendido, resuelve problemas y recibe retroalimentación inmediata.'],
+              ['04', 'Evidencia', 'Un proyecto aplicado, rúbrica o síntesis certifica el dominio real de los objetivos.'],
             ].map(([number, title, description]) => (
               <div className="wa-home-method-step" key={number}>
                 <span className="wa-home-method-number">{number}</span>
@@ -135,16 +495,17 @@ export function AcademySections() {
         </div>
       </section>
 
-      <section className="wa-home-section" id="docentes">
+      {/* DOCENTES Y ACOMPAÑAMIENTO */}
+      <section className="wa-home-section wa-home-section--surface" id="docentes">
         <div className="wa-home-container">
           <div className="wa-home-head">
             <span className="wa-catalog-kicker">
-              <WisdomIcon name="user" size={13} /> Acompañamiento humano y pedagógico
+              <WisdomIcon name="user" size={13} /> Acompañamiento pedagógico integral
             </span>
-            <h2>Profesores que conocen el camino</h2>
+            <h2>Docentes comprometidos y tecnología que potencia el aprendizaje</h2>
             <p>
-              La tecnología amplifica la enseñanza, no la reemplaza. Los profesores IA están
-              diseñados por el equipo académico y trabajan junto a tutores humanos y familias.
+              La tecnología amplifica la enseñanza pero no reemplaza el criterio docente. Nuestros
+              profesores IA asisten la práctica diaria en estrecha colaboración con tutores humanos y familias.
             </p>
           </div>
           <div className="wa-home-teachers">
@@ -156,8 +517,8 @@ export function AcademySections() {
                 <Badge variant="gold" size="sm">Básica Elemental</Badge>
                 <h3>Prof. Mateo</h3>
                 <p>
-                  Pedagogía lúdica, asombro y analogías concretas. Acompaña a los más pequeños a
-                  construir bases sólidas con alegría y disciplina.
+                  Pedagogía lúdica, asombro y analogías concretas. Acompaña a los estudiantes de
+                  primaria a construir fundamentos conceptuales con entusiasmo, disciplina y afecto.
                 </p>
               </div>
             </article>
@@ -169,8 +530,8 @@ export function AcademySections() {
                 <Badge variant="navy" size="sm">Básica Superior</Badge>
                 <h3>Dra. Sofía de Valenzuela</h3>
                 <p>
-                  Rigor académico, pensamiento socrático y argumentación con evidencia. Prepara a
-                  los adolescentes para la universidad y para la vida.
+                  Rigor académico, diálogo socrático y argumentación basada en evidencia. Prepara a
+                  los jóvenes para desafíos intelectuales avanzados y para la vida universitaria.
                 </p>
               </div>
             </article>
@@ -178,7 +539,8 @@ export function AcademySections() {
         </div>
       </section>
 
-      <section className="wa-home-metrics" aria-label="Capacidad académica">
+      {/* MÉTRICAS DE CAPACIDAD */}
+      <section className="wa-home-metrics" aria-label="Capacidad y respaldo académico">
         <div className="wa-home-container wa-home-metrics-grid">
           {METRICS.map((metric) => (
             <div key={metric.label}>
@@ -190,18 +552,23 @@ export function AcademySections() {
         </div>
       </section>
 
+      {/* PREGUNTAS FRECUENTES */}
       <section className="wa-home-section" id="preguntas">
         <div className="wa-home-container wa-home-faq-layout">
           <div className="wa-home-faq-intro">
             <span className="wa-catalog-kicker">
               <WisdomIcon name="book" size={13} /> Preguntas frecuentes
             </span>
-            <h2>Decisiones informadas, familias tranquilas</h2>
+            <h2>Claridad para tomar la mejor decisión educativa</h2>
             <p>
-              Si estás evaluando una educación diferente para tu familia o una formación seria para
-              tu carrera, estas respuestas te ayudan a decidir.
+              Respondemos a las dudas más comunes sobre nuestras dos líneas de formación, el acceso a
+              la plataforma y el respaldo pedagógico.
             </p>
-            <Link href="/login"><Button variant="secondary" size="sm">Hablar con el equipo</Button></Link>
+            <Link href="/login">
+              <Button variant="secondary" size="sm">
+                Hablar con el equipo
+              </Button>
+            </Link>
           </div>
           <div className="wa-home-faq">
             {FAQS.map((faq) => (
@@ -214,24 +581,35 @@ export function AcademySections() {
         </div>
       </section>
 
+      {/* CIERRE Y LLAMADA A LA ACCIÓN FINAL */}
       <section className="wa-home-cta">
         <div className="wa-home-container">
           <div>
             <span className="wa-catalog-kicker">
               <WisdomIcon name="sparkles" size={13} color="current" /> El siguiente paso
             </span>
-            <h2>Tu formación no debería elegir entre excelencia y propósito.</h2>
+            <h2>Una educación integral que une excelencia académica y propósito.</h2>
             <p>
-              Explora los programas, conoce el método y accede a una academia que combina fe,
-              razón, tecnología y estándares internacionales.
+              Ya sea que busques un itinerario escolar completo para tu familia o cursos prácticos
+              para desarrollar habilidades de vanguardia, Wisdom Academy tiene una ruta para ti.
             </p>
           </div>
           <div className="wa-home-cta-actions">
-            <a href="#programas"><Button variant="primary-gold" size="lg">Explorar programas</Button></a>
-            <Link href="/login"><Button variant="secondary" size="lg">Ingresar al portal</Button></Link>
+            <a href="#cursos-talleres" style={{ textDecoration: 'none' }}>
+              <Button variant="primary-gold" size="lg">
+                <WisdomIcon name="sparkles" size={16} /> Explorar Cursos y Talleres
+              </Button>
+            </a>
+            <a href="#portal-escolar" style={{ textDecoration: 'none' }}>
+              <Button variant="secondary" size="lg">
+                <WisdomIcon name="graduation-cap" size={16} /> Conocer Portal Escolar
+              </Button>
+            </a>
           </div>
         </div>
       </section>
     </>
   );
 }
+
+export default AcademySections;
