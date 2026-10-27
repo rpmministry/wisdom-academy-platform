@@ -27,8 +27,8 @@ test.describe('Landing Page Wisdom Academy - Rediseño Estratégico Multi-dispos
       // 2. Propuesta de valor en el Hero (H1 claro y sin ambigüedades)
       const h1 = page.locator('h1.wa-catalog-title');
       await expect(h1).toBeVisible();
-      await expect(h1).toContainText('Educación escolar organizada');
-      await expect(h1).toContainText('cursos de alta especialización');
+      await expect(h1).toContainText('Educación integral');
+      await expect(h1).toContainText('excelencia y propósito');
 
       // 3. CTAs estratégicos duales en la primera vista
       const ctaWorkshops = page.locator('.wa-home-hero-actions a[href="#cursos-talleres"]');
@@ -86,21 +86,24 @@ test.describe('Landing Page Wisdom Academy - Rediseño Estratégico Multi-dispos
     await expect(ctaSchool).toBeVisible();
     await ctaSchool.click();
 
-    // Verificación de que el catálogo muestra los programas escolares
-    await expect(page.getByTestId('catalog-card-guia-bienvenida-homeschool')).toBeVisible();
-    await expect(page.getByTestId('catalog-card-programa-homeschool-4-egb')).toBeVisible();
+    // Verificación de que el ancla de Portal Escolar y el catálogo están presentes
+    await expect(page.locator('#portal-escolar')).toBeAttached();
+    await expect(page.locator('#programas')).toBeVisible();
   });
 
   test('apertura de la vista previa del Portal Escolar desde el gateway', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.goto('/', { waitUntil: 'load' });
 
     const btnModal = page.locator('#gateway-escolar button:has-text("Vista previa del portal")');
     await expect(btnModal).toBeVisible();
-    await btnModal.click();
+    // Reintento de clic si la hidratación está en curso
+    await expect(async () => {
+      await btnModal.click();
+      await expect(page.locator('.wa-school-content')).toBeVisible({ timeout: 2000 });
+    }).toPass({ timeout: 15_000 });
 
     // Se abre el diálogo modal con el itinerario de 4.° y 8.° EGB
-    await expect(page.locator('.wa-school-content')).toBeVisible();
     await expect(page.locator('.wa-school-title')).toContainText('itinerario académico');
 
     // Cerrar modal

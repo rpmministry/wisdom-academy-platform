@@ -279,13 +279,16 @@ export function CatalogExperience({ home = false }: { home?: boolean }) {
       <section className={`wa-catalog-hero${home ? ' wa-home-hero' : ''}`}>
         <div>
           <span className="wa-catalog-kicker">
-            <WisdomIcon name="sparkles" size={13} /> {home ? 'Academia integral · Educación, tecnología y futuro' : 'Catálogo oficial 2026–2027'}
+            <WisdomIcon name="sparkles" size={13} />{' '}
+            {home
+              ? 'Formación para aprender, crecer y servir en cada etapa de la vida'
+              : 'Catálogo oficial 2026–2027'}
           </span>
           <h1 className="wa-catalog-title">
             {home ? (
               <>
-                Educación escolar organizada y<br />
-                <span>cursos de alta especialización.</span>
+                Educación integral,<br />
+                <span>excelencia y propósito.</span>
               </>
             ) : (
               <>
@@ -296,7 +299,7 @@ export function CatalogExperience({ home = false }: { home?: boolean }) {
           </h1>
           <p className="wa-catalog-lead">
             {home
-              ? 'Wisdom Academy reúne dos propuestas formativas de excelencia: un Portal Escolar con trayectorias académicas estructuradas para familias, y un catálogo de Cursos y Talleres para aprender habilidades prácticas en tecnología, liderazgo, finanzas y artes a tu propio ritmo.'
+              ? 'Wisdom Academy integra una educación escolar estructurada con una amplia propuesta de cursos y talleres de alta calidad, orientados al desarrollo de conocimientos, habilidades y nuevas oportunidades de formación en múltiples áreas, oficios y campos de especialización. Inspirados en principios y valores cristianos evangélicos, promovemos una educación rigurosa, práctica e integral, que une el crecimiento académico y profesional con la formación del carácter y el propósito de contribuir positivamente a la sociedad.'
               : 'Programas de educación básica, apoyo homeschool, cursos y talleres de formación integral, además de recursos digitales. Cada producto enumera exactamente los contenidos que habilita y el acceso se verifica en el servidor.'}
           </p>
           {home && (
@@ -344,19 +347,19 @@ export function CatalogExperience({ home = false }: { home?: boolean }) {
             <div className="wa-hero-value-pillars" aria-label="Aspectos destacados de la academia">
               <div className="wa-hero-value-pill">
                 <WisdomIcon name="sparkles" size={14} color="#b45309" />
-                <span><strong>Cursos y Talleres:</strong> IA, Python, finanzas y liderazgo</span>
+                <span><strong>Cursos y Talleres:</strong> alta calidad y especialización práctica</span>
               </div>
               <div className="wa-hero-value-pill">
                 <WisdomIcon name="graduation-cap" size={14} color="#2563eb" />
-                <span><strong>Portal Escolar:</strong> trayectoria K-12 con tutorías y portafolio</span>
+                <span><strong>Portal Escolar:</strong> educación escolar estructurada con acompañamiento</span>
               </div>
               <div className="wa-hero-value-pill">
                 <WisdomIcon name="shield" size={14} color="#047857" />
-                <span><strong>Acceso verificado:</strong> contenidos trazables en servidor</span>
+                <span><strong>Principios y Valores:</strong> formación del carácter y vocación de servicio</span>
               </div>
               <div className="wa-hero-value-pill">
                 <WisdomIcon name="clock" size={14} color="#475569" />
-                <span><strong>Flexibilidad:</strong> modalidad 100% online e híbrida</span>
+                <span><strong>Educación Rigurosa:</strong> modalidad flexible y acceso verificado</span>
               </div>
             </div>
           )}

@@ -99,16 +99,16 @@
 
 | Ubicación | Elemento | Texto Implementado | Propósito Estratégico |
 | :--- | :--- | :--- | :--- |
-| **Hero** | Kicker | `PLATAFORMA EDUCATIVA INTEGRAL` | Contextualiza inmediatamente que no es solo un blog o un software puntual. |
-| **Hero** | Titular H1 | `Educación escolar organizada y cursos de alta especialización.` | Sintetiza en una sola frase las dos vertientes de formación de la plataforma. |
-| **Hero** | Párrafo Lead | `Acompañamos a familias y estudiantes en su formación académica escolar, y ofrecemos talleres prácticos en tecnología, liderazgo, finanzas y artes para jóvenes y adultos.` | Define con total claridad los públicos, alcances y áreas temáticas sin generar expectativas irreales. |
+| **Hero** | Kicker | `Formación para aprender, crecer y servir en cada etapa de la vida.` | Comunica vocación, aprendizaje continuo y propósito desde el primer instante. |
+| **Hero** | Titular H1 | `Educación integral, excelencia y propósito.` | Encabezado central unificador que transmite calidad institucional y seriedad. |
+| **Hero** | Párrafo Lead | `Wisdom Academy integra una educación escolar estructurada con una amplia propuesta de cursos y talleres de alta calidad, orientados al desarrollo de conocimientos, habilidades y nuevas oportunidades de formación en múltiples áreas, oficios y campos de especialización. Inspirados en principios y valores cristianos evangélicos, promovemos una educación rigurosa, práctica e integral, que une el crecimiento académico y profesional con la formación del carácter y el propósito de contribuir positivamente a la sociedad.` | Presenta la plataforma integral con calidad profesional, deja abierta la oferta futura e integra la visión cristiana con naturalidad. |
 | **Hero** | CTA 1 (Primario) | `Explorar Cursos y Talleres` | Dirige con scroll suave a la vitrina comercial destacada. |
 | **Hero** | CTA 2 (Secundario)| `Conocer Portal Escolar` | Conduce al módulo de programas escolares y grados académicos. |
-| **Hero** | Pilares | `Formación con Propósito` • `Acompañamiento Cercano` • `Flexibilidad Total` • `Tecnología Ética` | Refuerza los 4 valores institucionales verificados. |
-| **Gateway** | Tarjeta Portal Escolar | `PORTAL ESCOLAR · FORMACIÓN ACADÉMICA CONTINUA` / `Educación escolar estructurada para cada etapa` | Comunica itinerario formal para familias y estudiantes de niveles escolares (EGB). |
-| **Gateway** | Tarjeta Cursos y Talleres | `CURSOS Y TALLERES · APRENDIZAJE ABIERTO` / `Habilidades prácticas, creativas y profesionales` | Posiciona la formación continua para jóvenes y adultos en múltiples disciplinas. |
-| **Vitrina Talleres**| Encabezado | `Cursos y Talleres para el Mundo Actual` | Resalta la relevancia práctica del catálogo abierto. |
-| **Vitrina Talleres**| Banner Expansión | `Catálogo Multidisciplinario en Constante Expansión` / `Incorporamos periódicamente nuevas propuestas en diversas disciplinas.` | Proyecta el crecimiento continuo del catálogo más allá de los contenidos semilla iniciales. |
+| **Hero** | Pilares | `Cursos y Talleres: alta calidad y especialización práctica` • `Portal Escolar: educación estructurada con acompañamiento` • `Principios y Valores: formación del carácter y servicio` • `Educación Rigurosa: modalidad flexible y acceso verificado` | Refuerza los 4 valores institucionales con visión de futuro y rigor académico. |
+| **Gateway** | Tarjeta Portal Escolar | `PORTAL ESCOLAR · EDUCACIÓN ESCOLAR Y HOMESCHOOL` / `Portal Escolar con trayectoria organizada` | Comunica educación escolar estructurada con acompañamiento y principios cristianos. |
+| **Gateway** | Tarjeta Cursos y Talleres | `CURSOS Y TALLERES DE ESPECIALIZACIÓN` / `Cursos y Talleres de alta calidad y aplicación real` | Posiciona la formación continua en múltiples áreas y oficios para jóvenes y adultos. |
+| **Vitrina Talleres**| Encabezado | `Cursos y Talleres de Alta Calidad` / `Aprende habilidades prácticas para liderar y servir` | Resalta la relevancia formativa, práctica y de servicio del catálogo abierto. |
+| **Vitrina Talleres**| Banner Expansión | `Propuesta formativa en constante crecimiento` / `Diseñamos e incorporamos continuamente nuevos cursos y talleres en diversas disciplinas y oficios.` | Comunica la expansión continua hacia nuevas disciplinas sin limitar a la oferta actual. |
 
 ---
 

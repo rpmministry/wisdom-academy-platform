@@ -152,9 +152,8 @@ export function PathwayGatewaySection({
           </span>
           <h2>Una misma academia, dos opciones adaptadas a tu meta</h2>
           <p>
-            Wisdom Academy articula dos propuestas formativas diseñadas con el mismo rigor y
-            valores: trayectorias escolares organizadas para familias y cursos especializados para
-            jóvenes y profesionales.
+            Wisdom Academy articula una educación escolar estructurada con una amplia propuesta de cursos
+            y talleres de alta calidad, uniendo el rigor académico y práctico con la formación del carácter.
           </p>
         </div>
 
@@ -163,7 +162,7 @@ export function PathwayGatewaySection({
           <article className="wa-pathway-card wa-pathway-card--pro" id="gateway-cursos">
             <div className="wa-pathway-card-badge">
               <Badge variant="gold" size="sm">
-                <WisdomIcon name="sparkles" size={13} /> Formación Continua y Habilidades
+                <WisdomIcon name="sparkles" size={13} /> Cursos y Talleres de Especialización
               </Badge>
               <span className="wa-pathway-card-tag">Jóvenes y Adultos</span>
             </div>
@@ -172,15 +171,15 @@ export function PathwayGatewaySection({
               <WisdomIcon name="sparkles" size={26} color="#B45309" />
             </div>
 
-            <h3>Cursos y Talleres para el mundo real</h3>
+            <h3>Cursos y Talleres de alta calidad y aplicación real</h3>
             <p className="wa-pathway-card-lead">
-              Adquiere competencias prácticas de alto impacto: Inteligencia Artificial, programación
-              en Python, finanzas personales, liderazgo con cosmovisión bíblica, música y formación familiar.
+              Desarrollo de conocimientos, habilidades y nuevas oportunidades formativas en múltiples
+              áreas, oficios y campos de especialización, con enfoque práctico, rigor y valores éticos.
             </p>
 
             <ul className="wa-pathway-card-list">
               <li>
-                <strong>Aprendizaje práctico:</strong> proyectos aplicados y resolución de problemas reales.
+                <strong>Aprendizaje práctico y riguroso:</strong> proyectos aplicados y resolución de problemas reales.
               </li>
               <li>
                 <strong>A tu propio ritmo:</strong> contenidos modulares, clases en video y recursos descargables.
@@ -189,7 +188,7 @@ export function PathwayGatewaySection({
                 <strong>Certificación verificable:</strong> diplomas digitales con carga horaria y trazabilidad.
               </li>
               <li>
-                <strong>Catálogo en expansión:</strong> nuevas disciplinas, áreas tecnológicas y talleres cada semestre.
+                <strong>Oferta en constante expansión:</strong> nuevos campos de formación, disciplinas y talleres periódicos.
               </li>
             </ul>
 
@@ -218,7 +217,7 @@ export function PathwayGatewaySection({
           <article className="wa-pathway-card wa-pathway-card--school" id="gateway-escolar">
             <div className="wa-pathway-card-badge">
               <Badge variant="navy" size="sm">
-                <WisdomIcon name="graduation-cap" size={13} /> Educación Básica y Homeschool
+                <WisdomIcon name="graduation-cap" size={13} /> Educación Escolar y Homeschool
               </Badge>
               <span className="wa-pathway-card-tag">Familias y Estudiantes K-12</span>
             </div>
@@ -229,8 +228,8 @@ export function PathwayGatewaySection({
 
             <h3>Portal Escolar con trayectoria organizada</h3>
             <p className="wa-pathway-card-lead">
-              Itinerarios académicos integrales para familias que educan en el hogar o buscan un
-              soporte escolar riguroso, estructurado por materias, con calendario escolar y acompañamiento continuo.
+              Educación académica escolar estructurada para cada etapa, uniendo excelencia
+              formativa, acompañamiento continuo y formación del carácter inspirada en principios y valores cristianos.
             </p>
 
             <ul className="wa-pathway-card-list">
@@ -300,12 +299,12 @@ export function WorkshopsFeaturedSection({
       <div className="wa-home-container">
         <div className="wa-home-head">
           <span className="wa-catalog-kicker">
-            <WisdomIcon name="sparkles" size={13} /> Cursos y Talleres de Formación Aplicada
+            <WisdomIcon name="sparkles" size={13} /> Cursos y Talleres de Alta Calidad
           </span>
           <h2>Aprende habilidades prácticas para liderar y servir</h2>
           <p>
-            Explora experiencias de aprendizaje diseñadas para responder a desafíos reales. Talleres
-            intensivos, cursos especializados y proyectos con retroalimentación personalizada.
+            Propuesta formativa orientada al desarrollo de competencias prácticas en múltiples áreas,
+            oficios y campos de especialización. Experiencias diseñadas para aprender, crecer y servir con excelencia.
           </p>
         </div>
 
@@ -436,10 +435,10 @@ export function WorkshopsFeaturedSection({
               <WisdomIcon name="book" size={24} color="#0BAA5E" />
             </div>
             <div>
-              <strong>Un catálogo educativo en constante crecimiento</strong>
+              <strong>Propuesta formativa en constante crecimiento</strong>
               <p>
-                Diseñamos nuevos cursos y talleres cada semestre en áreas de tecnología, ciencias,
-                finanzas, liderazgo ético y humanidades para ampliar horizontes a estudiantes de todas las edades.
+                Diseñamos e incorporamos continuamente nuevos cursos, talleres y especializaciones en diversas
+                disciplinas y oficios, brindando nuevas oportunidades de formación en cada etapa de la vida.
               </p>
             </div>
           </div>
@@ -588,10 +587,10 @@ export function AcademySections() {
             <span className="wa-catalog-kicker">
               <WisdomIcon name="sparkles" size={13} color="current" /> El siguiente paso
             </span>
-            <h2>Una educación integral que une excelencia académica y propósito.</h2>
+            <h2>Educación integral, excelencia y propósito en cada etapa.</h2>
             <p>
-              Ya sea que busques un itinerario escolar completo para tu familia o cursos prácticos
-              para desarrollar habilidades de vanguardia, Wisdom Academy tiene una ruta para ti.
+              Ya sea que busques un itinerario escolar estructurado para tu familia o cursos y talleres
+              de alta calidad orientados a tu crecimiento profesional y personal, Wisdom Academy tiene una ruta para ti.
             </p>
           </div>
           <div className="wa-home-cta-actions">
