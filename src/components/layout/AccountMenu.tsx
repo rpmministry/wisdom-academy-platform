@@ -118,6 +118,16 @@ export const AccountMenu: React.FC<AccountMenuProps> = ({
 
   if (!usuario) return null;
 
+  const defaultRole = usuario.roles?.includes('platform_owner')
+    ? 'Creador de Wisdom School'
+    : usuario.rol === 'STUDENT'
+      ? 'Estudiante'
+      : usuario.rol === 'ADMIN'
+        ? 'Administrador'
+        : usuario.rol === 'TEACHER'
+          ? 'Docente'
+          : 'Cuenta Wisdom';
+
   return (
     <div className={`wa-account ${className || ''}`} ref={rootRef}>
       <button
@@ -142,7 +152,7 @@ export const AccountMenu: React.FC<AccountMenuProps> = ({
         {showName && (
           <span className="wa-account-copy">
             <strong>{usuario.nombreCompleto}</strong>
-            <small>{roleLabel || (usuario.rol === 'STUDENT' ? 'Estudiante' : 'Cuenta Wisdom')}</small>
+            <small>{roleLabel || defaultRole}</small>
           </span>
         )}
         <WisdomIcon name="chevron-down" size={14} color="current" />
@@ -163,7 +173,7 @@ export const AccountMenu: React.FC<AccountMenuProps> = ({
             </span>
             <div>
               <strong>{usuario.nombreCompleto}</strong>
-              <small>{usuario.correo || usuario.usuario || 'Cuenta Wisdom'}</small>
+              <small>{usuario.roles?.includes('platform_owner') ? 'Creador de Wisdom School' : (usuario.correo || usuario.usuario || 'Cuenta Wisdom')}</small>
             </div>
           </div>
 

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Aprovisiona el año escolar 2026-2027 de Avril (8.° EGB) y Gael (4.° EGB):
  * - Crea sus cuentas y expedientes si no existen.
  * - Matricula ambos perfiles en el programa y todas sus asignaturas.
@@ -51,26 +51,29 @@ interface StudentProvision {
   programSlug: string;
   legacyCourseIds: number[];
   classroom: string;
+  initialPassword?: string;
 }
 
 const STUDENTS: StudentProvision[] = [
   {
     key: 'avril',
-    email: 'avril@wisdomacademy.edu.ec',
+    email: 'andradesanchezavril@gmail.com',
     username: 'avril',
     profile: ESTUDIANTE_AVRIL_INICIAL,
     programSlug: 'programa-homeschool-8-egb',
     legacyCourseIds: [801, 802, 803, 804, 805, 806, 807, 808, 809, 810, 811],
     classroom: '08_Octavo_EGB_Avril',
+    initialPassword: 'Wisdom2026*AvrilEGB8#',
   },
   {
     key: 'gael',
-    email: 'gael@wisdomacademy.edu.ec',
+    email: 'gaelandradesanchez@gmail.com',
     username: 'gael',
     profile: ESTUDIANTE_GAEL_INICIAL,
     programSlug: 'programa-homeschool-4-egb',
     legacyCourseIds: [401, 402, 403, 404, 405, 406, 407, 408, 409],
     classroom: '04_Cuarto_EGB_Gael',
+    initialPassword: 'Wisdom2026*GaelEGB4#',
   },
 ];
 
@@ -133,25 +136,25 @@ async function ensureUserSecure(student: StudentProvision, rotate: boolean): Pro
       password_hash: string | null;
     };
     if (rotate || !hasPassword.password_hash) {
-      plainPassword = generateInitialPassword();
+      plainPassword = student.initialPassword || generateInitialPassword();
       const hash = await hashPassword(plainPassword);
       prepare(`
         UPDATE users
-        SET password_hash = ?, password_updated_at = ?, must_change_password = 1,
+        SET password_hash = ?, password_updated_at = ?, must_change_password = 0,
             status = 'active', updated_at = ?
         WHERE id = ?
       `).run(hash, now, now, userId);
       prepare("UPDATE sessions SET revoked_at = ? WHERE user_id = ? AND revoked_at IS NULL").run(now, userId);
     }
   } else {
-    plainPassword = generateInitialPassword();
+    plainPassword = student.initialPassword || generateInitialPassword();
     const hash = await hashPassword(plainPassword);
     userId = `usr_${student.key}_${randomToken(12)}`;
     prepare(`
       INSERT INTO users
         (id, email, email_verified, display_name, username, password_hash, password_updated_at,
          must_change_password, status, is_minor, created_at, updated_at)
-      VALUES (?, ?, 1, ?, ?, ?, ?, 1, 'active', 1, ?, ?)
+      VALUES (?, ?, 1, ?, ?, ?, ?, 0, 'active', 1, ?, ?)
     `).run(
       userId,
       student.email,
@@ -475,7 +478,7 @@ async function main(): Promise<void> {
     }
     if (provision.password) {
       const login = await authenticateWithPassword(provision.email, provision.password);
-      if (login.userId !== provision.userId || !login.mustChangePassword) {
+      if (login.userId !== provision.userId) {
         throw new Error(`La verificación de acceso falló para ${provision.email}.`);
       }
     }

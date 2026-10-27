@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
@@ -219,7 +219,7 @@ export const AdminWorkspaceShell: React.FC<AdminWorkspaceShellProps> = ({
               className="wa-account-admin"
               triggerClassName="wa-aw-top-avatar"
               showName={false}
-              roleLabel={roleLabel || 'Administrador'}
+              roleLabel={roleLabel || undefined}
             />
           </div>
         </header>

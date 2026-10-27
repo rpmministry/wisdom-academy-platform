@@ -34,7 +34,8 @@
     "check:deploy": "tsx scripts/check-deployment.ts",
     "resources:audit": "tsx scripts/audit-educational-resources.ts",
     "db:migrate-and-seed": "tsx scripts/db-migrate-and-seed.ts",
-    "db:push-to-turso": "tsx scripts/import-local-sqlite-to-turso.ts"
+    "db:push-to-turso": "tsx scripts/import-local-sqlite-to-turso.ts",
+    "sync:accounts": "tsx scripts/sync-all-accounts.ts"
   },
   "dependencies": {
     "@carbon/grid": "^11.23.0",

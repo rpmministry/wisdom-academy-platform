@@ -156,7 +156,7 @@ export interface EvidenciaPortafolioEcuador {
  */
 export const ESTUDIANTE_GAEL_INICIAL: EstudianteWisdom = {
   idMoodle: 104,
-  nombreCompleto: 'Gael',
+  nombreCompleto: 'Gael Andrade Sanchez',
   edad: 8,
   gradoEcuador: '4° de EGB',
   grado: '4° de EGB',
@@ -169,7 +169,7 @@ export const ESTUDIANTE_GAEL_INICIAL: EstudianteWisdom = {
     referencia: 'Proverbios 2:6',
     texto: 'Porque Jehová da la sabiduría, y de su boca viene el conocimiento y la inteligencia.',
   },
-  emailMentorPadre: 'padres@wisdomacademy.edu.ec',
+  emailMentorPadre: 'mauriandrade2@gmail.com',
 };
 
 /**
@@ -178,7 +178,7 @@ export const ESTUDIANTE_GAEL_INICIAL: EstudianteWisdom = {
  */
 export const ESTUDIANTE_AVRIL_INICIAL: EstudianteWisdom = {
   idMoodle: 108,
-  nombreCompleto: 'Avril',
+  nombreCompleto: 'Avril Andrade Sanchez',
   edad: 12,
   gradoEcuador: '8° de EGB',
   grado: '8° de EGB',
@@ -191,6 +191,6 @@ export const ESTUDIANTE_AVRIL_INICIAL: EstudianteWisdom = {
     referencia: 'Colosenses 2:3',
     texto: 'En quien están escondidos todos los tesoros de la sabiduría y del conocimiento.',
   },
-  emailMentorPadre: 'padres@wisdomacademy.edu.ec',
+  emailMentorPadre: 'mauriandrade2@gmail.com',
 };
 

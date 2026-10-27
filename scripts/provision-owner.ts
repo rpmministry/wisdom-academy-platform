@@ -146,7 +146,7 @@ async function main(): Promise<void> {
   }
 
   const password =
-    existing && !rotate ? null : generateInitialPassword();
+    process.env.OWNER_INITIAL_PASSWORD?.trim() || (existing && !rotate ? null : generateInitialPassword());
   const passwordHash = password ? await hashPassword(password) : null;
   const now = nowIso();
   let userId: string;
@@ -156,7 +156,7 @@ async function main(): Promise<void> {
     if (passwordHash) {
       prepare(`
         UPDATE users
-        SET password_hash = ?, password_updated_at = ?, must_change_password = 1,
+        SET password_hash = ?, password_updated_at = ?, must_change_password = 0, display_name = 'Mauricio',
             status = 'active', updated_at = ?
         WHERE id = ?
       `).run(passwordHash, now, now, userId);
@@ -171,11 +171,11 @@ async function main(): Promise<void> {
       INSERT INTO users
         (id, email, email_verified, display_name, username, password_hash, password_updated_at,
          must_change_password, status, is_minor, created_at, updated_at)
-      VALUES (?, ?, 0, ?, ?, ?, ?, 1, 'active', 0, ?, ?)
+      VALUES (?, ?, 1, ?, ?, ?, ?, 0, 'active', 0, ?, ?)
     `).run(
       userId,
       email,
-      'Creador de Wisdom Academy',
+      'Mauricio',
       'creador',
       passwordHash,
       now,
@@ -196,7 +196,7 @@ async function main(): Promise<void> {
   });
   prepare(`
     INSERT INTO crm_contacts (id, email, name, status, created_at, updated_at)
-    VALUES (?, ?, 'Creador de Wisdom Academy', 'customer', ?, ?)
+    VALUES (?, ?, 'Mauricio', 'customer', ?, ?)
     ON CONFLICT(email) DO UPDATE SET updated_at = excluded.updated_at
   `).run(`ctc_owner_${randomToken(12)}`, email, now, now);
 

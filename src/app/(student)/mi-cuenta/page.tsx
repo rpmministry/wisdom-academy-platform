@@ -87,7 +87,9 @@ export default function MiCuentaPage() {
   if (!usuario) return null;
 
   const rol =
-    usuario.rol === 'STUDENT'
+    usuario.roles?.includes('platform_owner')
+      ? 'Creador de Wisdom School'
+      : usuario.rol === 'STUDENT'
       ? 'Estudiante'
       : usuario.rol === 'ADMIN'
         ? 'Administración'

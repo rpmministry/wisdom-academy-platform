@@ -57,7 +57,7 @@ export const ROLE_DEFINITIONS: Array<{
 }> = [
   {
     code: 'platform_owner',
-    name: 'Creador de la plataforma',
+    name: 'Creador de Wisdom School',
     description: 'Control total formativo y administrativo. No transferible.',
     rank: 0,
     permissions: ['*'],

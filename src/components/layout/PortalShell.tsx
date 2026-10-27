@@ -165,7 +165,9 @@ export const PortalShell: React.FC<{ children: React.ReactNode }> = ({ children 
             {usuario && (
               <AccountMenu
                 roleLabel={
-                  usuario.rol === 'STUDENT'
+                  usuario.roles?.includes('platform_owner')
+                    ? 'Creador de Wisdom School'
+                    : usuario.rol === 'STUDENT'
                     ? 'Estudiante'
                     : usuario.rol === 'ADMIN'
                       ? 'Administración'
