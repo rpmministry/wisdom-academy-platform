@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    Wisdom Academy · Catálogo y CRM (capa visual 2026)
    ========================================================================== */
 
@@ -828,8 +828,9 @@
     grid-template-columns: 1fr;
   }
   .wa-catalog-collage {
-    min-height: 300px;
-    order: -1;
+    min-height: 260px;
+    order: 2;
+    margin-top: 1rem;
   }
   .wa-crm-shell {
     grid-template-columns: 1fr;
@@ -1310,6 +1311,390 @@
   gap: 0.55rem;
   flex-wrap: wrap;
   margin-top: 1.1rem;
+}
+
+.wa-hero-value-pillars {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.55rem;
+  margin-top: 1.15rem;
+  max-width: 44rem;
+}
+
+.wa-hero-value-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  line-height: 1.35;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.wa-hero-value-pill strong {
+  color: var(--text-primary);
+}
+
+[data-theme='dark'] .wa-hero-value-pill {
+  background: rgba(15, 23, 42, 0.65);
+  border-color: rgba(148, 163, 184, 0.16);
+}
+
+/* --------------------------------------------------------------------------
+   SECCIÓN: GATEWAY DE DOS CAMINOS FORMATIVOS
+   -------------------------------------------------------------------------- */
+.wa-pathway-gateway-section {
+  padding-top: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.wa-pathway-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+  gap: 1.5rem;
+}
+
+.wa-pathway-card {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(1.5rem, 3.5vw, 2.25rem);
+  border-radius: 22px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  box-shadow: var(--shadow-card);
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+}
+
+.wa-pathway-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-elevated);
+}
+
+.wa-pathway-card--pro {
+  border-top: 4px solid var(--wa-amber-600);
+}
+
+.wa-pathway-card--pro:hover {
+  border-color: rgba(217, 119, 6, 0.45);
+}
+
+.wa-pathway-card--school {
+  border-top: 4px solid var(--wa-blue-600);
+}
+
+.wa-pathway-card--school:hover {
+  border-color: rgba(37, 99, 235, 0.45);
+}
+
+.wa-pathway-card-badge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.2rem;
+}
+
+.wa-pathway-card-tag {
+  font-family: var(--wa-font-mono);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.wa-pathway-card-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border-subtle);
+}
+
+.wa-pathway-card-icon--pro {
+  background: var(--wa-amber-50);
+  border-color: var(--wa-amber-200, #fde68a);
+}
+
+[data-theme='dark'] .wa-pathway-card-icon--pro {
+  background: rgba(180, 83, 9, 0.16);
+  border-color: rgba(245, 158, 11, 0.28);
+}
+
+.wa-pathway-card-icon--school {
+  background: var(--wa-blue-50);
+  border-color: var(--wa-blue-100);
+}
+
+[data-theme='dark'] .wa-pathway-card-icon--school {
+  background: rgba(37, 99, 235, 0.16);
+  border-color: rgba(59, 130, 246, 0.28);
+}
+
+.wa-pathway-card h3 {
+  margin: 0.2rem 0 0;
+  font-family: var(--wa-font-display);
+  font-size: clamp(1.35rem, 2.2vw, 1.75rem);
+  line-height: 1.15;
+  color: var(--text-primary);
+  letter-spacing: -0.025em;
+}
+
+.wa-pathway-card-lead {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.wa-pathway-card-list {
+  margin: 0.4rem 0 1rem;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.wa-pathway-card-list li {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.wa-pathway-card-list li strong {
+  color: var(--text-primary);
+}
+
+.wa-pathway-card-list li::before {
+  content: '✓';
+  color: var(--brand-secondary);
+  font-weight: 900;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.wa-pathway-card-actions {
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* --------------------------------------------------------------------------
+   SECCIÓN: CURSOS Y TALLERES DESTACADOS (ESCAPARATE COMERCIAL)
+   -------------------------------------------------------------------------- */
+.wa-workshops-section {
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.wa-workshops-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(270px, 100%), 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.wa-workshop-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 18px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  overflow: hidden;
+  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.wa-workshop-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(180, 83, 9, 0.35);
+  box-shadow: var(--shadow-elevated);
+}
+
+.wa-workshop-card-cover {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--wa-neutral-900);
+}
+
+.wa-workshop-card-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 400ms ease;
+}
+
+.wa-workshop-card:hover .wa-workshop-card-cover img {
+  transform: scale(1.05);
+}
+
+.wa-workshop-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 40%, rgba(15, 23, 42, 0.65) 100%);
+}
+
+.wa-workshop-card-category {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.wa-workshop-card-status {
+  position: absolute;
+  bottom: 0.75rem;
+  right: 0.75rem;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  background: var(--wa-amber-100);
+  color: var(--wa-amber-700);
+  border: 1px solid var(--wa-amber-400);
+  font-size: 0.625rem;
+  font-weight: 800;
+}
+
+[data-theme='dark'] .wa-workshop-card-status {
+  background: rgba(180, 83, 9, 0.25);
+  color: #fcd34d;
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+.wa-workshop-card-body {
+  padding: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.wa-workshop-card-meta {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  font-family: var(--wa-font-mono);
+}
+
+.wa-workshop-card-title {
+  margin: 0;
+  font-family: var(--wa-font-display);
+  font-size: 1.05rem;
+  line-height: 1.25;
+  color: var(--text-primary);
+  letter-spacing: -0.015em;
+}
+
+.wa-workshop-card-description {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.wa-workshop-card-footer {
+  margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.wa-workshop-card-price {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--wa-font-display);
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.wa-workshop-card-price small {
+  font-family: var(--wa-font-sans);
+  font-size: 0.625rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.wa-workshops-expansion-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  padding: 1.25rem 1.5rem;
+  border-radius: 18px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-canvas);
+  margin-top: 1.5rem;
+}
+
+.wa-workshops-expansion-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  max-width: 780px;
+}
+
+.wa-workshops-expansion-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--brand-secondary-soft);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+[data-theme='dark'] .wa-workshops-expansion-icon {
+  background: rgba(11, 170, 94, 0.15);
+}
+
+.wa-workshops-expansion-content strong {
+  display: block;
+  font-family: var(--wa-font-display);
+  font-size: 1rem;
+  color: var(--text-primary);
+  margin-bottom: 0.15rem;
+}
+
+.wa-workshops-expansion-content p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
 }
 
 .wa-landing-anchor {

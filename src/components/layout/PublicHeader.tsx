@@ -17,9 +17,9 @@ interface PublicHeaderProps {
 }
 
 const HOME_LINKS = [
-  { href: '#academia', label: 'Academia' },
+  { href: '#cursos-talleres', label: 'Cursos y Talleres' },
+  { href: '#portal-escolar', label: 'Portal Escolar' },
   { href: '#metodo', label: 'Método' },
-  { href: '#programas', label: 'Programas' },
   { href: '#preguntas', label: 'Preguntas' },
 ] as const;
 
