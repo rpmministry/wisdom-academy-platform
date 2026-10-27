@@ -108,6 +108,7 @@
 | **Gateway** | Tarjeta Portal Escolar | `PORTAL ESCOLAR · EDUCACIÓN ESCOLAR Y HOMESCHOOL` / `Portal Escolar con trayectoria organizada` | Comunica educación escolar estructurada con acompañamiento y principios cristianos. |
 | **Gateway** | Tarjeta Cursos y Talleres | `CURSOS Y TALLERES DE ESPECIALIZACIÓN` / `Cursos y Talleres de alta calidad y aplicación real` | Posiciona la formación continua en múltiples áreas y oficios para jóvenes y adultos. |
 | **Vitrina Talleres**| Encabezado | `Cursos y Talleres de Alta Calidad` / `Aprende habilidades prácticas para liderar y servir` | Resalta la relevancia formativa, práctica y de servicio del catálogo abierto. |
+| **Vitrina Talleres**| Programa #1 Destacado | `Programa de Teología \| Universidad Cristiana N2N` (`Disponible · Semestre 1 Activo`, $50 USD / semestre) | Ubica en primera posición el programa ministerial con currículo real cargado (32 clases en video, 40 textos oficiales, repasos y 5 exámenes). |
 | **Vitrina Talleres**| Banner Expansión | `Propuesta formativa en constante crecimiento` / `Diseñamos e incorporamos continuamente nuevos cursos y talleres en diversas disciplinas y oficios.` | Comunica la expansión continua hacia nuevas disciplinas sin limitar a la oferta actual. |
 
 ---

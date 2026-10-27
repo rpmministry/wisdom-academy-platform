@@ -50,6 +50,20 @@ const FAQS = [
 
 const FALLBACK_WORKSHOPS = [
   {
+    id: 'wk-teologia-n2n',
+    slug: 'programa-de-teologia-n2n',
+    name: 'Programa de Teología | Universidad Cristiana N2N',
+    description:
+      'Formación bíblica y ministerial completa: 10 semestres estructurados con 32 clases en video, textos oficiales, repasos y 5 evaluaciones oficiales en el Semestre 1.',
+    category: 'Cursos',
+    coverImage: '/brand/n2n/online-mid1-2022.jpg',
+    hours: 120,
+    modality: 'Online flexible · Semestre 1 Activo',
+    tag: 'Teología & Ministerio',
+    priceText: '$50 USD / semestre',
+    upcoming: false,
+  },
+  {
     id: 'wk-python-ia',
     slug: 'curso-python-ia-jovenes',
     name: 'Programación con IA y Python para Jóvenes',
@@ -292,7 +306,52 @@ export function WorkshopsFeaturedSection({
     (p) => p.category === 'Talleres' || p.category === 'Cursos'
   );
 
-  const items = workshopProducts.length > 0 ? workshopProducts : null;
+  // Asegurar que el Programa de Teología N2N esté presente y posicionado de #1
+  const sortedWorkshops = [...workshopProducts].sort((a, b) => {
+    const aIsN2n = /teolog[ií]a|n2n/i.test(a.name) || a.slug.includes('teologia');
+    const bIsN2n = /teolog[ií]a|n2n/i.test(b.name) || b.slug.includes('teologia');
+    if (aIsN2n && !bIsN2n) return -1;
+    if (!aIsN2n && bIsN2n) return 1;
+    if (a.contentStatus === 'available' && b.contentStatus === 'upcoming') return -1;
+    if (a.contentStatus === 'upcoming' && b.contentStatus === 'available') return 1;
+    return 0;
+  });
+
+  const hasN2N = sortedWorkshops.some(
+    (p) => /teolog[ií]a|n2n/i.test(p.name) || p.slug.includes('teologia')
+  );
+
+  const finalItems =
+    workshopProducts.length > 0
+      ? hasN2N
+        ? sortedWorkshops
+        : [
+            {
+              id: 'prod-teologia-n2n-featured',
+              slug: 'programa-de-teologia-n2n',
+              name: 'Programa de Teología | Universidad Cristiana N2N',
+              description:
+                'Formación teológica y ministerial completa: 10 semestres estructurados con 32 clases en video, textos oficiales, repasos y 5 evaluaciones oficiales en el Semestre 1.',
+              category: 'Cursos',
+              coverImage: '/brand/n2n/online-mid1-2022.jpg',
+              priceCents: 5000,
+              currency: 'USD',
+              pricePending: false,
+              metadata: {
+                modality: 'Online flexible · Semestre 1 Activo',
+                hours: 120,
+              },
+              resourceCount: 40,
+              grade: null,
+              resources: [],
+              accessible: false,
+              annualOffer: false,
+              guideUrl: null,
+              contentStatus: 'available' as const,
+            },
+            ...sortedWorkshops,
+          ]
+      : null;
 
   return (
     <section className="wa-home-section wa-home-section--surface wa-workshops-section" id="cursos-talleres">
@@ -309,9 +368,11 @@ export function WorkshopsFeaturedSection({
         </div>
 
         <div className="wa-workshops-grid">
-          {items
-            ? items.map((product) => {
+          {finalItems
+            ? finalItems.map((product) => {
                 const upcoming = product.contentStatus === 'upcoming';
+                const isN2n =
+                  /teolog[ií]a|n2n/i.test(product.name) || product.slug.includes('teologia');
                 return (
                   <article
                     className="wa-workshop-card"
@@ -320,21 +381,30 @@ export function WorkshopsFeaturedSection({
                   >
                     <div className="wa-workshop-card-cover">
                       <Image
-                        src={product.coverImage || '/images/courses/python-ia.svg'}
+                        src={product.coverImage || (isN2n ? '/brand/n2n/online-mid1-2022.jpg' : '/images/courses/python-ia.svg')}
                         alt={product.name}
                         fill
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />
                       <div className="wa-workshop-card-overlay" />
-                      <span className="wa-workshop-card-category">{product.category}</span>
-                      {upcoming && (
+                      <span className="wa-workshop-card-category">
+                        {isN2n ? 'Teología & Ministerio' : product.category}
+                      </span>
+                      {upcoming ? (
                         <span className="wa-workshop-card-status">Próximamente disponible</span>
+                      ) : (
+                        <span className="wa-workshop-card-status wa-workshop-card-status--available">
+                          Disponible · Semestre 1 Activo
+                        </span>
                       )}
                     </div>
 
                     <div className="wa-workshop-card-body">
                       <div className="wa-workshop-card-meta">
-                        <span>{product.metadata.modality || 'Online flexible'}</span>
+                        <span>
+                          {product.metadata.modality ||
+                            (isN2n ? 'Online flexible · Semestre 1 Activo' : 'Online flexible')}
+                        </span>
                         {product.metadata.hours && (
                           <>
                             <span>·</span>
@@ -356,7 +426,9 @@ export function WorkshopsFeaturedSection({
                           ) : (
                             <>
                               <span>${(product.priceCents / 100).toFixed(2)} USD</span>
-                              <small>Acceso verificado y certificado</small>
+                              <small>
+                                {isN2n ? 'por semestre · Semestre 1 con 32 clases' : 'Acceso verificado y certificado'}
+                              </small>
                             </>
                           )}
                         </div>
@@ -367,7 +439,7 @@ export function WorkshopsFeaturedSection({
                               Ver en catálogo
                             </Button>
                           </Link>
-                        ) : onOpenPurchase ? (
+                        ) : onOpenPurchase && !isN2n ? (
                           <Button
                             variant="primary-gold"
                             size="sm"
@@ -376,9 +448,16 @@ export function WorkshopsFeaturedSection({
                             Inscribirse
                           </Button>
                         ) : (
-                          <Link href="/catalogo#programas" style={{ textDecoration: 'none' }}>
+                          <Link
+                            href={
+                              isN2n
+                                ? '/cursos/programa-de-teologia-n2n'
+                                : `/cursos/${product.slug}`
+                            }
+                            style={{ textDecoration: 'none' }}
+                          >
                             <Button variant="primary-gold" size="sm">
-                              Inscribirse
+                              Ver programa activo →
                             </Button>
                           </Link>
                         )}
@@ -388,7 +467,11 @@ export function WorkshopsFeaturedSection({
                 );
               })
             : FALLBACK_WORKSHOPS.map((workshop) => (
-                <article className="wa-workshop-card" key={workshop.id}>
+                <article
+                  className="wa-workshop-card"
+                  key={workshop.id}
+                  data-testid={`featured-workshop-${workshop.slug}`}
+                >
                   <div className="wa-workshop-card-cover">
                     <Image
                       src={workshop.coverImage}
@@ -398,7 +481,13 @@ export function WorkshopsFeaturedSection({
                     />
                     <div className="wa-workshop-card-overlay" />
                     <span className="wa-workshop-card-category">{workshop.tag}</span>
-                    <span className="wa-workshop-card-status">Próximamente disponible</span>
+                    {workshop.upcoming ? (
+                      <span className="wa-workshop-card-status">Próximamente disponible</span>
+                    ) : (
+                      <span className="wa-workshop-card-status wa-workshop-card-status--available">
+                        Disponible · Semestre 1 Activo
+                      </span>
+                    )}
                   </div>
 
                   <div className="wa-workshop-card-body">
@@ -413,15 +502,32 @@ export function WorkshopsFeaturedSection({
 
                     <div className="wa-workshop-card-footer">
                       <div className="wa-workshop-card-price">
-                        <span>Inscripción abierta pronto</span>
-                        <small>Materiales en preparación</small>
+                        {workshop.upcoming ? (
+                          <>
+                            <span>Inscripción abierta pronto</span>
+                            <small>Materiales en preparación</small>
+                          </>
+                        ) : (
+                          <>
+                            <span>{workshop.priceText}</span>
+                            <small>Semestre 1 con 32 clases</small>
+                          </>
+                        )}
                       </div>
 
-                      <Link href="/catalogo#programas" style={{ textDecoration: 'none' }}>
-                        <Button variant="secondary" size="sm">
-                          Ver en catálogo
-                        </Button>
-                      </Link>
+                      {workshop.upcoming ? (
+                        <Link href="/catalogo#programas" style={{ textDecoration: 'none' }}>
+                          <Button variant="secondary" size="sm">
+                            Ver en catálogo
+                          </Button>
+                        </Link>
+                      ) : (
+                        <Link href={`/cursos/${workshop.slug}`} style={{ textDecoration: 'none' }}>
+                          <Button variant="primary-gold" size="sm">
+                            Ver programa activo →
+                          </Button>
+                        </Link>
+                      )}
                     </div>
                   </div>
                 </article>

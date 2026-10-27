@@ -1579,10 +1579,22 @@
   font-weight: 800;
 }
 
+.wa-workshop-card-status--available {
+  background: #ecfdf5;
+  color: #047857;
+  border-color: #6ee7b7;
+}
+
 [data-theme='dark'] .wa-workshop-card-status {
   background: rgba(180, 83, 9, 0.25);
   color: #fcd34d;
   border-color: rgba(245, 158, 11, 0.4);
+}
+
+[data-theme='dark'] .wa-workshop-card-status--available {
+  background: rgba(4, 120, 87, 0.25);
+  color: #a7f3d0;
+  border-color: rgba(16, 185, 129, 0.4);
 }
 
 .wa-workshop-card-body {

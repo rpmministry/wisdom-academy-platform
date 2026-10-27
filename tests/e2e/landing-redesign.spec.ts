@@ -76,7 +76,8 @@ test.describe('Landing Page Wisdom Academy - Rediseño Estratégico Multi-dispos
     const workshopsSection = page.locator('#cursos-talleres');
     await expect(workshopsSection).toBeVisible();
 
-    // Verificación de tarjetas destacadas de talleres
+    // Verificación de tarjetas destacadas de talleres (Teología N2N de #1 por tener contenido activo)
+    await expect(page.getByText('Programa de Teología').first()).toBeVisible();
     await expect(page.getByText('Programación con IA y Python').first()).toBeVisible();
     await expect(page.getByText('Mayordomía Financiera').first()).toBeVisible();
     await expect(page.getByText('Liderazgo y Cosmovisión').first()).toBeVisible();

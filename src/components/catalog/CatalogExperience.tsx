@@ -189,13 +189,45 @@ export function CatalogExperience({ home = false }: { home?: boolean }) {
   const isSchoolProduct = (product: CatalogProduct) =>
     product.category === 'Programas y grados' || product.category === 'Recursos gratuitos';
 
-  const portalProducts = useMemo(
-    () =>
-      productos.filter((product) =>
-        portalActivo === 'school' ? isSchoolProduct(product) : !isSchoolProduct(product)
-      ),
-    [portalActivo, productos]
-  );
+  const portalProducts = useMemo(() => {
+    const filtered = productos.filter((product) =>
+      portalActivo === 'school' ? isSchoolProduct(product) : !isSchoolProduct(product)
+    );
+    if (portalActivo === 'pro') {
+      const hasN2n = filtered.some(
+        (p) => /teolog[ií]a|n2n/i.test(p.name) || p.slug.includes('teologia')
+      );
+      if (!hasN2n) {
+        return [
+          {
+            id: 'prod-teologia-n2n-catalog',
+            slug: 'programa-de-teologia-n2n',
+            name: 'Programa de Teología | Universidad Cristiana N2N',
+            description:
+              'Formación teológica y ministerial completa: 10 semestres estructurados con 32 clases en video, textos oficiales, repasos y 5 evaluaciones oficiales en el Semestre 1.',
+            category: 'Cursos',
+            coverImage: '/brand/n2n/online-mid1-2022.jpg',
+            priceCents: 5000,
+            currency: 'USD',
+            pricePending: false,
+            metadata: {
+              modality: 'Online flexible · Semestre 1 Activo',
+              hours: 120,
+            },
+            resourceCount: 40,
+            grade: null,
+            resources: [],
+            accessible: false,
+            annualOffer: false,
+            guideUrl: null,
+            contentStatus: 'available' as const,
+          },
+          ...filtered,
+        ];
+      }
+    }
+    return filtered;
+  }, [portalActivo, productos]);
 
   const categoryOptions = useMemo(
     () => ['Todos', ...new Set(portalProducts.map((product) => product.category))],
@@ -228,7 +260,14 @@ export function CatalogExperience({ home = false }: { home?: boolean }) {
     if (orden === 'precio-asc') return [...list].sort((a, b) => precioOrdenable(a) - precioOrdenable(b));
     if (orden === 'precio-desc') return [...list].sort((a, b) => precioOrdenable(b) - precioOrdenable(a));
     if (orden === 'nombre') return [...list].sort((a, b) => a.name.localeCompare(b.name));
-    return list;
+    // En 'recomendados', priorizamos de #1 el curso con contenido activo (Programa de Teología N2N)
+    return [...list].sort((a, b) => {
+      const aIsN2n = /teolog[ií]a|n2n/i.test(a.name) || a.slug.includes('teologia');
+      const bIsN2n = /teolog[ií]a|n2n/i.test(b.name) || b.slug.includes('teologia');
+      if (aIsN2n && !bIsN2n) return -1;
+      if (!aIsN2n && bIsN2n) return 1;
+      return 0;
+    });
   }, [busqueda, categoria, orden, portalProducts]);
 
   const agregarAlCarrito = (producto: CatalogProduct): boolean => {

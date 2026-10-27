@@ -18,6 +18,8 @@ const COURSE_COVERS: Record<string, string> = {
   'programa-homeschool-4-egb': '/images/courses/homeschool-4.svg',
   'programa-homeschool-8-egb': '/images/courses/homeschool-8.svg',
   'guia-bienvenida-homeschool': '/images/courses/guia-bienvenida.svg',
+  'programa-de-teologia-n2n': '/brand/n2n/online-mid1-2022.jpg',
+  'wa-programa-programa-de-teologia-n2n': '/brand/n2n/online-mid1-2022.jpg',
 };
 
 function safeMetadata(json: string): Record<string, unknown> {
