@@ -16,9 +16,16 @@
  * 2. Preprocesador de Prosodia y Fonética Pedagógica:
  *    Convierte fracciones (1/4 -> un cuarto), signos matemáticos (+24 -> más 24, ℤ -> números enteros)
  *    e inyecta micro-pausas respiratorias (...) para eliminar la monotonía robótica.
- * 3. Segmentación en Frases (Sentence Chunking) con Keep-Alive:
- *    Resuelve de forma definitiva el límite de 15 segundos de Chromium, reproduciendo
- *    lecciones completas con cadencia humana ininterrumpida.
+ * 3. Micro-Segmentación en Cláusulas (Max 12-14 palabras por chunk):
+ *    Garantiza que ningún enunciado supere los 5-6 segundos, neutralizando de raíz
+ *    el límite fatal de 15 segundos de Chromium y WebKit.
+ * 4. Inmunidad a Garbage Collection de V8:
+ *    Ancla fuertemente cada SpeechSynthesisUtterance a memoria global durante la
+ *    reproducción, impidiendo que el motor de JS limpie el objeto y pierda el evento onend.
+ * 5. Watchdog de Autorrecuperación Asíncrono:
+ *    Monitorea de forma no destructiva el tiempo de habla de cada frase. Si el navegador
+ *    o el driver de audio silencia el evento onend, el watchdog avanza fluidamente a la
+ *    siguiente frase y paso pedagógico sin congelar la clase.
  * ==============================================================================
  */
 
@@ -43,7 +50,9 @@ export class TeacherSpeechManager {
   private indiceFraseActual: number = 0;
   private isSpeaking: boolean = false;
   private estaPausado: boolean = false;
-  private timerKeepAlive: any = null;
+  private timerRecuperacion: any = null;
+  private timerWatchdog: any = null;
+  private utteranceActiva: SpeechSynthesisUtterance | null = null;
   private callbacksActuales?: SpeechCallbacks;
   private vocesCargadas: SpeechSynthesisVoice[] = [];
   private idiomaActual: 'es' | 'en' = 'es';
@@ -105,15 +114,14 @@ export class TeacherSpeechManager {
       t = t.replace(/\b5\/8\b/g, 'cinco octavos');
 
       // 3. Notaciones matemáticas y científicas
-      t = t.replace(/\bℤ\b/g, 'los números enteros');
-      t = t.replace(/\b\+\s*([0-9]+)\b/g, 'positivo $1');
-      t = t.replace(/\b-\s*([0-9]+)\b/g, 'menos $1');
+      t = t.replace(/(?<!\p{L})ℤ(?!\p{L})/gu, 'los números enteros');
+      t = t.replace(/(?:^|\s)\+\s*([0-9]+)/g, ' positivo $1');
+      t = t.replace(/(?:^|\s)-\s*([0-9]+)/g, ' menos $1');
       t = t.replace(/\b([0-9]+)\s*×\s*([0-9]+)\b/g, '$1 por $2');
       t = t.replace(/\b([0-9]+)\s*÷\s*([0-9]+)\b/g, '$1 dividido para $2');
       t = t.replace(/\bO₂\b/g, 'oxígeno');
       t = t.replace(/\bCO₂\b/g, 'dióxido de carbono');
-      t = t.replace(/\b([0-9]+)\s*°C\b/g, '$1 grados centígrados');
-      t = t.replace(/\b([0-9]+)\s*°\s*C\b/g, '$1 grados centígrados');
+      t = t.replace(/\b([0-9]+)\s*°\s*C\b/gi, '$1 grados centígrados');
 
       // 4. Modulación pedagógica: insertar micro-pausas expresivas en conectores
       t = t.replace(/\b(En primer lugar|En segundo lugar|Por ejemplo|Fíjate bien|Recuerda que|Observa que|De este modo),/gi, '$1,...');
@@ -131,17 +139,52 @@ export class TeacherSpeechManager {
   }
 
   /**
-   * Divide el texto en oraciones naturales respetando signos de puntuación,
-   * evitando que Chromium congele la voz en textos largos (> 15 segundos).
+   * Divide el texto en oraciones y micro-cláusulas respetando pausas semánticas
+   * y garantizando que ningún fragmento supere ~12-14 palabras. Esto elimina por
+   * completo el corte a los 15 segundos de Chromium y WebKit.
    */
-  private segmentarEnOraciones(texto: string): string[] {
-    // Expresión regular que divide por puntos, signos de exclamación o interrogación
-    const segmentos = texto
-      .split(/(?<=[.!?])\s+/)
+  public segmentarEnOraciones(texto: string): string[] {
+    if (!texto) return [];
+
+    // Paso 1: Dividir por puntuación fuerte (. ! ? y saltos de línea)
+    const oracionesPrincipales = texto
+      .split(/(?<=[.!?\n])\s+/)
       .map((s) => s.trim())
       .filter((s) => s.length > 0);
 
-    return segmentos.length > 0 ? segmentos : [texto];
+    const subSegmentos: string[] = [];
+
+    for (const oracion of oracionesPrincipales) {
+      const palabras = oracion.split(/\s+/).filter(Boolean);
+      // Si la oración tiene 14 palabras o menos, se mantiene íntegra
+      if (palabras.length <= 14) {
+        subSegmentos.push(oracion);
+        continue;
+      }
+
+      // Si es más larga, subdividir por signos de puntuación intermedia (, ; : — – …)
+      const clausulas = oracion
+        .split(/(?<=[,;:—–…])\s+/)
+        .map((c) => c.trim())
+        .filter((c) => c.length > 0);
+
+      for (const clausula of clausulas) {
+        const palabrasClausula = clausula.split(/\s+/).filter(Boolean);
+        if (palabrasClausula.length <= 14) {
+          subSegmentos.push(clausula);
+        } else {
+          // Si una cláusula aislada sigue teniendo más de 14 palabras, fragmentar por límites de 12 palabras
+          for (let i = 0; i < palabrasClausula.length; i += 12) {
+            const rebanada = palabrasClausula.slice(i, i + 12).join(' ');
+            if (rebanada.length > 0) {
+              subSegmentos.push(rebanada);
+            }
+          }
+        }
+      }
+    }
+
+    return subSegmentos.length > 0 ? subSegmentos : [texto];
   }
 
   /**
@@ -264,14 +307,14 @@ export class TeacherSpeechManager {
       return false;
     }
 
-    // Dividir en frases para una reproducción fluida sin límites de tiempo
+    // Dividir en frases seguras para una reproducción fluida sin límites de tiempo
     this.colaFrases = this.segmentarEnOraciones(textoProcesado);
     this.indiceFraseActual = 0;
     this.isSpeaking = true;
     this.estaPausado = false;
 
-    // Iniciar keep-alive de Chrome para evitar que el navegador suspenda el audio
-    this.iniciarKeepAlive();
+    // Iniciar monitor de recuperación no destructivo
+    this.iniciarVigilanciaRecuperacion();
 
     callbacks?.onStart?.();
 
@@ -281,13 +324,26 @@ export class TeacherSpeechManager {
   }
 
   /**
-   * Reproduce la siguiente frase en la cola secuencial.
+   * Limpia el temporizador de seguridad de la frase activa.
+   */
+  private limpiarWatchdog() {
+    if (this.timerWatchdog) {
+      clearTimeout(this.timerWatchdog);
+      this.timerWatchdog = null;
+    }
+  }
+
+  /**
+   * Reproduce la siguiente frase en la cola secuencial con anclaje a memoria
+   * y temporizador de seguridad que evita que el motor se congele a mitad de texto.
    */
   private reproducirSiguienteFrase() {
     if (!this.isSpeaking || this.estaPausado) return;
 
+    this.limpiarWatchdog();
+
     if (this.indiceFraseActual >= this.colaFrases.length) {
-      // Fin exitoso de todas las frases
+      // Fin exitoso de todas las frases de este paso pedagógico
       this.finalizarLocucion(true);
       return;
     }
@@ -304,7 +360,7 @@ export class TeacherSpeechManager {
       let factorRitmo = 1.0;
 
       if (this.perfilActual === 'mateo') {
-        // Prof. Mateo: Tono ligeramente más cálido y dinámico
+        // Prof. Mateo: Tono cálido, dinámico y pedagógico
         tono = 1.04;
         factorRitmo = 1.02;
       } else if (this.perfilActual === 'sofia') {
@@ -322,17 +378,36 @@ export class TeacherSpeechManager {
         utterance.voice = mejorVoz;
       }
 
+      // ANCLAJE CONTRA V8 GARBAGE COLLECTION:
+      // Mantener la referencia viva tanto en el Manager como en window para evitar
+      // que el GC destruya el objeto y deje de emitir onend.
+      this.utteranceActiva = utterance;
+      if (typeof window !== 'undefined') {
+        (window as any).__wisdom_active_utterance = utterance;
+      }
+
       utterance.onend = () => {
+        this.limpiarWatchdog();
+        this.utteranceActiva = null;
+        if (typeof window !== 'undefined') {
+          (window as any).__wisdom_active_utterance = null;
+        }
         this.indiceFraseActual++;
-        // Micro-pausa natural entre frases (60ms) para una cadencia ultra orgánica
+        // Micro-pausa natural entre frases (50ms) para una cadencia ultra orgánica
         setTimeout(() => {
           if (this.isSpeaking && !this.estaPausado) {
             this.reproducirSiguienteFrase();
           }
-        }, 60);
+        }, 50);
       };
 
       utterance.onerror = (e) => {
+        this.limpiarWatchdog();
+        this.utteranceActiva = null;
+        if (typeof window !== 'undefined') {
+          (window as any).__wisdom_active_utterance = null;
+        }
+
         // Si fue un corte intencional ('interrupted' o 'canceled'), no tratamos como fallo crítico
         if ((e as any).error === 'interrupted' || (e as any).error === 'canceled') {
           return;
@@ -346,6 +421,37 @@ export class TeacherSpeechManager {
         }
       };
 
+      // WATCHDOG DE SEGURIDAD ASÍNCRONO:
+      // Si el navegador o el driver de audio silencia el evento onend,
+      // el watchdog auto-avanza a la siguiente frase sin colapsar la lección.
+      const palabrasCount = frase.split(/\s+/).filter(Boolean).length;
+      const tiempoEstimadoMs = Math.max(
+        3200,
+        Math.ceil((palabrasCount * 480) / this.velocidadActual) + 3800
+      );
+
+      this.timerWatchdog = setTimeout(() => {
+        if (!this.isSpeaking || this.estaPausado) return;
+        this.limpiarWatchdog();
+        this.utteranceActiva = null;
+        if (typeof window !== 'undefined') {
+          (window as any).__wisdom_active_utterance = null;
+          try {
+            if (window.speechSynthesis.speaking && window.speechSynthesis.paused) {
+              window.speechSynthesis.resume();
+            }
+          } catch {
+            // No-op
+          }
+        }
+        this.indiceFraseActual++;
+        if (this.indiceFraseActual < this.colaFrases.length) {
+          this.reproducirSiguienteFrase();
+        } else {
+          this.finalizarLocucion(true);
+        }
+      }, tiempoEstimadoMs);
+
       window.speechSynthesis.speak(utterance);
     } catch (e) {
       console.error('Error al emitir frase de síntesis:', e);
@@ -354,24 +460,30 @@ export class TeacherSpeechManager {
   }
 
   /**
-   * Mantiene viva la síntesis de voz en Chrome evitando el freeze de los 15s.
+   * Monitorea pasivamente el estado de la síntesis y reanuda si el navegador
+   * se ha quedado en pausa involuntaria (sin llamar a pause() destructivo).
    */
-  private iniciarKeepAlive() {
-    this.detenerKeepAlive();
+  private iniciarVigilanciaRecuperacion() {
+    this.detenerVigilanciaRecuperacion();
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      this.timerKeepAlive = setInterval(() => {
-        if (this.isSpeaking && !this.estaPausado && window.speechSynthesis.speaking) {
-          window.speechSynthesis.pause();
-          window.speechSynthesis.resume();
+      this.timerRecuperacion = setInterval(() => {
+        if (this.isSpeaking && !this.estaPausado) {
+          try {
+            if (window.speechSynthesis.paused) {
+              window.speechSynthesis.resume();
+            }
+          } catch {
+            // No-op
+          }
         }
-      }, 10000);
+      }, 2500);
     }
   }
 
-  private detenerKeepAlive() {
-    if (this.timerKeepAlive) {
-      clearInterval(this.timerKeepAlive);
-      this.timerKeepAlive = null;
+  private detenerVigilanciaRecuperacion() {
+    if (this.timerRecuperacion) {
+      clearInterval(this.timerRecuperacion);
+      this.timerRecuperacion = null;
     }
   }
 
@@ -379,7 +491,12 @@ export class TeacherSpeechManager {
    * Finaliza la locución y dispara los callbacks correspondientes.
    */
   private finalizarLocucion(exito: boolean, error?: any) {
-    this.detenerKeepAlive();
+    this.limpiarWatchdog();
+    this.detenerVigilanciaRecuperacion();
+    this.utteranceActiva = null;
+    if (typeof window !== 'undefined') {
+      (window as any).__wisdom_active_utterance = null;
+    }
     this.isSpeaking = false;
     this.estaPausado = false;
     this.colaFrases = [];
@@ -396,6 +513,7 @@ export class TeacherSpeechManager {
    * Pausa temporalmente la locución actual.
    */
   public pausar() {
+    this.limpiarWatchdog();
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.pause();
       this.estaPausado = true;
@@ -409,6 +527,10 @@ export class TeacherSpeechManager {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.resume();
       this.estaPausado = false;
+      // Continuar con la frase activa o siguiente
+      if (this.isSpeaking && this.colaFrases.length > 0) {
+        this.reproducirSiguienteFrase();
+      }
     }
   }
 
@@ -416,10 +538,17 @@ export class TeacherSpeechManager {
    * Detiene inmediatamente cualquier locución en curso y reinicia la cola.
    */
   public detener() {
-    this.detenerKeepAlive();
+    this.limpiarWatchdog();
+    this.detenerVigilanciaRecuperacion();
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
+      try {
+        window.speechSynthesis.cancel();
+      } catch {
+        // No-op
+      }
+      (window as any).__wisdom_active_utterance = null;
     }
+    this.utteranceActiva = null;
     this.isSpeaking = false;
     this.estaPausado = false;
     this.colaFrases = [];

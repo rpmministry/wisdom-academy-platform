@@ -1593,17 +1593,18 @@ export const OpenMAICClassroomViewer: React.FC<OpenMAICClassroomViewerProps> = (
         4. BARRA INFERIOR MULTI-AGENTE (OPENMAIC LIVE SPEECH & COMMUNITY)
       ======================================================================= */}
       <div
-        className="wa-openmaic-speechbar"
+        className="wa-speechbar wa-openmaic-speechbar"
         style={{
           borderTop: '1px solid var(--border-subtle)',
           backgroundColor: 'var(--bg-subtle)',
-          padding: '10px 16px',
+          padding: '8px 14px',
           display: 'flex',
           alignItems: 'center',
-          gap: '14px',
+          gap: '12px',
           boxSizing: 'border-box',
           flexShrink: 0,
-          flexWrap: 'wrap',
+          flexWrap: 'nowrap',
+          overflow: 'hidden',
         }}
       >
         {/* AVATAR DEL PROFESOR CON HALO VIBRANTE */}
@@ -1656,20 +1657,21 @@ export const OpenMAICClassroomViewer: React.FC<OpenMAICClassroomViewerProps> = (
             backgroundColor: 'var(--bg-surface)',
             borderRadius: 'var(--wa-radius-md)',
             border: '1px solid var(--border-subtle)',
-            padding: '8px 14px',
+            padding: '6px 12px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             gap: '10px',
             boxShadow: 'var(--shadow-sm)',
-            minHeight: '40px',
+            minHeight: '38px',
+            overflow: 'hidden',
           }}
         >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', flex: 1 }}>
-            <span style={{ fontSize: '0.75rem', fontFamily: 'var(--wa-font-mono)', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', flex: 1, minWidth: 0, overflow: 'hidden' }}>
+            <span style={{ fontSize: '0.75rem', fontFamily: 'var(--wa-font-mono)', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               {pasoActualData?.etiqueta}: {pasoActualData?.titulo}
             </span>
-            <p style={{ margin: 0, fontSize: '0.8125rem', color: 'var(--text-secondary)', lineHeight: 1.4, fontStyle: 'italic' }}>
+            <p style={{ margin: 0, fontSize: '0.8125rem', color: 'var(--text-secondary)', lineHeight: 1.35, fontStyle: 'italic', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
               &ldquo;{pasoActualData?.guionVoz}&rdquo;
             </p>
           </div>

@@ -1,4 +1,4 @@
-﻿.wa-portal {
+.wa-portal {
   --wa-portal-header-height: 64px;
   min-height: 100dvh;
   display: flex;
@@ -229,13 +229,23 @@
   max-height: calc(100dvh - var(--wa-portal-header-height));
 }
 
-/* En una sola columna el aula crece con su contenido y el panel académico
-   queda debajo; una altura fija comprimía la clase a unos pocos píxeles. */
-@media (max-width: 1100px) {
+/* En una sola columna vertical (móvil y tablet vertical) el aula crece con
+   su contenido y el panel académico queda debajo. En modo horizontal (landscape),
+   el aula conserva la altura de ventana con split-view interactivo sin recortes. */
+@media (max-width: 1100px) and (orientation: portrait), (max-width: 768px) and (orientation: portrait) {
   .wa-portal-content .wa-platzi-classroom {
     height: auto;
     max-height: none;
     min-height: calc(100dvh - var(--wa-portal-header-height));
+  }
+}
+
+@media (min-width: 769px) and (orientation: landscape), (orientation: landscape) and (min-width: 680px) {
+  .wa-portal-content .wa-platzi-classroom {
+    height: calc(100dvh - var(--wa-portal-header-height)) !important;
+    min-height: calc(100dvh - var(--wa-portal-header-height)) !important;
+    max-height: calc(100dvh - var(--wa-portal-header-height)) !important;
+    overflow: hidden !important;
   }
 }
 
