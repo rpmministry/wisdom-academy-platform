@@ -7,6 +7,8 @@ export const metadata: Metadata = {
     'Plataforma educativa integral y bilingüe: programas de educación básica, apoyo homeschool, cursos y talleres con acompañamiento académico, recursos digitales y acceso verificado.',
 };
 
+export const revalidate = 0;
+
 export default function HomePage() {
   return <CatalogExperience home />;
 }

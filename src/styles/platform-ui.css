@@ -1468,9 +1468,11 @@
 }
 
 .wa-pathway-card-list li {
-  display: flex;
-  gap: 0.5rem;
-  align-items: flex-start;
+  position: relative;
+  display: block;
+  padding-left: 1.4rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
 }
 
 .wa-pathway-card-list li strong {
@@ -1479,10 +1481,13 @@
 
 .wa-pathway-card-list li::before {
   content: '✓';
+  position: absolute;
+  left: 0;
+  top: 0.05rem;
   color: var(--brand-secondary);
   font-weight: 900;
   font-size: 0.9rem;
-  flex-shrink: 0;
+  line-height: 1;
 }
 
 .wa-pathway-card-actions {

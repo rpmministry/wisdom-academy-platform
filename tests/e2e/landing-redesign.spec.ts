@@ -112,4 +112,28 @@ test.describe('Landing Page Wisdom Academy - Rediseño Estratégico Multi-dispos
     await closeBtn.click();
     await expect(page.locator('.wa-school-content')).toHaveCount(0);
   });
+
+  test('capturas de evidencia móvil de secciones en 390px', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(500);
+
+    // 1. Academia
+    const secAcademia = page.locator('#academia');
+    await secAcademia.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(300);
+    await page.screenshot({ path: 'docs/evidencias/mobile-academia-fixed.png' });
+
+    // 2. Cursos & Talleres
+    const secWorkshops = page.locator('#cursos-talleres');
+    await secWorkshops.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(300);
+    await page.screenshot({ path: 'docs/evidencias/mobile-workshops-fixed.png' });
+
+    // 3. Catálogo & Chips
+    const secProgramas = page.locator('#programas');
+    await secProgramas.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(300);
+    await page.screenshot({ path: 'docs/evidencias/mobile-catalog-chips-fixed.png' });
+  });
 });
