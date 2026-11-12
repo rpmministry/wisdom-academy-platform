@@ -40,12 +40,42 @@ function esMateriaTeologia(materia: string): boolean {
 
 export type ProveedorIAId =
   | 'gemini-free'
+  | 'deepseek-free'
   | 'groq-free'
   | 'openrouter-free'
   | 'cerebras-free'
   | 'mistral-free'
   | 'cache-clases-openmaic'
   | 'motor-curricular-autonomo';
+
+export type CategoriaFalloProveedor =
+  | 'HTTP_401'
+  | 'HTTP_403'
+  | 'HTTP_404'
+  | 'HTTP_429'
+  | 'HTTP_503'
+  | 'HTTP_OTRO'
+  | 'TIMEOUT'
+  | 'RED'
+  | 'RESPUESTA_VACIA';
+
+function clasificarEstadoHttp(status: number): CategoriaFalloProveedor {
+  if (status === 401) return 'HTTP_401';
+  if (status === 403) return 'HTTP_403';
+  if (status === 404) return 'HTTP_404';
+  if (status === 429) return 'HTTP_429';
+  if (status === 503) return 'HTTP_503';
+  return 'HTTP_OTRO';
+}
+
+function normalizarTextoProveedor(valor: unknown): string | null {
+  if (typeof valor !== 'string') return null;
+  let texto = valor.trim();
+  const bloque = texto.match(/^```(?:[a-z]+)?\s*([\s\S]*?)\s*```$/i);
+  if (bloque?.[1]) texto = bloque[1].trim();
+  if (texto.length <= 10) return null;
+  return texto;
+}
 
 export type EstadoCircuito = 'HEALTHY' | 'DEGRADED' | 'TRIPPED';
 
@@ -72,6 +102,10 @@ export interface RespuestaIAOrquestada {
     texto: string;
   };
   intentosFallidos?: number;
+  motivoFalloTotal?: string;
+  presupuestoLatenciaAgotado?: boolean;
+  presupuestoTokensAgotado?: boolean;
+  tokensEstimadosConsumidos?: number;
 }
 
 export interface MetricasProveedor {
@@ -84,6 +118,7 @@ export interface MetricasProveedor {
   latenciaPromedioMs: number;
   tiempoUltimoFallo?: number;
   tiempoReactivacion?: number;
+  ultimaCategoriaFallo?: CategoriaFalloProveedor;
 }
 
 interface EntradaCache {
@@ -111,6 +146,15 @@ export class WisdomAIOrchestrator {
   // TTL de la caché (24 horas)
   private readonly TTL_CACHE_MS = 24 * 60 * 60 * 1000;
 
+  // Límites de costo y latencia por consulta
+  private readonly PRESUPUESTO_LATENCIA_MS = 15_000;
+  private readonly PRESUPUESTO_TOKENS = 6_000;
+  private readonly MAX_TOKENS_SALIDA = 600;
+  private readonly MAX_INTENTOS_POR_PROVEEDOR = 2;
+  private readonly BACKOFF_BASE_MS = 250;
+
+  private tokensEstimadosConsumidos = 0;
+
   private constructor() {
     this.inicializarProveedores();
     this.precargarCacheConceptosClave();
@@ -129,6 +173,7 @@ export class WisdomAIOrchestrator {
   private inicializarProveedores() {
     const proveedores: { id: ProveedorIAId; nombre: string }[] = [
       { id: 'gemini-free', nombre: 'Google Gemini 3.8 / 2.5 Flash (Free Tier)' },
+      { id: 'deepseek-free', nombre: 'DeepSeek Chat (API compatible OpenAI)' },
       { id: 'groq-free', nombre: 'Groq Cloud (Llama 3.3 70B / Mixtral Free)' },
       { id: 'openrouter-free', nombre: 'OpenRouter Free Tier (:free Models)' },
       { id: 'cerebras-free', nombre: 'Cerebras Cloud (Llama 3.1 70B Ultra Fast)' },
@@ -306,13 +351,25 @@ PAUTAS PEDAGÓGICAS ESTRICTAS:
   /**
    * Registra fallo en un proveedor y evalúa si abrir el circuito (TRIPPED).
    */
-  private registrarFallo(id: ProveedorIAId, esRateLimit429: boolean) {
+  private registrarFallo(id: ProveedorIAId, esRateLimit429: boolean, status?: number) {
     const metricas = this.estadosCircuitos.get(id);
     if (!metricas) return;
 
     metricas.peticionesTotales++;
     metricas.peticionesFallidas++;
     metricas.tiempoUltimoFallo = Date.now();
+    metricas.ultimaCategoriaFallo = status ? clasificarEstadoHttp(status) : esRateLimit429 ? 'HTTP_429' : 'HTTP_OTRO';
+
+    if (metricas.ultimaCategoriaFallo === 'HTTP_401' || metricas.ultimaCategoriaFallo === 'HTTP_403') {
+      metricas.estado = 'TRIPPED';
+      metricas.tiempoReactivacion = Date.now() + this.COOLDOWN_CIRCUITO_MS;
+      return;
+    }
+
+    if (metricas.ultimaCategoriaFallo === 'HTTP_404') {
+      metricas.estado = 'DEGRADED';
+      return;
+    }
 
     if (esRateLimit429 || metricas.peticionesFallidas >= 2) {
       metricas.estado = 'TRIPPED';
@@ -360,20 +417,21 @@ PAUTAS PEDAGÓGICAS ESTRICTAS:
           clearTimeout(timeout);
 
           if (res.status === 429) {
-            this.registrarFallo('gemini-free', true);
-            break; // Salta a la siguiente API key
+            this.registrarFallo('gemini-free', true, 429);
+            break;
           }
 
           if (!res.ok) {
-            this.registrarFallo('gemini-free', false);
+            this.registrarFallo('gemini-free', false, res.status);
             continue;
           }
 
           const datos = await res.json();
-          const texto = datos?.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (texto && texto.trim().length > 10) {
-            return { texto: texto.trim(), modelo };
+          const texto = normalizarTextoProveedor(datos?.candidates?.[0]?.content?.parts?.[0]?.text);
+          if (texto) {
+            return { texto, modelo };
           }
+          this.registrarFallo('gemini-free', false, 200);
         } catch {
           clearTimeout(timeout);
           this.registrarFallo('gemini-free', false);
@@ -384,7 +442,58 @@ PAUTAS PEDAGÓGICAS ESTRICTAS:
   }
 
   /**
-   * [PROVEEDOR 2] Groq Cloud Free Tier (Llama 3.3 70B / Mixtral)
+   * [PROVEEDOR 2] DeepSeek Chat (API compatible con OpenAI)
+   */
+  private async intentarDeepSeek(prompt: string): Promise<{ texto: string; modelo: string } | null> {
+    const keysRaw = process.env.DEEPSEEK_API_KEY || process.env.DEEPSEEK_FREE_API_KEY;
+    if (!keysRaw || keysRaw.includes('tu-clave')) return null;
+
+    const keys = keysRaw.split(',').map((k) => k.trim()).filter((k) => k.length > 10);
+    const modelos = [process.env.DEEPSEEK_MODEL || 'deepseek-chat'];
+
+    for (const apiKey of keys) {
+      for (const modelo of modelos) {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), this.TIMEOUT_PETICION_MS);
+
+        try {
+          const res = await fetch('https://api.deepseek.com/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${apiKey}`,
+            },
+            signal: controller.signal,
+            body: JSON.stringify({
+              model: modelo,
+              messages: [{ role: 'user', content: prompt }],
+              temperature: 0.7,
+              max_tokens: this.MAX_TOKENS_SALIDA,
+              stream: false,
+            }),
+          });
+          clearTimeout(timeout);
+
+          if (!res.ok) {
+            this.registrarFallo('deepseek-free', res.status === 429, res.status);
+            continue;
+          }
+
+          const datos = await res.json();
+          const texto = normalizarTextoProveedor(datos?.choices?.[0]?.message?.content);
+          if (texto) return { texto, modelo };
+          this.registrarFallo('deepseek-free', false, 200);
+        } catch {
+          clearTimeout(timeout);
+          this.registrarFallo('deepseek-free', false);
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * [PROVEEDOR 3] Groq Cloud Free Tier (Llama 3.3 70B / Mixtral)
    */
   private async intentarGroq(prompt: string): Promise<{ texto: string; modelo: string } | null> {
     const keysRaw = process.env.GROQ_API_KEY || process.env.GROQ_API_KEYS;
@@ -416,20 +525,21 @@ PAUTAS PEDAGÓGICAS ESTRICTAS:
           clearTimeout(timeout);
 
           if (res.status === 429) {
-            this.registrarFallo('groq-free', true);
+            this.registrarFallo('groq-free', true, 429);
             break;
           }
 
           if (!res.ok) {
-            this.registrarFallo('groq-free', false);
+            this.registrarFallo('groq-free', false, res.status);
             continue;
           }
 
           const datos = await res.json();
-          const texto = datos?.choices?.[0]?.message?.content;
-          if (texto && texto.trim().length > 10) {
-            return { texto: texto.trim(), modelo };
+          const texto = normalizarTextoProveedor(datos?.choices?.[0]?.message?.content);
+          if (texto) {
+            return { texto, modelo };
           }
+          this.registrarFallo('groq-free', false, 200);
         } catch {
           clearTimeout(timeout);
           this.registrarFallo('groq-free', false);
@@ -479,20 +589,21 @@ PAUTAS PEDAGÓGICAS ESTRICTAS:
           clearTimeout(timeout);
 
           if (res.status === 429) {
-            this.registrarFallo('openrouter-free', true);
+            this.registrarFallo('openrouter-free', true, 429);
             break;
           }
 
           if (!res.ok) {
-            this.registrarFallo('openrouter-free', false);
+            this.registrarFallo('openrouter-free', false, res.status);
             continue;
           }
 
           const datos = await res.json();
-          const texto = datos?.choices?.[0]?.message?.content;
-          if (texto && texto.trim().length > 10) {
-            return { texto: texto.trim(), modelo };
+          const texto = normalizarTextoProveedor(datos?.choices?.[0]?.message?.content);
+          if (texto) {
+            return { texto, modelo };
           }
+          this.registrarFallo('openrouter-free', false, 200);
         } catch {
           clearTimeout(timeout);
           this.registrarFallo('openrouter-free', false);
@@ -533,20 +644,21 @@ PAUTAS PEDAGÓGICAS ESTRICTAS:
         clearTimeout(timeout);
 
         if (res.status === 429) {
-          this.registrarFallo('cerebras-free', true);
+          this.registrarFallo('cerebras-free', true, 429);
           return null;
         }
 
         if (!res.ok) {
-          this.registrarFallo('cerebras-free', false);
+          this.registrarFallo('cerebras-free', false, res.status);
           continue;
         }
 
         const datos = await res.json();
-        const texto = datos?.choices?.[0]?.message?.content;
-        if (texto && texto.trim().length > 10) {
-          return { texto: texto.trim(), modelo };
+        const texto = normalizarTextoProveedor(datos?.choices?.[0]?.message?.content);
+        if (texto) {
+          return { texto, modelo };
         }
+        this.registrarFallo('cerebras-free', false, 200);
       } catch {
         clearTimeout(timeout);
         this.registrarFallo('cerebras-free', false);
@@ -586,20 +698,21 @@ PAUTAS PEDAGÓGICAS ESTRICTAS:
         clearTimeout(timeout);
 
         if (res.status === 429) {
-          this.registrarFallo('mistral-free', true);
+          this.registrarFallo('mistral-free', true, 429);
           return null;
         }
 
         if (!res.ok) {
-          this.registrarFallo('mistral-free', false);
+          this.registrarFallo('mistral-free', false, res.status);
           continue;
         }
 
         const datos = await res.json();
-        const texto = datos?.choices?.[0]?.message?.content;
-        if (texto && texto.trim().length > 10) {
-          return { texto: texto.trim(), modelo };
+        const texto = normalizarTextoProveedor(datos?.choices?.[0]?.message?.content);
+        if (texto) {
+          return { texto, modelo };
         }
+        this.registrarFallo('mistral-free', false, 200);
       } catch {
         clearTimeout(timeout);
         this.registrarFallo('mistral-free', false);
@@ -645,6 +758,44 @@ ${concepto} En la práctica: ${ejemplo}. Desarrollar este pensamiento analítico
 ${teologia ? 'Tal como proclama' : 'Como síntesis del método'} ${principioRef}: "${principioTxt}". Mantén siempre el espíritu reflexivo y la excelencia en cada investigación.`;
   }
 
+  private presupuestoLatenciaAgotado(inicio: number): boolean {
+    return Date.now() - inicio >= this.PRESUPUESTO_LATENCIA_MS;
+  }
+
+  private consumirPresupuestoTokens(prompt: string): boolean {
+    const estimado = Math.ceil(prompt.length / 4) + this.MAX_TOKENS_SALIDA;
+    if (this.tokensEstimadosConsumidos + estimado > this.PRESUPUESTO_TOKENS) return false;
+    this.tokensEstimadosConsumidos += estimado;
+    return true;
+  }
+
+  private async intentarConReintentos(
+    intentar: () => Promise<{ texto: string; modelo: string } | null>,
+    inicio: number
+  ): Promise<{ texto: string; modelo: string } | null> {
+    for (let intento = 1; intento <= this.MAX_INTENTOS_POR_PROVEEDOR; intento += 1) {
+      if (this.presupuestoLatenciaAgotado(inicio)) return null;
+      const resultado = await intentar();
+      if (resultado) return resultado;
+      if (intento < this.MAX_INTENTOS_POR_PROVEEDOR) {
+        await new Promise((resolve) => setTimeout(resolve, this.BACKOFF_BASE_MS * intento));
+      }
+    }
+    return null;
+  }
+
+  public reiniciarEstadoParaPruebas() {
+    this.estadosCircuitos.clear();
+    this.cacheRespuestas.clear();
+    this.tokensEstimadosConsumidos = 0;
+    this.inicializarProveedores();
+    this.precargarCacheConceptosClave();
+  }
+
+  public static crearInstanciaParaPruebas(): WisdomAIOrchestrator {
+    return new WisdomAIOrchestrator();
+  }
+
   /**
    * Método Maestro de Orquestación: Ejecuta el pipeline completo de Caché -> Rotación -> Fallback.
    */
@@ -679,118 +830,62 @@ ${teologia ? 'Tal como proclama' : 'Como síntesis del método'} ${principioRef}
 
     const prompt = this.construirPrompt(params, nombreProfesor, diapo);
     let intentosFallidos = 0;
+    let motivoFalloTotal: string | undefined;
+    let presupuestoLatenciaAgotado = false;
+    let presupuestoTokensAgotado = false;
 
-    // 3. Nivel 1: Google Gemini Free Tier
-    if (this.esProveedorDisponible('gemini-free')) {
-      const resultado = await this.intentarGemini(prompt);
+    const ejecutarNivel = async (
+      id: ProveedorIAId,
+      intentar: () => Promise<{ texto: string; modelo: string } | null>
+    ) => {
+      if (!this.esProveedorDisponible(id)) return null;
+      if (this.presupuestoLatenciaAgotado(inicio)) {
+        presupuestoLatenciaAgotado = true;
+        motivoFalloTotal = 'PRESUPUESTO_LATENCIA_AGOTADO';
+        return null;
+      }
+      if (!this.consumirPresupuestoTokens(prompt)) {
+        presupuestoTokensAgotado = true;
+        motivoFalloTotal = 'PRESUPUESTO_TOKENS_AGOTADO';
+        return null;
+      }
+      const resultado = await this.intentarConReintentos(intentar, inicio);
+      if (!resultado) intentosFallidos += 1;
+      return resultado;
+    };
+
+    const niveles: { id: ProveedorIAId; intentar: () => Promise<{ texto: string; modelo: string } | null> }[] = [
+      { id: 'gemini-free', intentar: () => this.intentarGemini(prompt) },
+      { id: 'deepseek-free', intentar: () => this.intentarDeepSeek(prompt) },
+      { id: 'groq-free', intentar: () => this.intentarGroq(prompt) },
+      { id: 'openrouter-free', intentar: () => this.intentarOpenRouter(prompt) },
+      { id: 'cerebras-free', intentar: () => this.intentarCerebras(prompt) },
+      { id: 'mistral-free', intentar: () => this.intentarMistral(prompt) },
+    ];
+
+    for (const nivel of niveles) {
+      const resultado = await ejecutarNivel(nivel.id, nivel.intentar);
       if (resultado) {
         const latencia = Date.now() - inicio;
-        this.registrarExito('gemini-free', latencia);
-        this.guardarEnCache(claveCache, resultado.texto, diapo?.versiculoBiblico, 'gemini-free');
+        this.registrarExito(nivel.id, latencia);
+        this.guardarEnCache(claveCache, resultado.texto, diapo?.versiculoBiblico, nivel.id);
 
         return {
           textoRespuesta: resultado.texto,
-          proveedorUtilizado: 'gemini-free',
+          proveedorUtilizado: nivel.id,
           modeloUtilizado: resultado.modelo,
           nombreProfesor,
           tiempoRespuestaMs: latencia,
           enCache: false,
           versiculoAsociado: diapo?.versiculoBiblico,
           intentosFallidos,
+          tokensEstimadosConsumidos: this.tokensEstimadosConsumidos,
         };
       }
-      intentosFallidos++;
+      if (motivoFalloTotal) break;
     }
 
-    // 4. Nivel 2: Groq Cloud Free Tier
-    if (this.esProveedorDisponible('groq-free')) {
-      const resultado = await this.intentarGroq(prompt);
-      if (resultado) {
-        const latencia = Date.now() - inicio;
-        this.registrarExito('groq-free', latencia);
-        this.guardarEnCache(claveCache, resultado.texto, diapo?.versiculoBiblico, 'groq-free');
-
-        return {
-          textoRespuesta: resultado.texto,
-          proveedorUtilizado: 'groq-free',
-          modeloUtilizado: resultado.modelo,
-          nombreProfesor,
-          tiempoRespuestaMs: latencia,
-          enCache: false,
-          versiculoAsociado: diapo?.versiculoBiblico,
-          intentosFallidos,
-        };
-      }
-      intentosFallidos++;
-    }
-
-    // 5. Nivel 3: OpenRouter Free Tier
-    if (this.esProveedorDisponible('openrouter-free')) {
-      const resultado = await this.intentarOpenRouter(prompt);
-      if (resultado) {
-        const latencia = Date.now() - inicio;
-        this.registrarExito('openrouter-free', latencia);
-        this.guardarEnCache(claveCache, resultado.texto, diapo?.versiculoBiblico, 'openrouter-free');
-
-        return {
-          textoRespuesta: resultado.texto,
-          proveedorUtilizado: 'openrouter-free',
-          modeloUtilizado: resultado.modelo,
-          nombreProfesor,
-          tiempoRespuestaMs: latencia,
-          enCache: false,
-          versiculoAsociado: diapo?.versiculoBiblico,
-          intentosFallidos,
-        };
-      }
-      intentosFallidos++;
-    }
-
-    // 6. Nivel 4: Cerebras Cloud Free Tier
-    if (this.esProveedorDisponible('cerebras-free')) {
-      const resultado = await this.intentarCerebras(prompt);
-      if (resultado) {
-        const latencia = Date.now() - inicio;
-        this.registrarExito('cerebras-free', latencia);
-        this.guardarEnCache(claveCache, resultado.texto, diapo?.versiculoBiblico, 'cerebras-free');
-
-        return {
-          textoRespuesta: resultado.texto,
-          proveedorUtilizado: 'cerebras-free',
-          modeloUtilizado: resultado.modelo,
-          nombreProfesor,
-          tiempoRespuestaMs: latencia,
-          enCache: false,
-          versiculoAsociado: diapo?.versiculoBiblico,
-          intentosFallidos,
-        };
-      }
-      intentosFallidos++;
-    }
-
-    // 7. Nivel 5: Mistral AI Free Tier
-    if (this.esProveedorDisponible('mistral-free')) {
-      const resultado = await this.intentarMistral(prompt);
-      if (resultado) {
-        const latencia = Date.now() - inicio;
-        this.registrarExito('mistral-free', latencia);
-        this.guardarEnCache(claveCache, resultado.texto, diapo?.versiculoBiblico, 'mistral-free');
-
-        return {
-          textoRespuesta: resultado.texto,
-          proveedorUtilizado: 'mistral-free',
-          modeloUtilizado: resultado.modelo,
-          nombreProfesor,
-          tiempoRespuestaMs: latencia,
-          enCache: false,
-          versiculoAsociado: diapo?.versiculoBiblico,
-          intentosFallidos,
-        };
-      }
-      intentosFallidos++;
-    }
-
-    // 8. Nivel 6: Motor Curricular Autónomo Determinista (Garantía 100% de Respuesta)
+    motivoFalloTotal ??= 'TODOS_LOS_PROVEEDORES_FALLARON';
     const respuestaAutonoma = this.generarRespaldoCurricular(params, diapo, esGael, nombreProfesor);
     const latencia = Date.now() - inicio;
     this.registrarExito('motor-curricular-autonomo', latencia);
@@ -805,6 +900,10 @@ ${teologia ? 'Tal como proclama' : 'Como síntesis del método'} ${principioRef}
       enCache: false,
       versiculoAsociado: diapo?.versiculoBiblico,
       intentosFallidos,
+      motivoFalloTotal,
+      presupuestoLatenciaAgotado,
+      presupuestoTokensAgotado,
+      tokensEstimadosConsumidos: this.tokensEstimadosConsumidos,
     };
   }
 

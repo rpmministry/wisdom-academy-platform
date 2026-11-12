@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0.0",
+  "managed_by": "alsiztech-engineering-brain",
+  "workspace": "alsiztech",
+  "project": "rpmministry-wisdom-academy",
+  "display_name": "Wisdom Academy",
+  "brain_root_env": "ALSIZ_ENGINEERING_BRAIN_ROOT",
+  "patterns_registry": "registry/patterns.json",
+  "patterns_catalog": "docs/PATTERN-CATALOG.md",
+  "evidence_root": "evidence",
+  "project_paths_config": ".local/project-paths.json"
+}
