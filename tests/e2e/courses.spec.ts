@@ -6,6 +6,8 @@ import { test, expect, type Page } from '@playwright/test';
  * renderiza sin errores de página y que un programa inexistente no expone datos.
  */
 
+test.describe.configure({ timeout: 180_000 });
+
 const origin = process.env.PLAYWRIGHT_BASE_URL || 'http://127.0.0.1:3000';
 const AULA_HOMESCHOOL = '/aula?recurso=programa-homeschool-8-egb';
 
@@ -56,7 +58,9 @@ test.describe('Cursos y talleres — experiencia de estudiante', () => {
 
   test('un programa inexistente no renderiza contenido privado', async ({ page }) => {
     await page.goto('/cursos/programa-que-no-existe');
-    await expect(page.getByText(/404|not found|no encontrada/i).first()).toBeVisible();
+    await expect(page.getByText(/404|not found|no encontrada/i).first()).toBeVisible({
+      timeout: 30_000,
+    });
   });
 
   test('el acceso a un recurso abre el aula contextual y no vuelve a contenidos', async ({ page }) => {

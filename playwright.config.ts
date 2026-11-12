@@ -48,10 +48,13 @@ export default defineConfig({
     env: {
       WISDOM_E2E: '1',
       WISDOM_E2E_PASSWORD: 'E2eWisdom!2026-test',
+      WISDOM_E2E_ADMIN_PASSWORD: 'E2eAdminWisdom!2026-test',
       WISDOM_DB_PATH: e2eDbPath,
       WISDOM_BACKUP_DIR: 'test-results/e2e-backups',
       APP_URL: baseURL,
       CODE_HASH_PEPPER: 'e2e-only-code-pepper-32-bytes-minimum',
+      TURSO_DATABASE_URL: '',
+      TURSO_AUTH_TOKEN: '',
     },
   },
 });

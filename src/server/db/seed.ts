@@ -774,7 +774,12 @@ function seedE2EStudent(db: SqliteDatabase): void {
 export function seedFoundation(db: SqliteDatabase): void {
   try {
     const existing = db.prepare("SELECT code FROM roles WHERE code = 'platform_owner' LIMIT 1").get();
-    if (existing) return;
+    if (existing) {
+      if (process.env.WISDOM_E2E === '1') {
+        seedE2EStudent(db);
+      }
+      return;
+    }
   } catch {}
 
   db.exec('BEGIN IMMEDIATE');
