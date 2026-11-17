@@ -37,6 +37,14 @@ function safeMetadata(json: string): Record<string, unknown> {
       offerPeriod: parsed.offerPeriod,
       offerDescription: parsed.offerDescription,
       guideUrl: parsed.guideUrl,
+      pazEnLaMesa: parsed.pazEnLaMesa === true,
+      salesMode: parsed.salesMode,
+      presalePriceCents: parsed.presalePriceCents,
+      officialPriceCents: parsed.officialPriceCents,
+      presaleStartsAt: parsed.presaleStartsAt,
+      presaleEndsAt: parsed.presaleEndsAt,
+      enrollmentClosesAt: parsed.enrollmentClosesAt,
+      landingPath: parsed.landingPath,
     };
   } catch {
     return {};

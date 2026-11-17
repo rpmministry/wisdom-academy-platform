@@ -16,6 +16,8 @@ import {
   WorkshopsFeaturedSection,
 } from '@/components/marketing/AcademySections';
 import { SchoolPortalModal } from '@/components/catalog/SchoolPortalModal';
+import { PazLaunchBanner } from '@/components/paz/PazLaunchBanner';
+import { PazHomeHero } from '@/components/paz/PazHomeHero';
 import { useCart } from '@/lib/cart/cartContext';
 import {
   HOMESCHOOL_OFFER_DESCRIPTION,
@@ -53,6 +55,14 @@ export interface CatalogProduct {
     offerPeriod?: string;
     offerDescription?: string;
     guideUrl?: string;
+    pazEnLaMesa?: boolean;
+    salesMode?: string;
+    presalePriceCents?: number;
+    officialPriceCents?: number;
+    presaleStartsAt?: string;
+    presaleEndsAt?: string;
+    enrollmentClosesAt?: string;
+    landingPath?: string;
   };
   coverImage: string;
   category: string;
@@ -298,11 +308,16 @@ export function CatalogExperience({ home = false }: { home?: boolean }) {
   };
 
   const abrirCompra = (producto: CatalogProduct) => {
+    if (producto.metadata.pazEnLaMesa) {
+      router.push(producto.metadata.landingPath || '/paz-en-la-mesa');
+      return;
+    }
     if (esProductoGuia(producto) || esProximamente(producto) || esPrecioPendiente(producto)) return;
     setSeleccionado(producto);
   };
 
   const comprarAhora = (producto: CatalogProduct) => {
+    if (producto.metadata.pazEnLaMesa) return;
     if (esPrecioPendiente(producto) || esProximamente(producto)) return;
     if (!hasItem(producto.id)) agregarAlCarrito(producto);
     setSeleccionado(null);
@@ -313,7 +328,9 @@ export function CatalogExperience({ home = false }: { home?: boolean }) {
 
   return (
     <main className="wa-catalog-page">
+      {home && <PazLaunchBanner />}
       <PublicHeader home={home} />
+      {home && <PazHomeHero />}
 
       <section className={`wa-catalog-hero${home ? ' wa-home-hero' : ''}`}>
         <div>
@@ -599,6 +616,7 @@ export function CatalogExperience({ home = false }: { home?: boolean }) {
               const proximamente = esProximamente(producto);
               const precioPendiente = esPrecioPendiente(producto);
               const ofertaAnual = producto.annualOffer;
+              const esTallerPaz = producto.metadata.pazEnLaMesa === true;
               const periodo = producto.metadata.offerPeriod?.trim();
 
               return (
@@ -680,6 +698,21 @@ export function CatalogExperience({ home = false }: { home?: boolean }) {
                             Gratis
                             <small>Lectura en línea y PDF</small>
                           </>
+                        ) : esTallerPaz ? (
+                          <>
+                            Desde{' '}
+                            {formatoPrecio(
+                              Number(producto.metadata.presalePriceCents || 2700),
+                              producto.currency
+                            )}
+                            <small>
+                              Preventa por hogar Â· Oficial{' '}
+                              {formatoPrecio(
+                                Number(producto.metadata.officialPriceCents || 3700),
+                                producto.currency
+                              )}
+                            </small>
+                          </>
                         ) : precioPendiente ? (
                           <>
                             Precio por definir
@@ -716,6 +749,16 @@ export function CatalogExperience({ home = false }: { home?: boolean }) {
                             Abrir guía
                           </Button>
                         </Link>
+                      ) : esTallerPaz ? (
+                        <Link
+                          href={producto.metadata.landingPath || '/paz-en-la-mesa'}
+                          style={{ textDecoration: 'none' }}
+                          data-testid="paz-catalog-open"
+                        >
+                          <Button variant="primary-gold" size="sm">
+                            <WisdomIcon name="sparkles" size={15} /> Ver taller
+                          </Button>
+                        </Link>
                       ) : precioPendiente ? (
                         <span className="wa-course-unavailable">
                           <WisdomIcon name="clock" size={15} />
@@ -724,7 +767,7 @@ export function CatalogExperience({ home = false }: { home?: boolean }) {
                       ) : proximamente ? (
                         <span className="wa-course-unavailable">
                           <WisdomIcon name="clock" size={15} />
-                          Próximamente disponible
+                          PrÃƒÂ³ximamente disponible
                         </span>
                       ) : producto.accessible ? (
                         <Link href={`/recurso/${producto.resources[0]?.slug || ''}`} style={{ textDecoration: 'none' }}>

@@ -82,6 +82,17 @@ function formatDateLabel(value: string | null): string {
   return new Intl.DateTimeFormat('es-EC', { dateStyle: 'medium', timeZone: 'America/Guayaquil' }).format(date);
 }
 
+function formatReleaseLabel(value: string | null): string {
+  if (!value) return 'Próximamente';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return 'Próximamente';
+  return new Intl.DateTimeFormat('es-EC', {
+    dateStyle: 'long',
+    timeStyle: 'short',
+    timeZone: 'America/Guayaquil',
+  }).format(date);
+}
+
 export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
   slug,
   detail,
@@ -92,6 +103,17 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
 }) => {
   const { program, modules, reviews, assessments, materials, progress } = detail;
   const isN2n = /n2n/i.test(program.title) || /n2n/i.test(program.institution || '');
+  const isPaz = program.slug === 'paz-en-la-mesa';
+  const tabs = useMemo(
+    () =>
+      TABS.map((tab) => {
+        if (!isPaz) return tab;
+        if (tab.id === 'ruta') return { ...tab, label: 'Ruta de clases' };
+        if (tab.id === 'materias') return { ...tab, label: 'Clases' };
+        return tab;
+      }),
+    [isPaz]
+  );
   const firstAvailable =
     modules.find((module) => !module.locked && module.lessons.length > 0) ||
     modules.find((module) => !module.locked) ||
@@ -110,6 +132,10 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
     allLessons.find((lesson) => lesson.id === progress.nextLessonId) ||
     allLessons.find((lesson) => lesson.progress?.status !== 'completed') ||
     null;
+  const nextUnitNumber = isPaz
+    ? nextLesson?.sessionNumber || nextLesson?.week
+    : nextLesson?.week;
+  const nextUnitNoun = isPaz ? 'Bloque' : 'Semana';
 
   const activeLessons = activeModule?.lessons || [];
 
@@ -202,6 +228,25 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
           <LmsIcon name="arrow" size={11} />
           <strong>{program.title}</strong>
         </nav>
+        {!program.released && (
+          <div
+            role="status"
+            style={{
+              margin: '0 0 1rem',
+              padding: '0.9rem 1rem',
+              borderRadius: 14,
+              border: '1px solid rgba(197, 160, 89, 0.45)',
+              background: 'rgba(197, 160, 89, 0.14)',
+              color: 'var(--text-primary)',
+              fontSize: '0.88rem',
+              lineHeight: 1.55,
+            }}
+          >
+            <strong>Contenido en preventa.</strong> Las clases y el Cuaderno de Trabajo se
+            desbloquean el {formatReleaseLabel(program.releaseAt)}. Tu acceso ya está
+            confirmado y la sesión exclusiva en vivo se realizará el martes 22 de diciembre.
+          </div>
+        )}
         <section className="wa-lms-hero">
           <div className="wa-lms-hero-media">
             {program.coverImageUrl ? (
@@ -228,8 +273,8 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
               <h1>{program.title}</h1>
               {program.subtitle && <p className="wa-lms-hero-subtitle">{program.subtitle}</p>}
               <div className="wa-lms-hero-chips">
-                <span><LmsIcon name="layers" size={14} /> {program.moduleCount} semestres</span>
-                <span><LmsIcon name="play" size={14} /> {program.lessonCount} sesiones cargadas</span>
+                <span><LmsIcon name="layers" size={14} /> {program.moduleCount} {isPaz ? 'clases' : 'semestres'}</span>
+                <span><LmsIcon name="play" size={14} /> {program.lessonCount} {isPaz ? 'bloques' : 'sesiones cargadas'}</span>
                 <span><LmsIcon name="award" size={14} /> {program.credential || (isN2n ? 'Certificación ministerial' : 'Constancia del programa')}</span>
               </div>
               <div className="wa-lms-hero-actions">
@@ -248,8 +293,13 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
                   className="wa-lms-btn wa-lms-btn-glass"
                   onClick={() => setActiveTab('materias')}
                 >
-                  <LmsIcon name="book" size={16} /> Explorar materias
+                  <LmsIcon name="book" size={16} /> {isPaz ? 'Explorar clases' : 'Explorar materias'}
                 </button>
+                {isPaz && (
+                  <Link className="wa-lms-btn wa-lms-btn-glass" href={`/cursos/${slug}/reto`}>
+                    <LmsIcon name="target" size={16} /> Reto de 7 días
+                  </Link>
+                )}
               </div>
             </div>
             <div className="wa-lms-hero-side">
@@ -265,14 +315,16 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
                 </div>
               </div>
               <div className="wa-lms-hero-stats">
-                <div><strong>{progress.completedLessons}</strong><span>clases completadas</span></div>
-                <div><strong>{completedSemesters}</strong><span>semestres aprobados</span></div>
+                <div><strong>{progress.completedLessons}</strong><span>{isPaz ? 'bloques completados' : 'clases completadas'}</span></div>
+                <div><strong>{completedSemesters}</strong><span>{isPaz ? 'clases completadas' : 'semestres aprobados'}</span></div>
                 <div><strong>{results.length}</strong><span>evaluaciones rendidas</span></div>
               </div>
               <div className="wa-lms-hero-next">
                 <span className="wa-lms-hero-next-label">Siguiente</span>
                 <strong>{nextLesson?.title || 'Ruta completada'}</strong>
-                {nextLesson?.week ? <span>Semana {String(nextLesson.week).padStart(2, '0')}</span> : null}
+                {nextUnitNumber ? (
+                  <span>{nextUnitNoun} {String(nextUnitNumber).padStart(2, '0')}</span>
+                ) : null}
               </div>
             </div>
           </div>
@@ -294,7 +346,7 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
         <div className="wa-lms-layout">
           <main className="wa-lms-main">
             <div className="wa-lms-tabs" role="tablist" aria-label="Secciones del programa">
-              {TABS.map((tab) => (
+              {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   type="button"
@@ -317,7 +369,9 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
                     <h2>{activeModule?.title || 'Semestre'}</h2>
                     <p>
                       {activeLessons.length > 0
-                        ? `${activeLessons.length} sesiones organizadas en ${weeks.length} semanas, según el horario oficial.`
+                        ? isPaz
+                          ? `${activeLessons.length} bloques pedagógicos de la clase, con video, cuaderno y oración.`
+                          : `${activeLessons.length} sesiones organizadas en ${weeks.length} semanas, según el horario oficial.`
                         : 'La estructura está lista. Las clases se incorporarán desde los materiales oficiales.'}
                     </p>
                   </div>
@@ -326,7 +380,7 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
                       {activeModule ? completionLabel(activeModule) : 'Pendiente'}
                     </span>
                     {activeModule?.completion && (
-                      <small>{modulePercent}% del semestre</small>
+                      <small>{modulePercent}% {isPaz ? 'de la clase' : 'del semestre'}</small>
                     )}
                   </div>
                 </div>
@@ -398,11 +452,14 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
                             aria-expanded={isOpen}
                           >
                             <span className="wa-lms-week-index" aria-hidden="true">
-                              <small>Semana</small>
+                              <small>{isPaz ? 'Clase' : 'Semana'}</small>
                               <strong>{String(group.week).padStart(2, '0')}</strong>
                             </span>
                             <span className="wa-lms-week-main">
-                              <span className="wa-lms-week-kicker">{group.lessons.length} sesiones · {weekSubjects.filter(Boolean).length} materias</span>
+                              <span className="wa-lms-week-kicker">
+                          {group.lessons.length} {isPaz ? 'bloques' : 'sesiones'} ·{' '}
+                          {weekSubjects.filter(Boolean).length} {isPaz ? 'materia' : 'materias'}
+                        </span>
                               <span className="wa-lms-week-title">{weekTitle(group.week, weekSubjects, isN2n)}</span>
                               <span className="wa-lms-week-subjects">
                                 {weekSubjects.filter(Boolean).slice(0, 3).map((subject) => (
@@ -429,7 +486,8 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
                               <div className="wa-lms-week-banner">
                                 <div className="wa-lms-week-banner-copy">
                                   <span className="wa-lms-week-banner-kicker">
-                                    Semana {String(group.week).padStart(2, '0')} · {group.lessons.length} sesiones
+                                    {isPaz ? 'Clase' : 'Semana'} {String(group.week).padStart(2, '0')} ·{' '}
+                                    {group.lessons.length} {isPaz ? 'bloques' : 'sesiones'}
                                   </span>
                                   <strong>{weekTitle(group.week, weekSubjects, isN2n)}</strong>
                                   <div className="wa-lms-week-banner-chips">
@@ -453,8 +511,16 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
                                 canManage={canManageMeetings}
                               />
                               <div className="wa-lms-week-note">
-                                <span><LmsIcon name="calendar" size={14} /> Semana {String(group.week).padStart(2, '0')} · {group.lessons.length} clases</span>
-                                <span>{weekCompleted === group.lessons.length ? 'Semana completada' : `${weekCompleted} completadas`}</span>
+                                <span>
+                                  <LmsIcon name="calendar" size={14} /> {isPaz ? 'Clase' : 'Semana'}{' '}
+                                  {String(group.week).padStart(2, '0')} · {group.lessons.length}{' '}
+                                  {isPaz ? 'bloques' : 'clases'}
+                                </span>
+                                <span>
+                                  {weekCompleted === group.lessons.length
+                                    ? `${isPaz ? 'Clase' : 'Semana'} completada`
+                                    : `${weekCompleted} completadas`}
+                                </span>
                               </div>
                               <div className="wa-lms-class-list">
                                   {group.lessons.map((lesson) => (
@@ -517,6 +583,7 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
                   modules={modules}
                   activeModuleId={activeModule?.id || ''}
                   onSelect={selectModule}
+                  isPaz={isPaz}
                 />
               </section>
             )}
@@ -563,6 +630,7 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
                 results={results}
                 isStaff={isStaff}
                 isTheology={isN2n}
+                isPaz={isPaz}
                 certificateAvailable={certificateAvailable}
                 modulePercent={modulePercent}
                 completedSemesters={completedSemesters}
@@ -582,33 +650,44 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
                 <>
                   <div className="wa-lms-continue-badge" style={{ ['--subject-ink' as string]: subjectPalette(nextLesson.subjectCode).ink, ['--subject-soft' as string]: subjectPalette(nextLesson.subjectCode).soft }}>
                     <span><LmsIcon name="play" size={24} /></span>
-                    <small>{nextLesson.week ? `Semana ${String(nextLesson.week).padStart(2, '0')}` : 'Siguiente sesión'}</small>
+                    <small>
+                      {nextUnitNumber
+                        ? `${nextUnitNoun} ${String(nextUnitNumber).padStart(2, '0')}`
+                        : isPaz
+                          ? 'Siguiente bloque'
+                          : 'Siguiente sesión'}
+                    </small>
                   </div>
                   <span className="wa-lms-subject-label">
-                    {nextLesson.subject || 'Siguiente sesión'}
+                    {nextLesson.subject || (isPaz ? 'Siguiente bloque' : 'Siguiente sesión')}
                   </span>
                   <strong className="wa-lms-continue-title">{nextLesson.title}</strong>
                   <span className="wa-lms-continue-meta">
-                    {nextLesson.week ? `Semana ${String(nextLesson.week).padStart(2, '0')}` : 'Ruta'} · {nextLesson.pagesLabel ? `páginas ${nextLesson.pagesLabel}` : 'sesión'}
+                    {nextUnitNumber
+                      ? `${nextUnitNoun} ${String(nextUnitNumber).padStart(2, '0')}`
+                      : 'Ruta'}{' '}
+                    · {nextLesson.pagesLabel ? `páginas ${nextLesson.pagesLabel}` : isPaz ? 'bloque' : 'sesión'}
                   </span>
                   <Link className="wa-lms-btn wa-lms-btn-primary wa-lms-btn-block" href={`/cursos/${slug}/clase/${nextLesson.id}`}>
-                    Abrir sesión <LmsIcon name="arrow" size={15} />
+                    Abrir {isPaz ? 'bloque' : 'sesión'} <LmsIcon name="arrow" size={15} />
                   </Link>
                 </>
               ) : (
-                <p className="wa-lms-muted">No hay una sesión pendiente.</p>
+                <p className="wa-lms-muted">
+                  No hay un {isPaz ? 'bloque' : 'sesión'} pendiente.
+                </p>
               )}
             </div>
 
             <div className="wa-lms-aside-card">
               <div className="wa-lms-aside-head">
-                <span className="wa-lms-kicker">Estado del semestre</span>
+                <span className="wa-lms-kicker">{isPaz ? 'Estado de la clase' : 'Estado del semestre'}</span>
                 <span className={`wa-lms-status ${progressTone(activeModule!)}`}>
                   {activeModule ? completionLabel(activeModule) : 'Pendiente'}
                 </span>
               </div>
               <div className="wa-lms-mini-stat">
-                <div><strong>{moduleProgress?.completedLessons || 0}</strong><span>de {moduleProgress?.totalLessons || 0} clases</span></div>
+                <div><strong>{moduleProgress?.completedLessons || 0}</strong><span>de {moduleProgress?.totalLessons || 0} {isPaz ? 'bloques' : 'clases'}</span></div>
                 <div><strong>{moduleProgress?.assessmentsPassed || 0}</strong><span>de {moduleProgress?.requiredAssessments || 0} exámenes</span></div>
               </div>
               <div className="wa-lms-bar wa-lms-bar-tall"><i style={{ width: `${modulePercent}%` }} /></div>
@@ -621,14 +700,17 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
                 </a>
               ) : (
                 <p className="wa-lms-hint">
-                  <LmsIcon name="lock" size={13} /> El certificado se habilita al aprobar el semestre.
+                  <LmsIcon name="lock" size={13} />{' '}
+                  {isPaz
+                    ? 'La constancia se habilita al completar la clase.'
+                    : 'El certificado se habilita al aprobar el semestre.'}
                 </p>
               )}
             </div>
 
             <div className="wa-lms-aside-card">
               <div className="wa-lms-aside-head">
-                <span className="wa-lms-kicker">Mapa de la carrera</span>
+                <span className="wa-lms-kicker">{isPaz ? 'Mapa del taller' : 'Mapa de la carrera'}</span>
                 <span className="wa-lms-count">{completedSemesters}/{modules.length}</span>
               </div>
               <div className="wa-lms-semester-list">
@@ -644,7 +726,13 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
                     </span>
                     <span>
                       <strong>{module.title}</strong>
-                      <small>{module.lessons.length ? `${module.lessons.length} clases` : module.subjects.length ? `${module.subjects.length} materias` : 'Contenido pendiente'}</small>
+                      <small>
+                  {module.lessons.length
+                    ? `${module.lessons.length} ${isPaz ? 'bloques' : 'clases'}`
+                    : module.subjects.length
+                      ? `${module.subjects.length} materias`
+                      : 'Contenido pendiente'}
+                </small>
                     </span>
                   </button>
                 ))}
@@ -709,8 +797,8 @@ const LessonRow: React.FC<{ slug: string; lesson: LessonView }> = ({ slug, lesso
   const completed = lesson.progress?.status === 'completed';
   const inProgress = lesson.progress?.status === 'in_progress';
   const palette = subjectPalette(lesson.subjectCode);
-  return (
-    <Link href={`/cursos/${slug}/clase/${lesson.id}`} className={`wa-lms-class ${completed ? 'is-complete' : ''}`}>
+  const content = (
+    <>
       <div className="wa-lms-class-main">
         <div className="wa-lms-class-tags">
           <span className="wa-lms-subject-tag" style={{ ['--subject-ink' as string]: palette.ink }}>
@@ -722,14 +810,34 @@ const LessonRow: React.FC<{ slug: string; lesson: LessonView }> = ({ slug, lesso
         <div className="wa-lms-class-meta">
           {lesson.pagesLabel && <span><LmsIcon name="book" size={13} /> Páginas {lesson.pagesLabel}</span>}
           {lesson.durationLabel && <span><LmsIcon name="clock" size={13} /> {lesson.durationLabel}</span>}
-          <span><LmsIcon name="video" size={13} /> {lesson.videoIds.length} video{lesson.videoIds.length === 1 ? '' : 's'}</span>
-          {lesson.materials.length > 0 && <span><LmsIcon name="file" size={13} /> {lesson.materials.length} material{lesson.materials.length === 1 ? '' : 'es'}</span>}
+          {lesson.released ? (
+            <>
+              <span><LmsIcon name="video" size={13} /> {lesson.videoIds.length} video{lesson.videoIds.length === 1 ? '' : 's'}</span>
+              {lesson.materials.length > 0 && <span><LmsIcon name="file" size={13} /> {lesson.materials.length} material{lesson.materials.length === 1 ? '' : 'es'}</span>}
+            </>
+          ) : (
+            <span><LmsIcon name="lock" size={13} /> Disponible el {formatReleaseLabel(lesson.releaseAt)}</span>
+          )}
         </div>
       </div>
       <div className="wa-lms-class-action">
-        <span>{completed ? 'Repasar' : inProgress ? 'Continuar' : 'Abrir'}</span>
-        <LmsIcon name="arrow" size={16} />
+        <span>{lesson.released ? (completed ? 'Repasar' : inProgress ? 'Continuar' : 'Abrir') : 'Próximamente'}</span>
+        <LmsIcon name={lesson.released ? 'arrow' : 'lock'} size={16} />
       </div>
+    </>
+  );
+
+  if (!lesson.released) {
+    return (
+      <div className="wa-lms-class" style={{ cursor: 'default', opacity: 0.78 }} aria-disabled="true">
+        {content}
+      </div>
+    );
+  }
+
+  return (
+    <Link href={`/cursos/${slug}/clase/${lesson.id}`} className={`wa-lms-class ${completed ? 'is-complete' : ''}`}>
+      {content}
     </Link>
   );
 };
@@ -1037,6 +1145,7 @@ const ProgressPanel: React.FC<{
   results: CourseAttemptResult[];
   isStaff: boolean;
   isTheology: boolean;
+  isPaz: boolean;
   certificateAvailable: boolean;
   modulePercent: number;
   completedSemesters: number;
@@ -1050,6 +1159,7 @@ const ProgressPanel: React.FC<{
   results,
   isStaff,
   isTheology,
+  isPaz,
   certificateAvailable,
   modulePercent,
   completedSemesters,
@@ -1061,24 +1171,28 @@ const ProgressPanel: React.FC<{
       <div>
         <span className="wa-lms-kicker">Mi progreso</span>
         <h2>Tu avance, en contexto</h2>
-        <p>Progreso del contenido cargado y estado de aprobación del semestre activo.</p>
+        <p>
+          {isPaz
+            ? 'Progreso de los bloques y estado de la clase activa.'
+            : 'Progreso del contenido cargado y estado de aprobación del semestre activo.'}
+        </p>
       </div>
     </div>
 
     <div className="wa-lms-stats">
-      <div className="wa-lms-stat"><span><LmsIcon name="play" size={17} /></span><strong>{totalCompleted}</strong><small>clases completadas de {totalLessons}</small></div>
+      <div className="wa-lms-stat"><span><LmsIcon name="play" size={17} /></span><strong>{totalCompleted}</strong><small>{isPaz ? 'bloques completados' : 'clases completadas'} de {totalLessons}</small></div>
       <div className="wa-lms-stat"><span><LmsIcon name="award" size={17} /></span><strong>{results.length}</strong><small>evaluaciones rendidas</small></div>
-      <div className="wa-lms-stat"><span><LmsIcon name="check" size={17} /></span><strong>{completedSemesters}</strong><small>semestres aprobados de {modules.length}</small></div>
-      <div className="wa-lms-stat"><span><LmsIcon name="target" size={17} /></span><strong>{modulePercent}%</strong><small>{activeModule?.title || 'Semestre activo'}</small></div>
+                <div className="wa-lms-stat"><span><LmsIcon name="check" size={17} /></span><strong>{completedSemesters}</strong><small>{isPaz ? 'clases completadas' : 'semestres aprobados'} de {modules.length}</small></div>
+      <div className="wa-lms-stat"><span><LmsIcon name="target" size={17} /></span><strong>{modulePercent}%</strong><small>{activeModule?.title || (isPaz ? 'Clase activa' : 'Semestre activo')}</small></div>
     </div>
 
     <div className="wa-lms-card">
       <div className="wa-lms-card-head">
         <div>
-          <span className="wa-lms-kicker">Mapa semanal</span>
-          <h3>{activeModule?.title || 'Semestre'} · cumplimiento por semana</h3>
+          <span className="wa-lms-kicker">{isPaz ? 'Mapa de bloques' : 'Mapa semanal'}</span>
+          <h3>{activeModule?.title || (isPaz ? 'Clase' : 'Semestre')} · cumplimiento por {isPaz ? 'bloque' : 'semana'}</h3>
         </div>
-        <span className="wa-lms-status live">{weeks.length} semanas</span>
+        <span className="wa-lms-status live">{weeks.length} {isPaz ? 'clase' : 'semanas'}</span>
       </div>
       <div className="wa-lms-week-grid">
         {weeks.map((group) => {
@@ -1086,7 +1200,7 @@ const ProgressPanel: React.FC<{
           const percent = group.lessons.length ? Math.round((completed / group.lessons.length) * 100) : 0;
           return (
             <div key={group.week} className={`wa-lms-week-cell ${percent === 100 ? 'is-done' : percent > 0 ? 'is-progress' : ''}`}>
-              <span>Semana {String(group.week).padStart(2, '0')}</span>
+              <span>{isPaz ? 'Clase' : 'Semana'} {String(group.week).padStart(2, '0')}</span>
               <strong>{completed}/{group.lessons.length}</strong>
               <div className="wa-lms-bar"><i style={{ width: `${percent}%` }} /></div>
             </div>
@@ -1098,12 +1212,24 @@ const ProgressPanel: React.FC<{
     <div className={`wa-lms-certificate ${certificateAvailable ? 'is-available' : ''}`}>
       <div className="wa-lms-certificate-icon"><LmsIcon name="award" size={30} /></div>
       <div>
-        <span className="wa-lms-kicker">{isTheology ? 'Certificación ministerial' : 'Constancia del programa'}</span>
-        <h3>{certificateAvailable ? 'Tu certificado del semestre está disponible' : 'Certificado del semestre'}</h3>
+        <span className="wa-lms-kicker">{isTheology ? 'Certificación ministerial' : isPaz ? 'Constancia del taller' : 'Constancia del programa'}</span>
+        <h3>
+          {isPaz
+            ? certificateAvailable
+              ? 'Tu constancia del taller está disponible'
+              : 'Constancia del taller'
+            : certificateAvailable
+              ? 'Tu certificado del semestre está disponible'
+              : 'Certificado del semestre'}
+        </h3>
         <p>
-          {certificateAvailable
-            ? `Descarga tu constancia ${isTheology ? 'ministerial de estudios' : 'de finalización'} del semestre aprobado.`
-            : `Completa las sesiones y aprueba las evaluaciones del semestre para habilitar tu constancia ${isTheology ? 'ministerial' : 'de finalización'}.`}
+          {isPaz
+            ? certificateAvailable
+              ? 'Descarga tu constancia digital de participación en el taller.'
+              : 'Completa los bloques de la clase para habilitar tu constancia digital del taller.'
+            : certificateAvailable
+              ? `Descarga tu constancia ${isTheology ? 'ministerial de estudios' : 'de finalización'} del semestre aprobado.`
+              : `Completa las sesiones y aprueba las evaluaciones del semestre para habilitar tu constancia ${isTheology ? 'ministerial' : 'de finalización'}.`}
         </p>
       </div>
       {certificateAvailable && activeModule && !isStaff ? (
@@ -1130,13 +1256,18 @@ const CareerMap: React.FC<{
   modules: ModuleView[];
   activeModuleId: string;
   onSelect: (module: ModuleView) => void;
-}> = ({ modules, activeModuleId, onSelect }) => (
+  isPaz: boolean;
+}> = ({ modules, activeModuleId, onSelect, isPaz }) => (
   <div className="wa-lms-career">
     <div className="wa-lms-section-head">
       <div>
         <span className="wa-lms-kicker">Visión completa</span>
-        <h2>Mapa de la carrera</h2>
-        <p>La ruta avanza semestre a semestre. Los semestres futuros se habilitan al aprobar el anterior.</p>
+        <h2>{isPaz ? 'Mapa del taller' : 'Mapa de la carrera'}</h2>
+              <p>
+                {isPaz
+                  ? 'Las cuatro clases están disponibles el mismo día. Cada clase se divide en cuatro bloques pedagógicos.'
+                  : 'La ruta avanza semestre a semestre. Los semestres futuros se habilitan al aprobar el anterior.'}
+              </p>
       </div>
     </div>
     <div className="wa-lms-career-grid">

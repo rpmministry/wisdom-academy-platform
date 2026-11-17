@@ -1,4 +1,4 @@
-﻿import type { Metadata } from 'next';
+import type { Metadata } from 'next';
 import { CatalogExperience } from '@/components/catalog/CatalogExperience';
 
 export const metadata: Metadata = {

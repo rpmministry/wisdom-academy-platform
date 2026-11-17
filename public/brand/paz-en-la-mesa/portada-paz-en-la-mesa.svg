@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1500" role="img" aria-labelledby="pazCoverTitle pazCoverDesc">
+  <title id="pazCoverTitle">Paz en la mesa, Orden en el bolsillo y fuego en el corazón</title>
+  <desc id="pazCoverDesc">Portada editorial cálida con un arco de hogar, una mesa, una llama dorada y los nombres de los Pastores Samuel y Gabby Palacio.</desc>
+  <defs>
+    <linearGradient id="paper" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FAF8F5"/>
+      <stop offset="0.55" stop-color="#F4EEE4"/>
+      <stop offset="1" stop-color="#EDE3D2"/>
+    </linearGradient>
+    <radialGradient id="warmLight" cx="50%" cy="22%" r="62%">
+      <stop offset="0" stop-color="#F9DCA8" stop-opacity="0.52"/>
+      <stop offset="0.55" stop-color="#D9A878" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#B36A50" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="table" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#B98563"/>
+      <stop offset="1" stop-color="#8A5A40"/>
+    </linearGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+    <pattern id="grain" width="28" height="28" patternUnits="userSpaceOnUse">
+      <circle cx="3" cy="4" r="0.7" fill="#2B2927" opacity="0.06"/>
+      <circle cx="17" cy="12" r="0.55" fill="#2B2927" opacity="0.045"/>
+      <circle cx="9" cy="22" r="0.5" fill="#2B2927" opacity="0.04"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="1500" fill="url(#paper)"/>
+  <rect width="1200" height="1500" fill="url(#grain)"/>
+  <rect width="1200" height="1500" fill="url(#warmLight)"/>
+
+  <g opacity="0.55">
+    <path d="M0 1180 C220 1120 320 1240 540 1180 C760 1120 940 1210 1200 1140 L1200 1500 L0 1500 Z" fill="#E6D9C4"/>
+    <path d="M0 1280 C260 1210 420 1320 660 1250 C900 1180 1040 1280 1200 1230 L1200 1500 L0 1500 Z" fill="#DECEB6" opacity="0.55"/>
+  </g>
+
+  <g>
+    <path d="M350 1010 V570 C350 432 462 320 600 320 C738 320 850 432 850 570 V1010" fill="none" stroke="#B36A50" stroke-width="10" stroke-linecap="round"/>
+    <path d="M390 1010 V580 C390 464 484 370 600 370 C716 370 810 464 810 580 V1010" fill="#F7F0E5" opacity="0.8"/>
+    <path d="M390 1010 V580 C390 464 484 370 600 370 C716 370 810 464 810 580 V1010" fill="none" stroke="#C5A059" stroke-width="2.5" opacity="0.65"/>
+  </g>
+
+  <g>
+    <ellipse cx="600" cy="712" rx="66" ry="120" fill="#C5A059" opacity="0.18" filter="url(#soft)"/>
+    <path d="M600 600 C560 652 538 692 538 736 C538 790 566 830 600 830 C634 830 662 790 662 736 C662 700 642 660 612 620 Z" fill="#C5A059"/>
+    <path d="M600 652 C574 682 560 710 560 738 C560 771 578 796 600 796 C622 796 640 771 640 738 C640 716 628 692 607 664 Z" fill="#B36A50" opacity="0.92"/>
+    <path d="M600 704 C588 718 581 732 581 746 C581 762 589 774 600 774 C611 774 619 762 619 746 C619 734 613 722 603 710 Z" fill="#FAF8F5" opacity="0.72"/>
+  </g>
+
+  <g>
+    <rect x="300" y="880" width="600" height="36" rx="18" fill="url(#table)"/>
+    <rect x="330" y="916" width="26" height="182" rx="10" fill="#8A5A40"/>
+    <rect x="844" y="916" width="26" height="182" rx="10" fill="#8A5A40"/>
+    <rect x="300" y="872" width="600" height="10" rx="5" fill="#D7B08B" opacity="0.8"/>
+    <rect x="430" y="842" width="120" height="38" rx="10" fill="#F2EDE4" stroke="#D8C8B1" stroke-width="2"/>
+    <path d="M448 842 V880 M472 842 V880 M496 842 V880 M520 842 V880" stroke="#D8C8B1" stroke-width="2"/>
+    <circle cx="700" cy="852" r="26" fill="#F2EDE4" stroke="#C5A059" stroke-width="2"/>
+    <circle cx="700" cy="852" r="15" fill="#B36A50" opacity="0.18"/>
+  </g>
+
+  <g opacity="0.7" stroke="#B36A50" fill="none" stroke-linecap="round">
+    <path d="M90 220 C120 200 150 200 180 220" stroke-width="2"/>
+    <path d="M1020 250 C1050 230 1080 230 1110 250" stroke-width="2"/>
+    <path d="M90 1320 C130 1290 170 1290 210 1320" stroke-width="2" opacity="0.55"/>
+    <path d="M990 1360 C1030 1330 1070 1330 1110 1360" stroke-width="2" opacity="0.55"/>
+  </g>
+</svg>

@@ -11,7 +11,8 @@
  *   3. Aprovisionamiento seguro del creador de plataforma (platform_owner).
  *   4. Aprovisionamiento del año lectivo 2026-2027 (Avril 8° EGB, Gael 4° EGB).
  *   5. Importación del currículo teológico ministerial N2N (Semestre 1).
- *   6. Estructuras de carpetas en Google Drive (Bóveda Documental y Cursos).
+ *   6. Aprovisionamiento del taller Paz en la mesa (4 clases, cuaderno y reto).
+ *   7. Estructuras de carpetas en Google Drive (Bóveda Documental y Cursos).
  *
  * USO:
  *   npm run db:migrate-and-seed
@@ -74,7 +75,14 @@ async function main() {
     console.warn('⚠ Advertencia en import:n2n-semester-1; continuando con los siguientes pasos.');
   }
 
-  // 5. Inicializar estructuras en Google Drive (si está configurado)
+  // 5. Aprovisionar el taller Paz en la mesa
+  try {
+    runStep('Aprovisionar taller Paz en la mesa', 'npx tsx scripts/import-paz-en-la-mesa.ts');
+  } catch {
+    console.warn('⚠ Advertencia en import:paz-en-la-mesa; continuando con los siguientes pasos.');
+  }
+
+  // 6. Inicializar estructuras en Google Drive (si está configurado)
   if (isVaultConfigured()) {
     try {
       runStep('Inicializar Bóveda Documental y Años Escolares en Google Drive', 'npx tsx scripts/init-google-drive-folders.ts');
@@ -83,7 +91,7 @@ async function main() {
       console.warn('⚠ Advertencia al inicializar carpetas en Google Drive; verifica permisos de Service Account.');
     }
   } else {
-    console.log('\n[5/5] Omitiendo inicialización en la nube de Google Drive (credenciales no presentes en este entorno).');
+    console.log('\n[6/6] Omitiendo inicializaciÃ³n en la nube de Google Drive (credenciales no presentes en este entorno).');
   }
 
   console.log('\n================================================================');

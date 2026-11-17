@@ -32,6 +32,7 @@ export interface CourseProgramRow {
   drive_folder_url: string | null;
   drive_synced_at: string | null;
   catalog_product_id: string | null;
+  release_at: string | null;
   metadata_json: string;
   created_at: string;
   updated_at: string;
@@ -62,6 +63,7 @@ export interface CourseLessonRow {
   pages_label: string | null;
   duration_label: string | null;
   drive_folder_id: string | null;
+  release_at: string | null;
   metadata_json: string;
   created_at: string;
   updated_at: string;
@@ -127,6 +129,8 @@ export interface ProgramSummary {
   credential: string | null;
   disclaimer: string | null;
   passPercentage: number | null;
+  releaseAt: string | null;
+  released: boolean;
   status: ProgramStatus;
   driveFolderId: string | null;
   driveFolderUrl: string | null;
@@ -152,6 +156,8 @@ export interface LessonView {
   subject: string | null;
   subjectCode: string | null;
   sessionNumber: number | null;
+  releaseAt: string | null;
+  released: boolean;
   materials: MaterialView[];
   progress: LessonProgressView | null;
 }
@@ -268,6 +274,26 @@ function parseJsonObject(value: string | null | undefined): Record<string, unkno
   }
 }
 
+function parseReleaseAt(rowValue: string | null | undefined, metadata: Record<string, unknown>): string | null {
+  const candidate =
+    (typeof rowValue === 'string' && rowValue.trim() ? rowValue : null) ||
+    (typeof metadata.releaseAt === 'string' && metadata.releaseAt.trim() ? metadata.releaseAt : null);
+  if (!candidate) return null;
+  const date = new Date(candidate);
+  return Number.isNaN(date.getTime()) ? null : date.toISOString();
+}
+
+function isReleased(releaseAt: string | null, now: Date = new Date()): boolean {
+  if (!releaseAt) return true;
+  return new Date(releaseAt).getTime() <= now.getTime();
+}
+
+function normalizeReleaseAt(value: string | null | undefined): string | null {
+  if (!value || !value.trim()) return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date.toISOString();
+}
+
 function parseModuleSubjects(value: unknown): ModuleSubject[] {
   if (!Array.isArray(value)) return [];
   const out: ModuleSubject[] = [];
@@ -350,6 +376,7 @@ export function userCanViewProgram(user: AuthUser, program: CourseProgramRow): b
 function toProgramSummary(program: CourseProgramRow): ProgramSummary {
   const resource = getProgramResource(program);
   const metadata = parseJsonObject(program.metadata_json);
+  const releaseAt = parseReleaseAt(program.release_at, metadata);
   const modules = prepare('SELECT COUNT(*) AS total FROM course_modules WHERE program_id = ?').get(
     program.id
   ) as { total: number };
@@ -385,6 +412,8 @@ function toProgramSummary(program: CourseProgramRow): ProgramSummary {
     disclaimer: typeof metadata.disclaimer === 'string' ? metadata.disclaimer : null,
     passPercentage:
       typeof metadata.passPercentage === 'number' ? Number(metadata.passPercentage) : null,
+    releaseAt,
+    released: isReleased(releaseAt),
     status: program.status,
     driveFolderId: program.drive_folder_id,
     driveFolderUrl: program.drive_folder_url,
@@ -433,6 +462,7 @@ export interface CreateProgramInput {
   coverImageUrl?: string | null;
   slug?: string | null;
   status?: ProgramStatus;
+  releaseAt?: string | null;
   metadata?: Record<string, unknown>;
   driveFolderId?: string | null;
   driveFolderUrl?: string | null;
@@ -481,8 +511,8 @@ export function createProgram(input: CreateProgramInput, actor?: AuthUser | null
       INSERT INTO course_programs
         (id, resource_id, kind, title, subtitle, description, institution, level, audience,
          duration_label, objectives_json, requirements_json, cover_image_url, status,
-         drive_folder_id, drive_folder_url, metadata_json, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+         drive_folder_id, drive_folder_url, release_at, metadata_json, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(
       programId,
       resourceId,
@@ -500,6 +530,7 @@ export function createProgram(input: CreateProgramInput, actor?: AuthUser | null
       status,
       input.driveFolderId || null,
       input.driveFolderUrl || null,
+      normalizeReleaseAt(input.releaseAt),
       JSON.stringify(input.metadata || {}),
       now,
       now
@@ -548,6 +579,7 @@ export function updateProgram(
   if (input.objectives !== undefined) assign('objectives_json', JSON.stringify(normalizeStringArray(input.objectives)));
   if (input.requirements !== undefined) assign('requirements_json', JSON.stringify(normalizeStringArray(input.requirements)));
   if (input.coverImageUrl !== undefined) assign('cover_image_url', input.coverImageUrl?.slice(0, 1000) || null);
+  if (input.releaseAt !== undefined) assign('release_at', normalizeReleaseAt(input.releaseAt));
   if (input.driveFolderId !== undefined) assign('drive_folder_id', input.driveFolderId || null);
   if (input.driveFolderUrl !== undefined) assign('drive_folder_url', input.driveFolderUrl || null);
   if (input.metadata !== undefined) assign('metadata_json', JSON.stringify(input.metadata || {}));
@@ -739,10 +771,20 @@ export function deleteModule(moduleId: string, actor?: AuthUser | null): void {
   });
 }
 
-function toLessonView(lesson: CourseLessonRow, userId?: string): LessonView {
-  const materials = prepare(
-    "SELECT * FROM course_materials WHERE lesson_id = ? AND visibility = 'student' ORDER BY position"
-  ).all(lesson.id) as CourseMaterialRow[];
+function toLessonView(
+  lesson: CourseLessonRow,
+  userId?: string,
+  options: { hideUnreleasedContent?: boolean } = {}
+): LessonView {
+  const metadata = parseJsonObject(lesson.metadata_json);
+  const releaseAt = parseReleaseAt(lesson.release_at, metadata);
+  const released = isReleased(releaseAt);
+  const hideContent = Boolean(options.hideUnreleasedContent) && !released;
+  const materials = hideContent
+    ? []
+    : (prepare(
+        "SELECT * FROM course_materials WHERE lesson_id = ? AND visibility = 'student' ORDER BY position"
+      ).all(lesson.id) as CourseMaterialRow[]);
   const progress = userId
     ? (prepare('SELECT * FROM lesson_progress WHERE user_id = ? AND lesson_id = ?').get(
         userId,
@@ -751,8 +793,7 @@ function toLessonView(lesson: CourseLessonRow, userId?: string): LessonView {
         | { status: 'in_progress' | 'completed'; playback_seconds: number; completed_at: string | null }
         | undefined)
     : undefined;
-  const videos = parseJsonArray(lesson.youtube_video_ids_json);
-  const metadata = parseJsonObject(lesson.metadata_json);
+  const videos = hideContent ? [] : parseJsonArray(lesson.youtube_video_ids_json);
   const toNumberOrNull = (value: unknown) =>
     Number.isInteger(Number(value)) ? Number(value) : null;
 
@@ -770,6 +811,8 @@ function toLessonView(lesson: CourseLessonRow, userId?: string): LessonView {
     subject: typeof metadata.subject === 'string' ? metadata.subject : null,
     subjectCode: typeof metadata.subjectCode === 'string' ? metadata.subjectCode : null,
     sessionNumber: toNumberOrNull(metadata.sessionNumber),
+    releaseAt,
+    released,
     materials: materials.map(toMaterialView),
     progress: progress
       ? {
@@ -804,6 +847,7 @@ export function addLesson(
     videoIds?: unknown;
     pagesLabel?: string | null;
     durationLabel?: string | null;
+    releaseAt?: string | null;
   },
   actor?: AuthUser | null
 ): LessonView {
@@ -824,8 +868,8 @@ export function addLesson(
   prepare(`
     INSERT INTO course_lessons
       (id, program_id, module_id, title, description, position, youtube_video_ids_json,
-       pages_label, duration_label, metadata_json, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, '{}', ?, ?)
+       pages_label, duration_label, release_at, metadata_json, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '{}', ?, ?)
   `).run(
     id,
     programId,
@@ -836,6 +880,7 @@ export function addLesson(
     JSON.stringify(normalizeStringArray(input.videoIds, 10, 20)),
     input.pagesLabel?.slice(0, 100) || null,
     input.durationLabel?.slice(0, 100) || null,
+    normalizeReleaseAt(input.releaseAt),
     now,
     now
   );
@@ -859,6 +904,7 @@ export function updateLesson(
     videoIds?: unknown;
     pagesLabel?: string | null;
     durationLabel?: string | null;
+    releaseAt?: string | null;
     moduleId?: string;
   },
   actor?: AuthUser | null
@@ -893,6 +939,10 @@ export function updateLesson(
   if (input.durationLabel !== undefined) {
     fields.push('duration_label = ?');
     values.push(input.durationLabel?.slice(0, 100) || null);
+  }
+  if (input.releaseAt !== undefined) {
+    fields.push('release_at = ?');
+    values.push(normalizeReleaseAt(input.releaseAt));
   }
   if (input.moduleId !== undefined) {
     const module = prepare('SELECT program_id FROM course_modules WHERE id = ?').get(input.moduleId) as
@@ -1070,6 +1120,9 @@ export function getModuleCompletion(
 }
 
 export function isModuleUnlocked(programId: string, moduleId: string, userId: string): boolean {
+  const program = getProgramRowById(programId);
+  const metadata = program ? parseJsonObject(program.metadata_json) : {};
+  if (metadata.sequential === false) return true;
   const modules = prepare(
     'SELECT id FROM course_modules WHERE program_id = ? ORDER BY position, title'
   ).all(programId) as Array<{ id: string }>;
@@ -1117,6 +1170,7 @@ export function getProgramDetail(
   }>;
 
   const staffView = Boolean(options.includeStaffMaterials);
+  const sequential = parseJsonObject(program.metadata_json).sequential !== false;
   let previousCompleted = false;
   const moduleViews: ModuleView[] = modules.map((module, index) => {
     const lessons = prepare('SELECT * FROM course_lessons WHERE module_id = ? ORDER BY position, title').all(
@@ -1125,7 +1179,7 @@ export function getProgramDetail(
     const completion = options.userId
       ? getModuleCompletion(program.id, module.id, options.userId)
       : null;
-    const locked = !staffView && index > 0 && !previousCompleted;
+    const locked = !staffView && sequential && index > 0 && !previousCompleted;
     if (completion) previousCompleted = completion.completed;
     const metadata = parseJsonObject(module.metadata_json);
     return {
@@ -1136,7 +1190,11 @@ export function getProgramDetail(
       description: module.description,
       driveFolderId: module.drive_folder_id,
       driveFolderUrl: module.drive_folder_url,
-      lessons: locked ? [] : lessons.map((lesson) => toLessonView(lesson, options.userId)),
+      lessons: locked
+        ? []
+        : lessons.map((lesson) =>
+            toLessonView(lesson, options.userId, { hideUnreleasedContent: !staffView })
+          ),
       subjects: parseModuleSubjects(metadata.subjects),
       contentStatus: typeof metadata.contentStatus === 'string' ? metadata.contentStatus : null,
       locked,
@@ -1156,7 +1214,9 @@ export function getProgramDetail(
       `).get(program.id, options.userId) as { total: number })
     : { total: 0 };
   const completed = Number(completedRow.total);
-  const nextLesson = allLessons.find((lesson) => lesson.progress?.status !== 'completed');
+  const nextLesson = allLessons.find(
+    (lesson) => lesson.released && lesson.progress?.status !== 'completed'
+  );
 
   return {
     program: toProgramSummary(program),
@@ -1193,7 +1253,11 @@ export function getProgramDetail(
   };
 }
 
-export function getLessonForStudent(lessonId: string, userId: string): {
+export function getLessonForStudent(
+  lessonId: string,
+  userId: string,
+  options: { includeUnreleased?: boolean } = {}
+): {
   lesson: LessonView;
   module: ModuleView;
   program: CourseProgramRow;
@@ -1206,6 +1270,8 @@ export function getLessonForStudent(lessonId: string, userId: string): {
   if (!row) return null;
   const program = getProgramRowById(row.program_id);
   if (!program) return null;
+  const lessonReleaseAt = parseReleaseAt(row.release_at, parseJsonObject(row.metadata_json));
+  if (!options.includeUnreleased && !isReleased(lessonReleaseAt)) return null;
   if (!isModuleUnlocked(program.id, row.module_id, userId)) return null;
   const module = getModuleView(row.module_id, userId);
   if (!module) return null;
@@ -1222,17 +1288,24 @@ export function getLessonForStudent(lessonId: string, userId: string): {
   });
 
   const ordered = (prepare(`
-    SELECT l.id, l.module_id FROM course_lessons l
+    SELECT l.id, l.module_id, l.release_at, l.metadata_json FROM course_lessons l
     JOIN course_modules m ON m.id = l.module_id
     WHERE l.program_id = ?
     ORDER BY m.position, m.title, l.position, l.title
-  `).all(program.id) as Array<{ id: string; module_id: string }>).filter((lesson) =>
-    unlockedModules.has(lesson.module_id)
-  );
+  `).all(program.id) as Array<{
+    id: string;
+    module_id: string;
+    release_at: string | null;
+    metadata_json: string;
+  }>).filter((lesson) => {
+    if (!unlockedModules.has(lesson.module_id)) return false;
+    if (options.includeUnreleased) return true;
+    return isReleased(parseReleaseAt(lesson.release_at, parseJsonObject(lesson.metadata_json)));
+  });
   const index = ordered.findIndex((item) => item.id === lessonId);
 
   return {
-    lesson: toLessonView(row, userId),
+    lesson: toLessonView(row, userId, { hideUnreleasedContent: !options.includeUnreleased }),
     module,
     program,
     prevLessonId: index > 0 ? ordered[index - 1].id : null,
@@ -1252,6 +1325,10 @@ export function markLessonProgress(
   const program = getProgramRowById(row.program_id);
   if (!program) throw new ApiError(404, 'PROGRAM_NOT_FOUND', 'El programa no existe.');
   assertProgramAccess(user, program);
+  const releaseAt = parseReleaseAt(row.release_at, parseJsonObject(row.metadata_json));
+  if (!isReleased(releaseAt)) {
+    throw new ApiError(409, 'LESSON_NOT_RELEASED', 'Esta clase se habilita en la fecha de estreno.');
+  }
 
   const now = nowIso();
   const completed = input.completed === true;

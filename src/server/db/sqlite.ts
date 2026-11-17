@@ -159,6 +159,16 @@ function applyMigrations(db: SqliteDatabase): void {
 
   for (const migration of MIGRATIONS) {
     if (applied.has(migration.version)) continue;
+    if (db instanceof TursoSqliteDatabase) {
+      // El driver libSQL rechaza varias sentencias dentro de una transacción
+      // interactiva. `executeMultiple` las admite fuera de transacción; la
+      // migración se registra inmediatamente después.
+      db.exec(migration.sql);
+      db.prepare(
+        'INSERT INTO schema_migrations (version, name, applied_at) VALUES (?, ?, ?)'
+      ).run(migration.version, migration.name, nowIso());
+      continue;
+    }
     db.exec('BEGIN IMMEDIATE');
     try {
       db.exec(migration.sql);

@@ -47,10 +47,9 @@ export default async function LessonPage({
   const program = getProgramRowBySlug(slug);
   if (!program) notFound();
   if (!userCanViewProgram(user, program)) notFound();
-  const data = getLessonForStudent(lessonId, user.id);
-  if (!data || data.program.id !== program.id) notFound();
-
   const isStaff = canManageCourses(user);
+  const data = getLessonForStudent(lessonId, user.id, { includeUnreleased: isStaff });
+  if (!data || data.program.id !== program.id) notFound();
   const detail = getProgramDetail(program, { userId: user.id, includeStaffMaterials: isStaff });
   const allLessons = detail.modules.flatMap((module) => module.lessons);
   const index = allLessons.findIndex((lesson) => lesson.id === lessonId);

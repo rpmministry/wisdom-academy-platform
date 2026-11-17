@@ -16,6 +16,7 @@
     "init:drive": "tsx scripts/init-google-drive-folders.ts",
     "init:courses-drive": "tsx scripts/init-courses-workshops-drive.ts",
     "import:n2n-semester-1": "tsx scripts/import-n2n-semester-1.ts",
+    "import:paz-en-la-mesa": "tsx scripts/import-paz-en-la-mesa.ts",
     "test:phase1": "tsx scripts/test-phase-1.ts",
     "test:courses": "node --import tsx --import ./tests/platform/setup-env.mjs --test tests/courses/*.test.ts",
     "test:curriculum": "tsx scripts/test-curriculum.ts",

@@ -166,6 +166,9 @@ export const AdminWorkspaceShell: React.FC<AdminWorkspaceShellProps> = ({
           <Link href="/dashboard" className="wa-aw-foot-link">
             <WisdomIcon name="arrow-right" size={15} color="current" /> Mi portal
           </Link>
+          <Link href="/admin/paz-en-la-mesa" className="wa-aw-foot-link">
+            <WisdomIcon name="credit-card" size={15} color="current" /> Pagos Paz en la mesa
+          </Link>
           <div className="wa-aw-user">
             <span className="wa-aw-avatar">{initials(userName)}</span>
             <div>

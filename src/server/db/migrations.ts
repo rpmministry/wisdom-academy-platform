@@ -997,4 +997,80 @@ export const MIGRATIONS: Migration[] = [
       ALTER TABLE student_profiles ADD COLUMN registration_origin TEXT;
     `,
   },
+  {
+    version: 10,
+    name: 'taller_paz_en_la_mesa_leads_pagos_y_reto',
+    sql: `
+      -- Fecha de liberación de un programa y de cada clase. Permite vender en
+      -- preventa sin habilitar el contenido antes del estreno.
+      ALTER TABLE course_programs ADD COLUMN release_at TEXT;
+      ALTER TABLE course_lessons ADD COLUMN release_at TEXT;
+
+      CREATE TABLE IF NOT EXISTS paz_leads (
+        id TEXT PRIMARY KEY,
+        full_name TEXT NOT NULL,
+        email TEXT COLLATE NOCASE,
+        phone TEXT,
+        city TEXT,
+        church TEXT,
+        household_size INTEGER,
+        whatsapp_opt_in INTEGER NOT NULL DEFAULT 1,
+        consent INTEGER NOT NULL DEFAULT 1,
+        source TEXT NOT NULL DEFAULT 'landing',
+        campaign TEXT NOT NULL DEFAULT 'paz-en-la-mesa-2026',
+        metadata_json TEXT NOT NULL DEFAULT '{}',
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS ix_paz_leads_email ON paz_leads(email);
+      CREATE INDEX IF NOT EXISTS ix_paz_leads_created ON paz_leads(created_at);
+
+      CREATE TABLE IF NOT EXISTS paz_payment_intents (
+        id TEXT PRIMARY KEY,
+        reference TEXT NOT NULL UNIQUE,
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        plan TEXT NOT NULL CHECK (plan IN ('presale','official','scholarship')),
+        method TEXT NOT NULL CHECK (method IN ('bank_transfer','payphone')),
+        amount_cents INTEGER NOT NULL CHECK (amount_cents >= 0),
+        currency TEXT NOT NULL DEFAULT 'USD',
+        status TEXT NOT NULL DEFAULT 'pending'
+          CHECK (status IN ('pending','approved','rejected','cancelled')),
+        buyer_name TEXT NOT NULL,
+        buyer_email TEXT COLLATE NOCASE NOT NULL,
+        buyer_phone TEXT,
+        transfer_reference TEXT,
+        transfer_date TEXT,
+        note TEXT,
+        payment_url TEXT,
+        order_id TEXT REFERENCES orders(id),
+        reviewed_by TEXT REFERENCES users(id),
+        reviewed_at TEXT,
+        review_note TEXT,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS ix_paz_payments_status
+        ON paz_payment_intents(status, created_at);
+      CREATE INDEX IF NOT EXISTS ix_paz_payments_user
+        ON paz_payment_intents(user_id, created_at);
+
+      CREATE TABLE IF NOT EXISTS paz_challenge_progress (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        program_id TEXT NOT NULL REFERENCES course_programs(id) ON DELETE CASCADE,
+        day INTEGER NOT NULL CHECK (day BETWEEN 1 AND 7),
+        completed INTEGER NOT NULL DEFAULT 0,
+        note TEXT,
+        completed_at TEXT,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        UNIQUE (user_id, program_id, day)
+      );
+      CREATE INDEX IF NOT EXISTS ix_paz_challenge_user
+        ON paz_challenge_progress(user_id, program_id);
+
+      INSERT OR IGNORE INTO permissions (code, description, category)
+      VALUES ('paz.payments.manage', 'Validar pagos y becas del taller Paz en la mesa', 'pagos');
+    `,
+  },
 ];

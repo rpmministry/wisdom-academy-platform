@@ -30,6 +30,7 @@ import '@/styles/meetings.css';
 import '@/styles/admin-workspace.css';
 import '@/styles/portal-shell.css';
 import '@/styles/storefront.css';
+import '@/styles/paz-en-la-mesa.css';
 import { AuthProvider } from '@/lib/auth/authContext';
 import { CartProvider } from '@/lib/cart/cartContext';
 
