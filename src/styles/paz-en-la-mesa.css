@@ -794,11 +794,11 @@
 .paz-portrait-brand-copy small {
   display: block;
   margin-top: 0.15rem;
-  color: #7a7256;
+  color: #5f5a4d;
   font-family: 'Plus Jakarta Sans', 'Inter', 'Schibsted Grotesk', sans-serif;
-  font-size: 0.48rem;
+  font-size: 0.52rem;
   font-weight: 800;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.06em;
   line-height: 1.25;
   text-transform: uppercase;
 }
@@ -2202,6 +2202,29 @@
   background: #79735d;
 }
 
+[data-theme='dark'] .paz-btn--primary {
+  background: #9d573f;
+  border-color: #8a4a35;
+}
+
+[data-theme='dark'] .paz-btn--primary:hover {
+  background: #8a4a35;
+}
+
+[data-theme='dark'] .paz-countdown-unit span {
+  color: #c9c0b4;
+}
+
+[data-theme='dark'] .paz-title em,
+[data-theme='dark'] .paz-h2 em {
+  color: #e3a58c;
+}
+
+[data-theme='dark'] .paz-class-number {
+  background: #2a2823;
+  color: #f4ede1;
+}
+
 [data-theme='dark'] .paz-countdown-label {
   color: #b9b0a2;
 }
@@ -2611,7 +2634,9 @@
   }
 
   .paz-portrait-brand-copy small {
-    display: none;
+    display: block;
+    font-size: 0.5rem;
+    line-height: 1.2;
   }
 
   .paz-portrait-seal {

@@ -238,6 +238,12 @@
   border: 1px solid var(--border-gold);
 }
 
+[data-theme='dark'] .wa-badge--gold {
+  background-color: rgba(96, 165, 250, 0.14);
+  border-color: rgba(96, 165, 250, 0.34);
+  color: #bfdbfe;
+}
+
 .wa-badge--navy {
   background-color: var(--bg-subtle);
   color: var(--text-secondary);
