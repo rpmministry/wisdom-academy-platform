@@ -27,7 +27,8 @@ export const PAZ_BRAND = {
     'Una experiencia de cuatro clases magistrales, un cuaderno de trabajo de 24 páginas, una sesión exclusiva en vivo y un reto de 7 días para cerrar el año con la mesa limpia, los bolsillos ordenados y el altar familiar encendido.',
   promise:
     'No es teoría lejana: son cuatro encuentros prácticos y bíblicos para llevar la paz de Dios a la mesa real de tu casa y entrar al 2027 con dirección.',
-  coverImage: '/brand/paz-en-la-mesa/portada-paz-en-la-mesa.svg',
+  coverImage: '/brand/paz-en-la-mesa/pastores-samuel-gabby.jpg',
+  artImage: '/brand/paz-en-la-mesa/portada-paz-en-la-mesa.svg',
   ogImage: '/brand/paz-en-la-mesa/og-paz-en-la-mesa.svg',
   logoMark: '/brand/paz-en-la-mesa/isotipo-paz-en-la-mesa.svg',
   palette: {

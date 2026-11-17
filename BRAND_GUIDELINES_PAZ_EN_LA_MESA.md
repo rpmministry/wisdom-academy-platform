@@ -124,7 +124,7 @@ El logotipo oficial se implementa como componente React/SVG escalable en:
 ## 5. Fotografía y dirección de arte
 
 - **La Mesa Real:** mesa de madera, mantel de lino, vajilla sencilla, luz cálida lateral.
-- **Los pastores:** plano medio conjunto, ropa en tonos tierra, mirada cálida, gesto de conversación. Evitar poses publicitarias.
+- **Los pastores:** plano medio conjunto, ropa en tonos tierra, mirada cálida, gesto de conversación. Evitar poses publicitarias. El retrato oficial aprobado vive en `public/brand/paz-en-la-mesa/pastores-samuel-gabby.jpg` y se monta dentro de un marco de arco cálido con el logotipo, el sello de estreno y la firma de los anfitriones.
 - **Familias:** manos, mesa, cuaderno, Biblia abierta, tazas, luz de tarde. Rostros reales con consentimiento.
 - **Cuaderno:** papel crema, tipografía editorial, espacios para escribir, textura de algodón.
 - **Prohibido:** stock genérico de sonrisas perfectas, neón, degradados fríos, imágenes de dinero en efectivo como protagonista, menores sin autorización.
@@ -199,6 +199,7 @@ El logotipo oficial se implementa como componente React/SVG escalable en:
 - Datos bancarios y PayPhone: `src/lib/paz-en-la-mesa/server.ts`.
 - Landing: `src/app/(public)/paz-en-la-mesa/page.tsx`.
 - Banner y hero de portada: `src/components/paz/PazLaunchBanner.tsx` y `src/components/paz/PazHomeHero.tsx`.
+- Retrato de anfitriones: `src/components/paz/PazPastorsPortrait.tsx`, con fotografía en `public/brand/paz-en-la-mesa/pastores-samuel-gabby.jpg` y reemplazo opcional vía `NEXT_PUBLIC_PAZ_PASTORS_IMAGE`.
 
 ### Variables CSS
 

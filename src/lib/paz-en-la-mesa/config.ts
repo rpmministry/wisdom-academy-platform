@@ -36,7 +36,8 @@ export const pazPublicConfig = {
   whatsappUrl: envUrl(process.env.NEXT_PUBLIC_PAZ_WHATSAPP_URL, PAZ_PUBLIC_LINKS.whatsappFallback),
   payphoneUrl: envUrl(process.env.NEXT_PUBLIC_PAZ_PAYPHONE_URL, PAZ_PUBLIC_LINKS.payphoneFallback),
   pastorsImage:
-    (process.env.NEXT_PUBLIC_PAZ_PASTORS_IMAGE || '').trim() || '/brand/paz-en-la-mesa/portada-paz-en-la-mesa.svg',
+    (process.env.NEXT_PUBLIC_PAZ_PASTORS_IMAGE || '').trim() ||
+    '/brand/paz-en-la-mesa/pastores-samuel-gabby.jpg',
   notebookUrl: envHref(process.env.NEXT_PUBLIC_PAZ_NOTEBOOK_URL, ''),
   welcomeVideoUrl: envHref(process.env.NEXT_PUBLIC_PAZ_WELCOME_VIDEO_URL, ''),
   studentLiveUrl: envHref(process.env.NEXT_PUBLIC_PAZ_STUDENT_LIVE_URL, ''),

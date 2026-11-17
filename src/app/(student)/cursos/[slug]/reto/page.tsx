@@ -84,7 +84,7 @@ export default async function PazChallengePage({
           >
             <Image
               src={PAZ_BRAND.coverImage}
-              alt="Reto de 7 días de altar familiar"
+              alt="Pastores Samuel y Gabby Palacio, anfitriones del taller"
               fill
               sizes="(max-width: 820px) 90vw, 360px"
               unoptimized

@@ -1,13 +1,9 @@
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { WisdomIcon } from '@/components/ui/WisdomIcon';
 import { PazCountdown } from './PazCountdown';
-import {
-  PAZ_BRAND,
-  PAZ_CLASSES,
-  PAZ_PRICING,
-} from '@/lib/paz-en-la-mesa/content';
+import { PazPastorsPortrait } from './PazPastorsPortrait';
+import { PAZ_BRAND, PAZ_PRICING } from '@/lib/paz-en-la-mesa/content';
 import {
   formatPazUsd,
   pazNextMilestone,
@@ -85,21 +81,7 @@ export function PazHomeHero() {
           </div>
         </div>
 
-        <div className="paz-home-hero-media">
-          <Image
-            src={pazPublicConfig.pastorsImage}
-            alt="Portada editorial del taller: arco de hogar, mesa y llama"
-            fill
-            sizes="(max-width: 820px) 90vw, 420px"
-            priority
-            unoptimized
-            style={{ objectFit: 'cover' }}
-          />
-          <div className="paz-home-hero-caption">
-            <strong>Pastores Samuel y Gabby Palacio</strong>
-            <span>{PAZ_CLASSES.length} clases · MAIM Casa de Oración</span>
-          </div>
-        </div>
+        <PazPastorsPortrait priority />
       </div>
     </section>
   );

@@ -1,6 +1,5 @@
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import type { Metadata } from 'next';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { WisdomIcon } from '@/components/ui/WisdomIcon';
@@ -8,6 +7,7 @@ import { PazEnLaMesaLogo } from '@/components/paz/PazEnLaMesaLogo';
 import { PazLaunchBanner } from '@/components/paz/PazLaunchBanner';
 import { PazCountdown } from '@/components/paz/PazCountdown';
 import { PazLeadForm } from '@/components/paz/PazLeadForm';
+import { PazPastorsPortrait } from '@/components/paz/PazPastorsPortrait';
 import {
   PAZ_BRAND,
   PAZ_CHALLENGE_DAYS,
@@ -177,21 +177,7 @@ export function PazEnLaMesaLanding() {
             </div>
           </div>
 
-          <div className="paz-hero-media">
-            <Image
-              src={pazPublicConfig.pastorsImage}
-              alt="Portada editorial del taller Paz en la mesa: arco de hogar, mesa y llama"
-              fill
-              priority
-              unoptimized
-              sizes="(max-width: 820px) 92vw, 460px"
-              style={{ objectFit: 'cover' }}
-            />
-            <div className="paz-hero-media-label">
-              <strong>Pastores Samuel y Gabby Palacio</strong>
-              <span>MAIM Casa de Oración</span>
-            </div>
-          </div>
+          <PazPastorsPortrait priority />
         </div>
       </section>
 

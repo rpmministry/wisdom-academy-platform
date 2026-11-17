@@ -662,6 +662,201 @@
   color: rgba(250, 248, 245, 0.78);
 }
 
+/* Retrato editorial de los anfitriones */
+
+.paz-portrait {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  min-height: 0;
+  padding: 14px;
+  border: 1px solid rgba(179, 106, 80, 0.28);
+  border-radius: 30px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 15% 8%, rgba(197, 160, 89, 0.26), transparent 34%),
+    radial-gradient(circle at 92% 92%, rgba(179, 106, 80, 0.16), transparent 40%),
+    linear-gradient(155deg, #f7f0e4 0%, #efe5d5 48%, #e5d6bf 100%);
+  box-shadow: 0 34px 80px rgba(79, 60, 46, 0.2);
+}
+
+.paz-portrait::before {
+  content: '';
+  position: absolute;
+  inset: 7% 5% 9%;
+  z-index: 0;
+  border: 1.5px solid rgba(179, 106, 80, 0.34);
+  border-bottom: 0;
+  border-radius: 50% 50% 0 0 / 30% 30% 0 0;
+  pointer-events: none;
+}
+
+.paz-portrait::after {
+  content: '';
+  position: absolute;
+  inset: auto 8% 8% 8%;
+  height: 1px;
+  z-index: 0;
+  background: linear-gradient(90deg, transparent, rgba(197, 160, 89, 0.65), transparent);
+  pointer-events: none;
+}
+
+.paz-portrait-frame {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  overflow: hidden;
+  border: 2px solid rgba(250, 248, 245, 0.82);
+  border-radius: 230px 230px 20px 20px;
+  background: #e8dfd0;
+  box-shadow: 0 18px 44px rgba(43, 41, 39, 0.16);
+}
+
+.paz-portrait-frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(43, 41, 39, 0) 46%, rgba(43, 41, 39, 0.74) 100%),
+    linear-gradient(90deg, rgba(179, 106, 80, 0.08), transparent 42%);
+  pointer-events: none;
+}
+
+.paz-portrait-brand {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  max-width: calc(100% - 120px);
+  padding: 0.42rem 0.7rem 0.42rem 0.5rem;
+  border: 1px solid rgba(197, 160, 89, 0.48);
+  border-radius: 14px;
+  background: rgba(250, 248, 245, 0.95);
+  box-shadow: 0 10px 24px rgba(43, 41, 39, 0.14);
+  backdrop-filter: blur(8px);
+}
+
+.paz-portrait-brand-mark {
+  width: 36px;
+  height: 32px;
+  flex: 0 0 auto;
+}
+
+.paz-portrait-brand-copy {
+  min-width: 0;
+}
+
+.paz-portrait-brand-copy strong {
+  display: block;
+  color: #2b2927;
+  font-family: 'Lora', 'Playfair Display', Georgia, serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.paz-portrait-brand-copy small {
+  display: block;
+  margin-top: 0.15rem;
+  color: #7a7256;
+  font-family: 'Plus Jakarta Sans', 'Inter', 'Schibsted Grotesk', sans-serif;
+  font-size: 0.48rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+.paz-portrait-seal {
+  position: absolute;
+  top: 26px;
+  right: 24px;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 54px;
+  padding: 0.4rem 0.55rem;
+  border: 1px solid #d8bb85;
+  border-radius: 999px;
+  background: #c5a059;
+  color: #2b2927;
+  box-shadow: 0 8px 20px rgba(43, 41, 39, 0.16);
+}
+
+.paz-portrait-seal small {
+  font-family: 'Plus Jakarta Sans', 'Inter', 'Schibsted Grotesk', sans-serif;
+  font-size: 0.46rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.paz-portrait-seal strong {
+  margin-top: 0.12rem;
+  font-family: 'Lora', Georgia, serif;
+  font-size: 0.86rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.paz-portrait-caption {
+  position: absolute;
+  right: 28px;
+  bottom: 24px;
+  left: 28px;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  color: #faf8f5;
+  text-shadow: 0 2px 10px rgba(20, 18, 15, 0.35);
+}
+
+.paz-portrait-kicker {
+  color: #e6c78c;
+  font-family: 'Plus Jakarta Sans', 'Inter', 'Schibsted Grotesk', sans-serif;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.paz-portrait-caption strong {
+  font-family: 'Lora', 'Playfair Display', Georgia, serif;
+  font-size: clamp(1.02rem, 1.55vw, 1.3rem);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+}
+
+.paz-portrait-caption > span:last-child {
+  color: rgba(250, 248, 245, 0.82);
+  font-family: 'Plus Jakarta Sans', 'Inter', 'Schibsted Grotesk', sans-serif;
+  font-size: 0.7rem;
+  line-height: 1.35;
+}
+
+.paz-portrait-table-line {
+  position: absolute;
+  bottom: 88px;
+  left: 50%;
+  z-index: 3;
+  width: 62px;
+  height: 2px;
+  border-radius: 999px;
+  background: rgba(197, 160, 89, 0.8);
+  transform: translateX(-50%);
+}
+
 /* Movements */
 
 .paz-movements {
@@ -2201,6 +2396,31 @@
   color: #8f887c;
 }
 
+[data-theme='dark'] .paz-portrait {
+  border-color: #454037;
+  background:
+    radial-gradient(circle at 15% 8%, rgba(197, 160, 89, 0.12), transparent 34%),
+    radial-gradient(circle at 92% 92%, rgba(179, 106, 80, 0.12), transparent 40%),
+    linear-gradient(155deg, #2b2822 0%, #25231e 52%, #1f1d19 100%);
+}
+
+[data-theme='dark'] .paz-portrait::before {
+  border-color: rgba(216, 154, 130, 0.32);
+}
+
+[data-theme='dark'] .paz-portrait-brand {
+  border-color: rgba(197, 160, 89, 0.5);
+  background: rgba(250, 248, 245, 0.95);
+}
+
+[data-theme='dark'] .paz-portrait-brand-copy strong {
+  color: #2b2927;
+}
+
+[data-theme='dark'] .paz-portrait-brand-copy small {
+  color: #7a7256;
+}
+
 /* ------------------------------------------------------------------------------ */
 /* Responsive                                                                     */
 /* ------------------------------------------------------------------------------ */
@@ -2263,6 +2483,12 @@
   .paz-final,
   .paz-enroll-grid {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .paz-portrait {
+    aspect-ratio: 4 / 5;
+    max-height: 540px;
+    order: -1;
   }
 
   .paz-home-hero-media,
@@ -2336,6 +2562,56 @@
 
   .paz-form-row {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .paz-portrait {
+    aspect-ratio: 3 / 4;
+    max-height: 560px;
+  }
+
+  .paz-portrait-brand {
+    top: 18px;
+    left: 18px;
+    max-width: calc(100% - 100px);
+    padding: 0.38rem 0.6rem 0.38rem 0.45rem;
+  }
+
+  .paz-portrait-brand-mark {
+    width: 30px;
+    height: 27px;
+  }
+
+  .paz-portrait-brand-copy strong {
+    font-size: 0.84rem;
+  }
+
+  .paz-portrait-brand-copy small {
+    display: none;
+  }
+
+  .paz-portrait-seal {
+    top: 20px;
+    right: 18px;
+    min-width: 48px;
+  }
+
+  .paz-portrait-caption {
+    right: 20px;
+    bottom: 20px;
+    left: 20px;
+  }
+
+  .paz-portrait-caption strong {
+    font-size: 1rem;
+  }
+
+  .paz-portrait-caption > span:last-child {
+    font-size: 0.66rem;
+  }
+
+  .paz-portrait-table-line {
+    bottom: 80px;
+    width: 48px;
   }
 
   .paz-title {
