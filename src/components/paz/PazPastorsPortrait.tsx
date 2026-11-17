@@ -37,7 +37,12 @@ export function PazPastorsPortrait({
           <strong>8 DIC</strong>
         </span>
       </div>
-      <div className="paz-portrait-frame">
+      <div
+        className="paz-portrait-frame"
+        style={{
+          ['--paz-portrait-photo' as string]: `url("${pazPublicConfig.pastorsImage}")`,
+        }}
+      >
         <Image
           src={pazPublicConfig.pastorsImage}
           alt="Pastores Samuel y Gabby Palacio, anfitriones del taller Paz en la mesa"
@@ -45,7 +50,7 @@ export function PazPastorsPortrait({
           priority={priority}
           unoptimized
           sizes="(max-width: 820px) 92vw, 480px"
-          style={{ objectFit: 'cover', objectPosition: 'center 0%' }}
+          style={{ objectFit: 'contain', objectPosition: 'center center' }}
         />
       </div>
       <span className="paz-portrait-table-line" aria-hidden="true" />

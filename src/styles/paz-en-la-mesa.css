@@ -729,13 +729,31 @@
   box-shadow: 0 18px 44px rgba(43, 41, 39, 0.16);
 }
 
+.paz-portrait-frame::before {
+  content: '';
+  position: absolute;
+  inset: -28px;
+  z-index: 0;
+  background-image: var(--paz-portrait-photo);
+  background-position: center;
+  background-size: cover;
+  filter: blur(22px) saturate(0.9);
+  opacity: 0.68;
+  transform: scale(1.06);
+  pointer-events: none;
+}
+
+.paz-portrait-frame img {
+  z-index: 1;
+}
+
 .paz-portrait-frame::after {
   content: '';
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: 2;
   background:
-    linear-gradient(180deg, rgba(43, 41, 39, 0) 46%, rgba(43, 41, 39, 0.74) 100%),
+    linear-gradient(180deg, rgba(43, 41, 39, 0) 52%, rgba(43, 41, 39, 0.78) 100%),
     linear-gradient(90deg, rgba(179, 106, 80, 0.08), transparent 42%);
   pointer-events: none;
 }
