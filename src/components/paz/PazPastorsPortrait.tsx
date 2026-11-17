@@ -20,6 +20,23 @@ export function PazPastorsPortrait({
 }: PazPastorsPortraitProps) {
   return (
     <figure className={`paz-portrait ${className}`.trim()}>
+      <div className="paz-portrait-topbar">
+        <div className="paz-portrait-brand">
+          <PazEnLaMesaLogo
+            variant="mark"
+            theme="light"
+            className="paz-portrait-brand-mark"
+          />
+          <span className="paz-portrait-brand-copy">
+            <strong>Paz en la mesa</strong>
+            <small>Orden en el bolsillo · Fuego en el corazón</small>
+          </span>
+        </div>
+        <span className="paz-portrait-seal">
+          <small>Estreno</small>
+          <strong>8 DIC</strong>
+        </span>
+      </div>
       <div className="paz-portrait-frame">
         <Image
           src={pazPublicConfig.pastorsImage}
@@ -31,21 +48,6 @@ export function PazPastorsPortrait({
           style={{ objectFit: 'cover', objectPosition: 'center 24%' }}
         />
       </div>
-      <div className="paz-portrait-brand">
-        <PazEnLaMesaLogo
-          variant="mark"
-          theme="light"
-          className="paz-portrait-brand-mark"
-        />
-        <span className="paz-portrait-brand-copy">
-          <strong>Paz en la mesa</strong>
-          <small>Orden en el bolsillo · Fuego en el corazón</small>
-        </span>
-      </div>
-      <span className="paz-portrait-seal">
-        <small>Estreno</small>
-        <strong>8 DIC</strong>
-      </span>
       <span className="paz-portrait-table-line" aria-hidden="true" />
       <figcaption className="paz-portrait-caption">
         <span className="paz-portrait-kicker">Anfitriones · {PAZ_BRAND.institution}</span>
