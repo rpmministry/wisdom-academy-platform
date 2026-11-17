@@ -84,7 +84,7 @@ export default async function PazChallengePage({
           >
             <Image
               src={PAZ_BRAND.coverImage}
-              alt="Pastores Samuel y Gabby Palacio, anfitriones del taller"
+              alt="Portada editorial del taller Paz en la mesa"
               fill
               sizes="(max-width: 820px) 90vw, 360px"
               unoptimized
