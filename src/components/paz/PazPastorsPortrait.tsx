@@ -45,7 +45,7 @@ export function PazPastorsPortrait({
           priority={priority}
           unoptimized
           sizes="(max-width: 820px) 92vw, 480px"
-          style={{ objectFit: 'cover', objectPosition: 'center 24%' }}
+          style={{ objectFit: 'cover', objectPosition: 'center 12%' }}
         />
       </div>
       <span className="paz-portrait-table-line" aria-hidden="true" />
