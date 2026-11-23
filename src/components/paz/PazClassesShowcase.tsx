@@ -1,10 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import Link from 'next/link';
 import { WisdomIcon } from '@/components/ui/WisdomIcon';
 import { PAZ_CLASSES, type PazClass } from '@/lib/paz-en-la-mesa/content';
-import { pazPublicConfig } from '@/lib/paz-en-la-mesa/config';
 
 export interface PazClassesShowcaseProps {
   className?: string;
@@ -13,13 +11,6 @@ export interface PazClassesShowcaseProps {
 export function PazClassesShowcase({ className = '' }: PazClassesShowcaseProps) {
   const [selectedClassNum, setSelectedClassNum] = useState<number>(1);
   const selectedClass = PAZ_CLASSES.find((c) => c.number === selectedClassNum) || PAZ_CLASSES[0];
-
-  const classVideoStatus = (num: number) => {
-    if (num === 1) {
-      return { label: 'Video disponible en el aula', available: true, ready: true };
-    }
-    return { label: 'Próximamente disponible', available: false, ready: false };
-  };
 
   return (
     <div className={`paz-classes-showcase ${className}`.trim()}>
@@ -36,7 +27,6 @@ export function PazClassesShowcase({ className = '' }: PazClassesShowcaseProps) 
       >
         {PAZ_CLASSES.map((item) => {
           const isSelected = item.number === selectedClassNum;
-          const status = classVideoStatus(item.number);
           return (
             <button
               key={item.key}
@@ -92,17 +82,14 @@ export function PazClassesShowcase({ className = '' }: PazClassesShowcaseProps) 
                 </strong>
                 <span
                   style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.25rem',
-                    fontSize: '0.72rem',
-                    color: status.ready ? '#8f4e38' : '#7a7256',
-                    fontWeight: 600,
+                    display: 'block',
+                    fontSize: '0.74rem',
+                    color: '#7a7256',
+                    fontWeight: 500,
                     marginTop: '0.2rem',
                   }}
                 >
-                  {status.ready && <WisdomIcon name="sparkles" size={11} />}
-                  {status.label}
+                  {item.durationLabel} · {item.leader}
                 </span>
               </div>
             </button>
@@ -221,127 +208,20 @@ export function PazClassesShowcase({ className = '' }: PazClassesShowcaseProps) 
           {selectedClass.summary}
         </p>
 
-        {/* Módulo de video y recursos de la clase */}
+        {/* Enfoque pedagógico del anfitrión */}
         <div
           style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '1.25rem',
-            marginBottom: '2rem',
+            fontSize: '0.88rem',
+            color: '#5c5847',
+            padding: '0.85rem 1.15rem',
+            borderRadius: '12px',
+            background: '#f2ede4',
+            marginBottom: '1.75rem',
+            lineHeight: 1.5,
+            borderLeft: `4px solid ${selectedClass.accent}`,
           }}
         >
-          {/* Tarjeta de video */}
-          <div
-            style={{
-              padding: '1.25rem',
-              borderRadius: '16px',
-              background: '#fcfbfa',
-              border: '1px solid #e4dacb',
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: '0.6rem',
-              }}
-            >
-              <strong style={{ fontSize: '0.9rem', color: '#2b2927' }}>
-                <WisdomIcon name="video" size={15} /> Video de la clase
-              </strong>
-              <span
-                style={{
-                  fontSize: '0.72rem',
-                  padding: '0.2rem 0.55rem',
-                  borderRadius: '999px',
-                  fontWeight: 700,
-                  background:
-                    selectedClass.number === 1
-                      ? 'rgba(179,106,80,0.15)'
-                      : 'rgba(92,88,71,0.12)',
-                  color:
-                    selectedClass.number === 1 ? '#8f4e38' : '#5c5847',
-                }}
-              >
-                {selectedClass.number === 1
-                  ? 'Video disponible en el aula'
-                  : 'Próximamente'}
-              </span>
-            </div>
-            <p style={{ fontSize: '0.86rem', color: '#66615b', margin: '0 0 0.85rem 0' }}>
-              {selectedClass.number === 1
-                ? 'La primera clase se encuentra completamente editada y lista para reproducir en tu aula exclusiva de estudiante tras la inscripción.'
-                : 'Clase grabada con Samuel y Gabby Palacio. Se liberará oficialmente con el estreno del taller.'}
-            </p>
-            {selectedClass.number === 1 ? (
-              <Link
-                href="/cursos/paz-en-la-mesa"
-                className="paz-btn paz-btn--primary paz-btn--small"
-                style={{ width: '100%', marginBottom: '0.65rem' }}
-              >
-                <WisdomIcon name="graduation-cap" size={14} /> Entrar al aula del taller
-              </Link>
-            ) : null}
-            <div
-              style={{
-                fontSize: '0.8rem',
-                color: '#7a7256',
-                fontStyle: 'italic',
-                padding: '0.5rem 0.75rem',
-                borderRadius: '8px',
-                background: '#f2ede4',
-              }}
-            >
-              {selectedClass.leaderDetail}
-            </div>
-          </div>
-
-          {/* Tarjeta de recursos descargables */}
-          <div
-            style={{
-              padding: '1.25rem',
-              borderRadius: '16px',
-              background: '#fcfbfa',
-              border: '1px solid #e4dacb',
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: '0.6rem',
-              }}
-            >
-              <strong style={{ fontSize: '0.9rem', color: '#2b2927' }}>
-                <WisdomIcon name="file-text" size={15} /> Recurso descargable
-              </strong>
-              <span
-                style={{
-                  fontSize: '0.72rem',
-                  padding: '0.2rem 0.55rem',
-                  borderRadius: '999px',
-                  fontWeight: 700,
-                  background: 'rgba(197,160,89,0.2)',
-                  color: '#8f6820',
-                }}
-              >
-                Cuaderno PDF (24 págs)
-              </span>
-            </div>
-            <p style={{ fontSize: '0.86rem', color: '#66615b', margin: '0 0 0.85rem 0' }}>
-              <strong>Herramienta:</strong> {selectedClass.tool} ({selectedClass.toolPages}).
-              Interactivo e imprimible para trabajar en pareja o familia.
-            </p>
-            <a
-              href="#inscripcion"
-              className="paz-btn paz-btn--ghost paz-btn--small"
-              style={{ width: '100%' }}
-            >
-              <WisdomIcon name="award" size={14} /> Descargable al inscribirte
-            </a>
-          </div>
+          <strong>Enfoque de la clase:</strong> {selectedClass.leaderDetail}
         </div>
 
         {/* Bloques de la clase */}
