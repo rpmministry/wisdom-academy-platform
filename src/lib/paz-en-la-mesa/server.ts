@@ -32,7 +32,7 @@ export function pazBankDetails(): PazBankDetails {
     accountType: accountType || 'Cuenta de la fundación',
     accountNumber: accountNumber || 'Se comparte al iniciar la preventa',
     accountHolder,
-    email: (process.env.PAZ_PAYMENTS_EMAIL || 'pagos@maimcasa.com').trim(),
+    email: (process.env.PAZ_PAYMENTS_EMAIL || 'pagos@wisdomacademy.alsiztech.com').trim(),
     referenceHint: 'Escribe tu nombre y el código de inscripción en el comprobante.',
     configured: Boolean(accountNumber && bankName),
   };

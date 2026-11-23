@@ -12,6 +12,8 @@ import type { AttemptResult } from '@/server/domain/courseAssessments';
 import type { WeeklyMeetingView } from '@/server/domain/weeklyMeetings';
 import { WeeklyMeetingCard } from './WeeklyMeetingCard';
 import { FacultyPanel } from './FacultyPanel';
+import { PazActivityTracker } from '@/components/paz/PazActivityTracker';
+import { PazUnifiedClassroom } from '@/components/paz/PazUnifiedClassroom';
 
 type CourseAttemptResult = AttemptResult & { assessmentTitle: string; assessmentKind: string };
 
@@ -220,6 +222,7 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
 
   return (
     <main className="wa-lms">
+      {isPaz && <PazActivityTracker programSlug={slug} />}
       <div className="wa-lms-container">
         <nav className="wa-breadcrumbs" aria-label="Migas de pan">
           <Link href="/dashboard">Mi portal</Link>
@@ -345,6 +348,13 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
 
         <div className="wa-lms-layout">
           <main className="wa-lms-main">
+            {isPaz && (
+              <PazUnifiedClassroom
+                slug={slug}
+                detail={detail}
+                isStaff={isStaff}
+              />
+            )}
             <div className="wa-lms-tabs" role="tablist" aria-label="Secciones del programa">
               {tabs.map((tab) => (
                 <button

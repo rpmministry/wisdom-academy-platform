@@ -1,9 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { apiFetch, errorMessage } from '@/lib/api/client';
 import { WisdomIcon } from '@/components/ui/WisdomIcon';
-import { pazPublicConfig } from '@/lib/paz-en-la-mesa/config';
+import {
+  buildOfficialWhatsappChatUrl,
+  pazPublicConfig,
+} from '@/lib/paz-en-la-mesa/config';
 
 export interface PazLeadFormProps {
   source?: string;
@@ -62,6 +66,11 @@ export function PazLeadForm({
   };
 
   if (status === 'done') {
+    const whatsappLink =
+      pazPublicConfig.whatsappGroupUrl ||
+      buildOfficialWhatsappChatUrl(
+        'Hola Wisdom Academy, acabo de registrarme para recibir el temario del taller Paz en la mesa.'
+      );
     return (
       <div className="paz-lead-card" id={id}>
         <div className="paz-alert paz-alert--success" role="status">
@@ -69,17 +78,18 @@ export function PazLeadForm({
           <br />
           {message}
         </div>
-        {pazPublicConfig.whatsappUrl && (
-          <a
-            href={pazPublicConfig.whatsappUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="paz-btn paz-btn--olive"
-            style={{ width: '100%', marginTop: '0.75rem' }}
-          >
-            <WisdomIcon name="users" size={16} /> Entrar a la comunidad de WhatsApp
-          </a>
-        )}
+        <a
+          href={whatsappLink}
+          target="_blank"
+          rel="noreferrer"
+          className="paz-btn paz-btn--olive"
+          style={{ width: '100%', marginTop: '0.75rem' }}
+        >
+          <WisdomIcon name="users" size={16} />{' '}
+          {pazPublicConfig.whatsappGroupUrl
+            ? 'Entrar a la comunidad de WhatsApp'
+            : 'Escribir al WhatsApp oficial (+593 99 875 5759)'}
+        </a>
       </div>
     );
   }
@@ -140,7 +150,10 @@ export function PazLeadForm({
           onChange={(event) => setConsent(event.target.checked)}
         />
         <span>
-          Autorizo a MAIM Casa de Oración y Wisdom Academy a contactarme sobre este taller.
+          Autorizo a Wisdom Academy a contactarme sobre este taller. Consulta nuestra{' '}
+          <Link href="/privacidad" target="_blank" style={{ textDecoration: 'underline' }}>
+            política de privacidad
+          </Link>.
         </span>
       </label>
       {status === 'error' && (
@@ -157,17 +170,17 @@ export function PazLeadForm({
         <WisdomIcon name={status === 'sending' ? 'refresh' : 'mail'} size={16} />
         {status === 'sending' ? 'Enviando…' : 'Quiero recibir el temario'}
       </button>
-      {pazPublicConfig.whatsappUrl && (
-        <a
-          href={pazPublicConfig.whatsappUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="paz-btn paz-btn--olive"
-          style={{ width: '100%' }}
-        >
-          <WisdomIcon name="users" size={16} /> Entrar directamente al WhatsApp
-        </a>
-      )}
+      <a
+        href={buildOfficialWhatsappChatUrl(
+          'Hola Wisdom Academy, deseo más información sobre el taller Paz en la mesa, orden en el bolsillo y fuego en el corazón.'
+        )}
+        target="_blank"
+        rel="noreferrer"
+        className="paz-btn paz-btn--olive"
+        style={{ width: '100%' }}
+      >
+        <WisdomIcon name="users" size={16} /> Contactar al WhatsApp oficial (+593 99 875 5759)
+      </a>
     </form>
   );
 }

@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiFetch, errorMessage } from '@/lib/api/client';
 import { WisdomIcon } from '@/components/ui/WisdomIcon';
+import { PazActivityTracker } from '@/components/paz/PazActivityTracker';
 
 interface LessonPlayerProps {
   slug: string;
@@ -12,6 +13,8 @@ interface LessonPlayerProps {
   fallbackImage?: string;
   videos: Array<{ id: string; embedUrl: string; watchUrl: string }>;
   initialCompleted: boolean;
+  classNumber?: number;
+  blockNumber?: number;
 }
 
 export const LessonPlayer: React.FC<LessonPlayerProps> = ({
@@ -21,6 +24,8 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
   fallbackImage,
   videos,
   initialCompleted,
+  classNumber,
+  blockNumber,
 }) => {
   const router = useRouter();
   const [completed, setCompleted] = useState(initialCompleted);
@@ -198,6 +203,16 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
         <div className="wa-lp-error" role="alert">
           {error}
         </div>
+      )}
+
+      {slug === 'paz-en-la-mesa' && (
+        <PazActivityTracker
+          programSlug={slug}
+          lessonId={lessonId}
+          classNumber={classNumber}
+          blockNumber={blockNumber}
+          isVideoPlaying={playing}
+        />
       )}
     </div>
   );

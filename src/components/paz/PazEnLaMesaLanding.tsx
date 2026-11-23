@@ -1,6 +1,7 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import type { Metadata } from 'next';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { WisdomIcon } from '@/components/ui/WisdomIcon';
 import { PazEnLaMesaLogo } from '@/components/paz/PazEnLaMesaLogo';
@@ -8,10 +9,12 @@ import { PazLaunchBanner } from '@/components/paz/PazLaunchBanner';
 import { PazCountdown } from '@/components/paz/PazCountdown';
 import { PazLeadForm } from '@/components/paz/PazLeadForm';
 import { PazPastorsPortrait } from '@/components/paz/PazPastorsPortrait';
+import { PazTrailerPlayer } from '@/components/paz/PazTrailerPlayer';
+import { PazClassesShowcase } from '@/components/paz/PazClassesShowcase';
+import { PazUnifiedEnrollment } from '@/components/paz/PazUnifiedEnrollment';
 import {
   PAZ_BRAND,
   PAZ_CHALLENGE_DAYS,
-  PAZ_CLASSES,
   PAZ_DATES,
   PAZ_FAQ,
   PAZ_GLOBAL_RESOURCES,
@@ -21,24 +24,13 @@ import {
   PAZ_SABBATH_REVIEW,
 } from '@/lib/paz-en-la-mesa/content';
 import {
+  buildOfficialWhatsappChatUrl,
   formatPazUsd,
   pazNextMilestone,
   pazPhaseAt,
   pazPublicConfig,
 } from '@/lib/paz-en-la-mesa/config';
 import { pazBankDetails, pazPayphoneUrl, pazWhatsappUrl } from '@/lib/paz-en-la-mesa/server';
-
-export const pazLandingMetadata: Metadata = {
-  title: 'Paz en la mesa, Orden en el bolsillo y fuego en el corazón | Wisdom Academy',
-  description:
-    'Taller de fin de año con los Pastores Samuel y Gabby Palacio: 4 clases para sanar tu mesa, ordenar tu economía, oír a Dios y encender tu hogar. Preventa USD 27 por hogar.',
-  openGraph: {
-    title: 'Paz en la mesa, Orden en el bolsillo y fuego en el corazón',
-    description:
-      '4 clases, cuaderno de 24 páginas, sesión en vivo y reto de 7 días. Estreno el 8 de diciembre de 2026.',
-    images: [{ url: PAZ_BRAND.ogImage }],
-  },
-};
 
 function ResourceIcon({ type }: { type: string }) {
   const name: 'file-text' | 'users' | 'award' | 'video' =
@@ -56,7 +48,20 @@ export function PazEnLaMesaLanding() {
       : PAZ_PRICING.presaleCents;
   const bank = pazBankDetails();
   const payphoneUrl = pazPayphoneUrl() || pazPublicConfig.payphoneUrl;
-  const whatsappUrl = pazWhatsappUrl() || pazPublicConfig.whatsappUrl;
+  const whatsappUrl = pazPublicConfig.whatsappUrl || buildOfficialWhatsappChatUrl();
+
+  const [selectedPlan, setSelectedPlan] = useState<'presale' | 'official' | 'scholarship'>('presale');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const planParam = urlParams.get('plan');
+      if (planParam === 'official' || planParam === 'scholarship' || planParam === 'presale') {
+        setSelectedPlan(planParam);
+      }
+    }
+  }, []);
+
   const phaseLabel =
     phase === 'anticipation'
       ? 'Preventa abre el 3 de diciembre · 20:00'
@@ -74,7 +79,7 @@ export function PazEnLaMesaLanding() {
     image: PAZ_BRAND.ogImage,
     provider: {
       '@type': 'Organization',
-      name: PAZ_BRAND.institution,
+      name: 'Wisdom Academy',
       sameAs: 'https://wisdomacademy.alsiztech.com/',
     },
     offers: [
@@ -103,6 +108,14 @@ export function PazEnLaMesaLanding() {
     },
   };
 
+  const scrollToEnrollment = (planToSelect?: 'presale' | 'official' | 'scholarship') => {
+    if (planToSelect) setSelectedPlan(planToSelect);
+    const element = document.getElementById('inscripcion');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <main className="paz-world paz-landing">
       <script
@@ -112,6 +125,7 @@ export function PazEnLaMesaLanding() {
       <PazLaunchBanner now={now} />
       <PublicHeader />
 
+      {/* HERO SECTION */}
       <section className="paz-hero" aria-labelledby="paz-title">
         <div className="paz-container paz-hero-grid">
           <div>
@@ -130,16 +144,21 @@ export function PazEnLaMesaLanding() {
 
             <div className="paz-actions">
               <a
-                href={whatsappUrl || '#comunidad'}
-                {...(whatsappUrl ? { target: '_blank', rel: 'noreferrer' } : {})}
+                href={pazPublicConfig.whatsappGroupUrl || buildOfficialWhatsappChatUrl('Hola Wisdom Academy, deseo más información sobre el taller Paz en la mesa.')}
+                target="_blank"
+                rel="noreferrer"
                 className="paz-btn paz-btn--olive"
                 data-testid="paz-hero-whatsapp"
               >
-                <WisdomIcon name="users" size={16} /> Comunidad oficial de WhatsApp
+                <WisdomIcon name="users" size={16} /> Comunidad de WhatsApp
               </a>
-              <Link href="/paz-en-la-mesa/inscripcion" className="paz-btn paz-btn--primary">
+              <button
+                type="button"
+                onClick={() => scrollToEnrollment('presale')}
+                className="paz-btn paz-btn--primary"
+              >
                 <WisdomIcon name="credit-card" size={16} /> Reservar mi lugar
-              </Link>
+              </button>
               <a href="#clases" className="paz-btn paz-btn--ghost">
                 <WisdomIcon name="book" size={16} /> Ver el temario
               </a>
@@ -181,6 +200,25 @@ export function PazEnLaMesaLanding() {
         </div>
       </section>
 
+      {/* SECCIÓN DEL TRÁILER OFICIAL */}
+      <section className="paz-section" style={{ paddingTop: '1rem', paddingBottom: '3rem' }}>
+        <div className="paz-container">
+          <div className="paz-section-head" style={{ marginBottom: '1.75rem' }}>
+            <span className="paz-kicker">
+              <WisdomIcon name="video" size={13} /> Tráiler del taller
+            </span>
+            <h2 className="paz-h2">
+              Conoce la propuesta de <em>La Mesa Real</em>
+            </h2>
+            <p className="paz-lead">
+              Reproduce el video oficial de presentación y descubre el camino pedagógico y espiritual que recorreremos juntos.
+            </p>
+          </div>
+          <PazTrailerPlayer />
+        </div>
+      </section>
+
+      {/* SECCIÓN: 4 MOVIMIENTOS */}
       <section className="paz-section" aria-labelledby="paz-movements-title">
         <div className="paz-container">
           <div className="paz-section-head">
@@ -211,96 +249,26 @@ export function PazEnLaMesaLanding() {
         </div>
       </section>
 
+      {/* SECCIÓN: LAS CUATRO CLASES */}
       <section className="paz-section paz-section--paper" id="clases" aria-labelledby="paz-classes-title">
         <div className="paz-container">
           <div className="paz-section-head">
             <span className="paz-kicker">
-              <WisdomIcon name="book" size={13} /> Las cuatro clases
+              <WisdomIcon name="book" size={13} /> Programa pedagógico
             </span>
             <h2 className="paz-h2" id="paz-classes-title">
-              Cuatro clases, <em>cuatro herramientas</em>
+              Cuatro clases magistrales, <em>cuatro herramientas prácticas</em>
             </h2>
             <p className="paz-lead">
-              Cada clase dura entre 35 y 40 minutos y se estructura en cuatro bloques:
-              principio eterno, mesa real, herramienta en mano y aterrizaje Q&A con oración.
-              Abre cada clase para ver su contenido completo.
+              Cada clase dura entre 35 y 40 minutos y se organiza en cuatro bloques: principio eterno, mesa real, herramienta en mano y aterrizaje con oración guiada.
             </p>
           </div>
 
-          <div className="paz-classes">
-            {PAZ_CLASSES.map((item) => (
-              <details
-                className="paz-class"
-                key={item.key}
-                style={{
-                  ['--class-accent' as string]: item.accent,
-                  ['--class-soft' as string]: item.soft,
-                }}
-              >
-                <summary>
-                  <span className="paz-class-number">
-                    <small>Clase</small>
-                    <strong>{String(item.number).padStart(2, '0')}</strong>
-                  </span>
-                  <span className="paz-class-main">
-                    <h3>
-                      {item.title}: {item.headline}
-                    </h3>
-                    <p>{item.summary}</p>
-                    <span className="paz-class-meta">
-                      <span>
-                        <WisdomIcon name="clock" size={12} /> {item.durationLabel}
-                      </span>
-                      <span>
-                        <WisdomIcon name="user" size={12} /> {item.leader}
-                      </span>
-                      <span>
-                        <WisdomIcon name="file-text" size={12} /> {item.pages}
-                      </span>
-                    </span>
-                  </span>
-                  <span className="paz-class-arrow" aria-hidden="true">
-                    <WisdomIcon name="chevron-down" size={16} />
-                  </span>
-                </summary>
-                <div className="paz-class-body">
-                  <p className="paz-class-summary">{item.leaderDetail}</p>
-                  <div className="paz-class-tool">
-                    <WisdomIcon name="sparkles" size={15} />
-                    <span>
-                      <strong>Herramienta del cuaderno:</strong> {item.tool} · {item.toolPages}
-                    </span>
-                  </div>
-                  <div className="paz-blocks">
-                    {item.blocks.map((block) => (
-                      <article className="paz-block" key={block.number}>
-                        <div className="paz-block-head">
-                          <strong>
-                            Bloque {block.number} · {block.title}
-                          </strong>
-                          <span>{block.timeRange}</span>
-                        </div>
-                        <p>{block.summary}</p>
-                        <div className="paz-scriptures">
-                          {block.scriptures.map((scripture) => (
-                            <span key={scripture}>{scripture}</span>
-                          ))}
-                        </div>
-                      </article>
-                    ))}
-                  </div>
-                  <div className="paz-scriptures" aria-label={`Pasajes de la clase ${item.number}`}>
-                    {item.scriptures.map((scripture) => (
-                      <span key={scripture}>{scripture}</span>
-                    ))}
-                  </div>
-                </div>
-              </details>
-            ))}
-          </div>
+          <PazClassesShowcase />
         </div>
       </section>
 
+      {/* SECCIÓN: RECURSOS INCLUIDOS Y CUADERNO DE TRABAJO */}
       <section className="paz-section" aria-labelledby="paz-resources-title">
         <div className="paz-container">
           <div className="paz-section-head">
@@ -311,8 +279,7 @@ export function PazEnLaMesaLanding() {
               Todo lo que recibes <em>en tu mesa</em>
             </h2>
             <p className="paz-lead">
-              El taller no termina en el video: se completa con el cuaderno, la sesión en vivo
-              y el reto que lleva la enseñanza a la práctica diaria.
+              El taller no termina en el video: se completa con el cuaderno de 24 páginas, la sesión en vivo y el reto diario que lleva la enseñanza a la práctica.
             </p>
           </div>
           <div className="paz-resources">
@@ -363,6 +330,7 @@ export function PazEnLaMesaLanding() {
         </div>
       </section>
 
+      {/* SECCIÓN: RETO DE 7 DÍAS */}
       <section
         className="paz-section paz-section--olive"
         id="reto"
@@ -385,9 +353,14 @@ export function PazEnLaMesaLanding() {
               <Link href="/cursos/paz-en-la-mesa/reto" className="paz-btn paz-btn--gold">
                 <WisdomIcon name="award" size={16} /> Abrir mi checklist
               </Link>
-              <a href="#inscripcion" className="paz-btn paz-btn--ghost" style={{ color: '#faf8f5', borderColor: 'rgba(250,248,245,.35)' }}>
-                <WisdomIcon name="calendar" size={16} /> Ver fechas
-              </a>
+              <button
+                type="button"
+                onClick={() => scrollToEnrollment('presale')}
+                className="paz-btn paz-btn--ghost"
+                style={{ color: '#faf8f5', borderColor: 'rgba(250,248,245,.35)' }}
+              >
+                <WisdomIcon name="calendar" size={16} /> Inscribirme al taller
+              </button>
             </div>
           </div>
           <div className="paz-challenge-list">
@@ -409,6 +382,7 @@ export function PazEnLaMesaLanding() {
         </div>
       </section>
 
+      {/* SECCIÓN: TARIFAS Y MODALIDADES */}
       <section className="paz-section paz-section--paper" id="precios" aria-labelledby="paz-pricing-title">
         <div className="paz-container">
           <div className="paz-section-head">
@@ -419,8 +393,8 @@ export function PazEnLaMesaLanding() {
               Un precio por hogar, <em>sin sorpresas</em>
             </h2>
             <p className="paz-lead">
-              El acceso es familiar: una inscripción reúne a todos los miembros de la casa.
-              Elige preventa o precio oficial y paga por transferencia o tarjeta.
+              El acceso es familiar: una sola inscripción reúne a todos los miembros de la casa.
+              Elige preventa, precio oficial o la opción solidaria Beca un Hogar.
             </p>
           </div>
           <div className="paz-pricing">
@@ -440,9 +414,14 @@ export function PazEnLaMesaLanding() {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
-              <Link href="/paz-en-la-mesa/inscripcion?plan=presale" className="paz-btn paz-btn--primary">
+              <button
+                type="button"
+                onClick={() => scrollToEnrollment('presale')}
+                className="paz-btn paz-btn--primary"
+                style={{ width: '100%', justifyContent: 'center' }}
+              >
                 Reservar en preventa
-              </Link>
+              </button>
             </article>
 
             <article className="paz-price-card">
@@ -461,9 +440,14 @@ export function PazEnLaMesaLanding() {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
-              <Link href="/paz-en-la-mesa/inscripcion?plan=official" className="paz-btn paz-btn--olive">
+              <button
+                type="button"
+                onClick={() => scrollToEnrollment('official')}
+                className="paz-btn paz-btn--olive"
+                style={{ width: '100%', justifyContent: 'center' }}
+              >
                 Inscribirme al precio oficial
-              </Link>
+              </button>
             </article>
 
             <article className="paz-price-card paz-price-card--solidarity">
@@ -479,34 +463,48 @@ export function PazEnLaMesaLanding() {
                 <li>Fundación Casa Main asigna los cupos a matrimonios vulnerables.</li>
                 <li>Recibirás confirmación y constancia del aporte solidario.</li>
               </ul>
-              <Link href="/paz-en-la-mesa/inscripcion?plan=scholarship" className="paz-btn paz-btn--gold">
+              <button
+                type="button"
+                onClick={() => scrollToEnrollment('scholarship')}
+                className="paz-btn paz-btn--gold"
+                style={{ width: '100%', justifyContent: 'center' }}
+              >
                 <WisdomIcon name="award" size={16} /> Beca un Hogar
-              </Link>
+              </button>
             </article>
           </div>
         </div>
       </section>
 
-      <section className="paz-section" id="pagos" aria-labelledby="paz-payments-title">
+      {/* SECCIÓN PRINCIPAL DE INSCRIPCIÓN Y PAGO UNIFICADO */}
+      <section className="paz-section" id="inscripcion" aria-labelledby="paz-unified-title">
+        <div className="paz-container paz-container--narrow">
+          <PazUnifiedEnrollment
+            initialPlan={selectedPlan}
+            bank={bank}
+          />
+        </div>
+      </section>
+
+      {/* SECCIÓN: MÉTODOS DE PAGO Y TRANSPARENCIA */}
+      <section className="paz-section paz-section--paper" id="pagos" aria-labelledby="paz-payments-title">
         <div className="paz-container">
           <div className="paz-section-head">
             <span className="paz-kicker">
-              <WisdomIcon name="credit-card" size={13} /> Métodos de pago
+              <WisdomIcon name="credit-card" size={13} /> Información de pagos
             </span>
             <h2 className="paz-h2" id="paz-payments-title">
-              Dos formas simples <em>de asegurar tu lugar</em>
+              Dos formas seguras <em>de procesar tu inscripción</em>
             </h2>
             <p className="paz-lead">
-              Puedes transferir a la cuenta de Fundación Casa Main o pagar con tarjeta
-              mediante PayPhone. Cada pago se valida antes de activar el acceso.
+              Puedes transferir directamente a la cuenta de Fundación Casa Main (0% comisión) o pagar en línea con tarjeta de crédito/débito a través de PayPhone.
             </p>
           </div>
           <div className="paz-payments">
             <article className="paz-payment">
-              <h3>Transferencia o depósito · 0% comisión</h3>
+              <h3>Transferencia o depósito bancario · 0% comisión</h3>
               <p>
-                Beneficiario: <strong>{bank.beneficiary}</strong>. RUC {bank.ruc}. Envía tu
-                comprobante y el código de inscripción para validar el pago.
+                Beneficiario: <strong>{bank.beneficiary}</strong>. RUC: {bank.ruc}. Realiza la transferencia y envía tu comprobante con el código de inscripción generado arriba.
               </p>
               <dl>
                 <div>
@@ -530,81 +528,64 @@ export function PazEnLaMesaLanding() {
                   <dd>{bank.ruc}</dd>
                 </div>
               </dl>
-              {!bank.configured && (
-                <div className="paz-payment-warning">
-                  La cuenta bancaria definitiva se comparte al iniciar la preventa y en la
-                  comunidad oficial. El RUC y el beneficiario ya son los datos oficiales.
-                </div>
-              )}
-              <Link
-                href="/paz-en-la-mesa/inscripcion?plan=presale&method=bank_transfer"
+              <button
+                type="button"
+                onClick={() => scrollToEnrollment('presale')}
                 className="paz-btn paz-btn--olive paz-btn--small"
                 style={{ marginTop: '0.75rem' }}
               >
-                Registrar mi transferencia
-              </Link>
+                Generar código de transferencia
+              </button>
             </article>
 
             <article className="paz-payment">
-              <h3>Tarjeta con PayPhone · 5% + IVA</h3>
+              <h3>Tarjeta con PayPhone (Ecuador e internacional)</h3>
               <p>
-                Pago seguro con tarjeta mediante el enlace oficial de PayPhone. La comisión
-                efectiva estimada es 5,75% y se informa antes de confirmar.
+                Pago seguro en línea con tarjetas Visa, Mastercard, Diners, Discover o saldo PayPhone. Procesamiento verificado por PayPhone Ecuador.
               </p>
               <dl>
                 <div>
                   <dt>Procesador</dt>
-                  <dd>PayPhone</dd>
+                  <dd>PayPhone (Ecuador)</dd>
                 </div>
                 <div>
-                  <dt>Comisión</dt>
-                  <dd>5% + IVA (5,75% efectivo)</dd>
+                  <dt>Tarjetas admitidas</dt>
+                  <dd>Crédito y Débito nacionales e internacionales</dd>
                 </div>
                 <div>
                   <dt>Confirmación</dt>
-                  <dd>Validación administrativa</dd>
+                  <dd>Inmediata y validada en plataforma</dd>
                 </div>
                 <div>
-                  <dt>Soporte</dt>
-                  <dd>{bank.email}</dd>
+                  <dt>Soporte oficial</dt>
+                  <dd>{pazPublicConfig.officialWhatsappPhone}</dd>
                 </div>
               </dl>
-              {payphoneUrl ? (
-                <a
-                  href={payphoneUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="paz-btn paz-btn--primary paz-btn--small"
-                  style={{ marginTop: '0.75rem' }}
-                >
-                  Pagar con tarjeta
-                </a>
-              ) : (
-                <Link
-                  href="/paz-en-la-mesa/inscripcion?plan=presale&method=payphone"
-                  className="paz-btn paz-btn--primary paz-btn--small"
-                  style={{ marginTop: '0.75rem' }}
-                >
-                  Solicitar enlace de PayPhone
-                </Link>
-              )}
+              <button
+                type="button"
+                onClick={() => scrollToEnrollment('presale')}
+                className="paz-btn paz-btn--primary paz-btn--small"
+                style={{ marginTop: '0.75rem' }}
+              >
+                Inscribirme con tarjeta PayPhone
+              </button>
             </article>
           </div>
         </div>
       </section>
 
-      <section className="paz-section paz-section--paper" aria-labelledby="paz-lives-title">
+      {/* CALENDARIO OFICIAL */}
+      <section className="paz-section" aria-labelledby="paz-lives-title">
         <div className="paz-container">
           <div className="paz-section-head">
             <span className="paz-kicker">
               <WisdomIcon name="calendar" size={13} /> Calendario oficial
             </span>
             <h2 className="paz-h2" id="paz-lives-title">
-              Nueve encuentros <em>para no caminar solo</em>
+              Encuentros y fechas clave <em>del taller</em>
             </h2>
             <p className="paz-lead">
-              Todos los En Vivos son a las 20:00, hora de Ecuador. La comunidad de WhatsApp
-              recibe el resumen y los recordatorios.
+              Todos los En Vivos se transmiten a las 20:00 (hora de Ecuador / UTC-5). La comunidad de WhatsApp recibe los enlaces de acceso y recordatorios.
             </p>
           </div>
           <div className="paz-lives">
@@ -619,69 +600,39 @@ export function PazEnLaMesaLanding() {
         </div>
       </section>
 
-      <section className="paz-section" id="comunidad" aria-labelledby="paz-community-title">
+      {/* SECCIÓN COMUNIDAD Y TEMARIO */}
+      <section className="paz-section paz-section--paper" id="comunidad" aria-labelledby="paz-community-title">
         <div className="paz-container paz-challenge">
           <div className="paz-challenge-copy">
             <span className="paz-kicker">
-              <WisdomIcon name="users" size={13} /> Comunidad oficial
+              <WisdomIcon name="users" size={13} /> Atención y comunidad oficial
             </span>
             <h2 className="paz-h2" id="paz-community-title">
-              Recibe el temario y <em>reserva tu lugar</em>
+              Atención directa en <em>WhatsApp oficial</em>
             </h2>
             <p className="paz-lead" style={{ marginLeft: 0 }}>
-              Déjanos tus datos para enviarte el temario completo, el recordatorio de la
-              apertura de preventa y los enlaces de los En Vivos. Si ya tienes el enlace de
-              WhatsApp, puedes entrar directamente.
+              ¿Tienes preguntas sobre el taller, las formas de pago o las fechas? Escríbenos directamente al WhatsApp oficial: <strong>{pazPublicConfig.officialWhatsappPhone}</strong>.
             </p>
-            {whatsappUrl && (
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="paz-btn paz-btn--olive"
-                style={{ marginTop: '0.75rem' }}
-              >
-                <WisdomIcon name="users" size={16} /> Entrar a la comunidad de WhatsApp
-              </a>
-            )}
+            <a
+              href={buildOfficialWhatsappChatUrl(
+                'Hola Wisdom Academy, deseo hacer una consulta sobre el taller Paz en la mesa, orden en el bolsillo y fuego en el corazón.'
+              )}
+              target="_blank"
+              rel="noreferrer"
+              className="paz-btn paz-btn--olive"
+              style={{ marginTop: '0.75rem' }}
+            >
+              <WisdomIcon name="users" size={16} /> Chatear al WhatsApp (+593 99 875 5759)
+            </a>
             <div className="paz-alert paz-alert--info" style={{ marginTop: '1rem' }}>
-              <strong>Fechas clave:</strong> preventa desde el 3 de diciembre (20:00),
-              estreno y liberación el 8 de diciembre, precio oficial del 9 al 20 de
-              diciembre y sesión de alumnos el 22 de diciembre.
+              <strong>Fechas clave:</strong> Preventa desde el 3 de diciembre (20:00), estreno y liberación de clases el 8 de diciembre, precio oficial del 9 al 20 de diciembre y sesión en vivo para alumnos el 22 de diciembre.
             </div>
           </div>
           <PazLeadForm id="paz-lead-form" source="landing" title="Quiero recibir el temario" />
         </div>
       </section>
 
-      <section className="paz-section paz-section--paper" aria-labelledby="paz-inscription-title" id="inscripcion">
-        <div className="paz-container paz-final" style={{ color: '#faf8f5' }}>
-          <div>
-            <span className="paz-kicker" style={{ color: '#e6c78c' }}>
-              <WisdomIcon name="sparkles" size={13} /> Tu mesa está lista
-            </span>
-            <h2 id="paz-inscription-title">
-              Cierra el 2026 con paz, orden y fuego.
-            </h2>
-            <p>
-              Reserva tu lugar en preventa por {formatPazUsd(PAZ_PRICING.presaleCents)} por
-              hogar o aporta una {PAZ_PRICING.scholarshipLabel} para un matrimonio vulnerable.
-            </p>
-          </div>
-          <div className="paz-final-actions">
-            <Link href="/paz-en-la-mesa/inscripcion" className="paz-btn paz-btn--gold">
-              <WisdomIcon name="credit-card" size={16} /> Ir a inscripción
-            </Link>
-            <Link href="/paz-en-la-mesa/inscripcion?plan=scholarship" className="paz-btn paz-btn--ghost" style={{ color: '#faf8f5', borderColor: 'rgba(250,248,245,.4)' }}>
-              <WisdomIcon name="award" size={16} /> Beca un Hogar
-            </Link>
-            <span className="paz-final-note">
-              Pago por transferencia o tarjeta · Validación antes de activar el acceso
-            </span>
-          </div>
-        </div>
-      </section>
-
+      {/* PREGUNTAS FRECUENTES (FAQ) */}
       <section className="paz-section" aria-labelledby="paz-faq-title">
         <div className="paz-container paz-container--narrow">
           <div className="paz-section-head">
@@ -703,13 +654,14 @@ export function PazEnLaMesaLanding() {
         </div>
       </section>
 
+      {/* FOOTER */}
       <footer className="paz-footer">
         <div className="paz-footer-inner">
           <PazEnLaMesaLogo variant="compact" theme="dark" className="paz-footer-logo" />
           <div>
-            <strong>{PAZ_BRAND.institution}</strong> · Pastores Samuel y Gabby Palacio
+            <strong>Wisdom Academy</strong> · Samuel y Gabby Palacio
             <br />
-            Desarrollado por {PAZ_BRAND.agency} · © {now.getFullYear()}
+            Atención oficial WhatsApp: {pazPublicConfig.officialWhatsappPhone} · © {now.getFullYear()}
           </div>
         </div>
       </footer>
@@ -718,4 +670,3 @@ export function PazEnLaMesaLanding() {
 }
 
 export default PazEnLaMesaLanding;
-

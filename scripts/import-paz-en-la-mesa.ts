@@ -66,7 +66,7 @@ function ensureProgram(): string {
       requirements: PAZ_REQUIREMENTS,
       coverImageUrl: PAZ_BRAND.coverImage,
       status: 'draft',
-      releaseAt: RELEASE_AT,
+      releaseAt: null,
       metadata: PAZ_PROGRAM_METADATA,
     });
     program = getProgramRowBySlug(created.slug);
@@ -88,7 +88,7 @@ function ensureProgram(): string {
       objectives: PAZ_OBJECTIVES,
       requirements: PAZ_REQUIREMENTS,
       coverImageUrl: PAZ_BRAND.coverImage,
-      releaseAt: RELEASE_AT,
+      releaseAt: null,
       status: 'published',
       metadata: PAZ_PROGRAM_METADATA,
     },
@@ -149,8 +149,8 @@ function ensureModules(programId: string): Map<number, string> {
         outcomes: item.outcomes,
         accent: item.accent,
         soft: item.soft,
-        contentStatus: 'coming_soon',
-        releaseAt: RELEASE_AT,
+        contentStatus: item.number === 1 ? 'available' : 'coming_soon',
+        releaseAt: item.number === 1 ? null : RELEASE_AT,
       }),
       nowIso(),
       moduleId
@@ -178,14 +178,15 @@ function ensureLessons(programId: string, modules: Map<number, string>): number 
       const key = `${item.key}-bloque-${block.number}`;
       const title = `Bloque ${block.number} · ${block.title}`;
       const description = `${block.summary} · Clase ${item.number}: ${item.title} · ${block.timeRange}`;
+      const isClass1 = item.number === 1;
       const base = {
         title,
         description,
         position: block.number,
-        videoIds: [] as string[],
+        videoIds: isClass1 ? ['OQUIbCicITA'] : ([] as string[]),
         pagesLabel: `${item.pages} · ${block.timeRange}`,
         durationLabel: block.timeRange,
-        releaseAt: RELEASE_AT,
+        releaseAt: item.number === 1 ? null : RELEASE_AT,
       };
       let lessonId = byKey.get(key) || null;
       if (lessonId) {
@@ -219,40 +220,41 @@ function ensureLessons(programId: string, modules: Map<number, string>): number 
           subjectCode: `PAZ-${String(item.number).padStart(2, '0')}`,
           sessionNumber: block.number,
           week: item.number,
-          releaseAt: RELEASE_AT,
-          videoStatus: 'coming_soon',
+          releaseAt: item.number === 1 ? null : RELEASE_AT,
+          videoStatus: isClass1 ? 'available' : 'coming_soon',
         }),
         nowIso(),
         lessonId
       );
-
     }
 
     const materialKey = `paz-cuaderno-${item.key}`;
     prepare(
       'DELETE FROM course_materials WHERE program_id = ? AND metadata_json LIKE ?'
     ).run(programId, `%${materialKey}%`);
-    const toolLessonId = byKey.get(`${item.key}-bloque-3`) || byKey.get(`${item.key}-bloque-1`);
-    if (toolLessonId) {
-      addMaterial(
-        programId,
-        {
-          kind: 'external_link',
-          title: `Cuaderno · ${item.tool} (${item.pages})`,
-          url: process.env.NEXT_PUBLIC_PAZ_NOTEBOOK_URL || '/paz-en-la-mesa#clases',
-          lessonId: toolLessonId,
-          moduleId,
-          visibility: 'student',
-          metadata: {
-            source: 'paz-en-la-mesa',
-            pazAssetKey: materialKey,
-            status: 'coming_soon',
-            pages: item.pages,
-            tool: item.tool,
+    for (const block of item.blocks) {
+      const blockLessonId = byKey.get(`${item.key}-bloque-${block.number}`);
+      if (blockLessonId) {
+        addMaterial(
+          programId,
+          {
+            kind: 'external_link',
+            title: `Cuaderno de Trabajo y Manual de Estudio (${item.tool} · ${item.pages})`,
+            url: process.env.NEXT_PUBLIC_PAZ_NOTEBOOK_URL || '/docs/cuaderno-de-trabajo-paz-en-la-mesa.pdf',
+            lessonId: blockLessonId,
+            moduleId,
+            visibility: 'student',
+            metadata: {
+              source: 'paz-en-la-mesa',
+              pazAssetKey: `${materialKey}-b${block.number}`,
+              status: 'available',
+              pages: item.pages,
+              tool: item.tool,
+            },
           },
-        },
-        null
-      );
+          null
+        );
+      }
     }
   }
   console.log(`= Clases y bloques verificados: ${PAZ_CLASSES.length * 4} (nuevos: ${createdCount})`);
@@ -270,7 +272,7 @@ function ensureProgramMaterials(programId: string): void {
     {
       key: 'cuaderno',
       title: 'Cuaderno de Trabajo PDF de 24 páginas',
-      url: process.env.NEXT_PUBLIC_PAZ_NOTEBOOK_URL || '/paz-en-la-mesa#reto',
+      url: process.env.NEXT_PUBLIC_PAZ_NOTEBOOK_URL || '/docs/cuaderno-de-trabajo-paz-en-la-mesa.pdf',
       description: 'Cuaderno interactivo e imprimible con las cuatro herramientas y el reto.',
     },
     {

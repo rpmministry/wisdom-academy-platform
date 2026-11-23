@@ -5,6 +5,7 @@ import { ApiError } from '../http/api';
 import { writeAudit } from '../audit';
 import { randomToken } from '../security/random';
 import { grantEntitlement } from './access';
+import { findUserByIdentifier, uniqueUsernameFromEmail } from './users';
 import { ensureProgramProduct } from './courseCatalog';
 import {
   assertProgramAccess,
@@ -40,10 +41,13 @@ export interface PazPaymentIntentInput {
   plan: PazPlan;
   method: PazPaymentMethod;
   buyerName?: string | null;
+  buyerEmail?: string | null;
   buyerPhone?: string | null;
+  city?: string | null;
   transferReference?: string | null;
   transferDate?: string | null;
   note?: string | null;
+  consent?: boolean;
 }
 
 export interface PazPaymentIntentView {
@@ -224,6 +228,17 @@ export function pazAmountForPlan(plan: PazPlan): number {
 }
 
 export function assertPazPlanAllowed(plan: PazPlan, now: Date = new Date()): void {
+  const forced = (
+    process.env.PAZ_FORCE_PHASE ||
+    process.env.NEXT_PUBLIC_PAZ_FORCE_PHASE ||
+    ''
+  ).trim();
+  if (forced === 'presale' || forced === 'official') {
+    return;
+  }
+  if (process.env.NODE_ENV === 'development') {
+    return;
+  }
   const phase = pazPhaseAt(now);
   if (plan === 'scholarship') {
     if (phase === 'closed') {
@@ -272,7 +287,7 @@ function findPendingIntent(
 }
 
 export function createPazPaymentIntent(
-  user: AuthUser,
+  user: AuthUser | null,
   input: PazPaymentIntentInput,
   options: { paymentUrl?: string } = {}
 ): { intent: PazPaymentIntentView; created: boolean } {
@@ -286,15 +301,83 @@ export function createPazPaymentIntent(
   assertPazPlanAllowed(plan);
   requirePazProgram();
 
-  const existing = findPendingIntent(user.id, plan, input.method);
+  let targetUserId: string;
+  let buyerEmail: string;
+  let buyerName: string;
+
+  if (user) {
+    targetUserId = user.id;
+    buyerEmail = user.email.toLowerCase();
+    buyerName =
+      cleanText(input.buyerName, 160) ||
+      cleanText(user.displayName || user.email, 160) ||
+      user.email;
+  } else {
+    const rawEmail = normalizeEmail(input.buyerEmail);
+    if (!rawEmail) {
+      throw new ApiError(
+        400,
+        'VALIDATION_ERROR',
+        'Escribe tu correo electrónico para procesar la inscripción.'
+      );
+    }
+    buyerEmail = rawEmail;
+    const rawName = cleanText(input.buyerName, 160);
+    if (!rawName || rawName.length < 2) {
+      throw new ApiError(
+        400,
+        'VALIDATION_ERROR',
+        'Escribe tu nombre y apellido para la inscripción.'
+      );
+    }
+    buyerName = rawName;
+
+    const existingUser = findUserByIdentifier(buyerEmail);
+    if (existingUser) {
+      targetUserId = existingUser.id;
+    } else {
+      targetUserId = `usr_${randomToken(16)}`;
+      const now = nowIso();
+      prepare(`
+        INSERT INTO users
+          (id, email, email_verified, display_name, username, status, is_minor, created_at, updated_at)
+        VALUES (?, ?, 0, ?, ?, 'active', 0, ?, ?)
+      `).run(
+        targetUserId,
+        buyerEmail,
+        buyerName,
+        uniqueUsernameFromEmail(buyerEmail),
+        now,
+        now
+      );
+      prepare(`
+        INSERT OR IGNORE INTO user_roles (id, user_id, role_code, granted_by, granted_at)
+        VALUES (?, ?, 'student', 'paz_enrollment', ?)
+      `).run(`ur_${randomToken(16)}`, targetUserId, now);
+    }
+  }
+
+  // Capturar o actualizar lead de manera transparente
+  try {
+    createPazLead({
+      fullName: buyerName,
+      email: buyerEmail,
+      phone: input.buyerPhone,
+      city: input.city,
+      consent: input.consent !== false,
+      source: 'checkout_intent',
+      campaign: 'paz-en-la-mesa-2026',
+      metadata: { plan, method: input.method },
+    });
+  } catch {
+    // Si ya existe el lead o hay una advertencia menor, continuamos con la orden de pago
+  }
+
+  const existing = findPendingIntent(targetUserId, plan, input.method);
   if (existing) {
     return { intent: toPaymentView(existing), created: false };
   }
 
-  const buyerName =
-    cleanText(input.buyerName, 160) ||
-    cleanText(user.displayName || user.email, 160) ||
-    user.email;
   const amountCents = pazAmountForPlan(plan);
   const id = `pazpay_${randomToken(16)}`;
   let reference = createReference();
@@ -317,13 +400,13 @@ export function createPazPaymentIntent(
   `).run(
     id,
     reference,
-    user.id,
+    targetUserId,
     plan,
     input.method,
     amountCents,
     PAZ_PRICING.currency,
     buyerName,
-    user.email.toLowerCase(),
+    buyerEmail,
     normalizePhone(input.buyerPhone),
     cleanText(input.transferReference, 120),
     cleanText(input.transferDate, 40),
@@ -332,13 +415,15 @@ export function createPazPaymentIntent(
     now,
     now
   );
-  writeAudit({
-    actor: user,
-    action: 'paz.payment_intent.created',
-    entityType: 'paz_payment_intent',
-    entityId: id,
-    after: { reference, plan, method: input.method, amountCents },
-  });
+  if (user) {
+    writeAudit({
+      actor: user,
+      action: 'paz.payment_intent.created',
+      entityType: 'paz_payment_intent',
+      entityId: id,
+      after: { reference, plan, method: input.method, amountCents },
+    });
+  }
   const row = prepare('SELECT * FROM paz_payment_intents WHERE id = ?').get(
     id
   ) as PazPaymentIntentRow;
@@ -535,6 +620,119 @@ export function reviewPazPaymentIntent(
     intent.id
   ) as PazPaymentIntentRow;
   return toPaymentView(updated);
+}
+
+export function findPazPaymentIntentByReference(
+  reference: string
+): PazPaymentIntentRow | null {
+  return (
+    (prepare(`
+      SELECT * FROM paz_payment_intents
+      WHERE reference = ?
+      LIMIT 1
+    `).get(reference) as PazPaymentIntentRow | undefined) ?? null
+  );
+}
+
+export function autoApprovePazPayment({
+  intentId,
+  processor = 'payphone',
+  processorTransactionId,
+  reviewNote,
+}: {
+  intentId: string;
+  processor?: string;
+  processorTransactionId?: string | number;
+  reviewNote?: string;
+}): {
+  intent: PazPaymentIntentView;
+  user: { id: string; email: string; displayName: string };
+  program: CourseProgramRow;
+} {
+  const intent = prepare('SELECT * FROM paz_payment_intents WHERE id = ?').get(
+    intentId
+  ) as PazPaymentIntentRow | undefined;
+  if (!intent) throw new ApiError(404, 'PAZ_PAYMENT_NOT_FOUND', 'El pago no existe.');
+
+  const program = requirePazProgram();
+  const userRow = prepare('SELECT id, email, display_name FROM users WHERE id = ?').get(
+    intent.user_id
+  ) as { id: string; email: string; display_name: string } | undefined;
+  if (!userRow) {
+    throw new ApiError(500, 'USER_NOT_FOUND', 'El usuario asociado al pago no fue encontrado.');
+  }
+
+  if (intent.status === 'approved') {
+    return {
+      intent: toPaymentView(intent),
+      user: { id: userRow.id, email: userRow.email, displayName: userRow.display_name },
+      program,
+    };
+  }
+
+  const now = nowIso();
+  const productId = productIdForProgram(program);
+  const accessStartsAt = now;
+  const accessEndsAt = new Date(new Date(now).getTime() + 365 * 86400000).toISOString();
+  const finalNote = cleanText(reviewNote, 1000) || `Aprobado por pasarela ${processor}`;
+
+  withTransaction(() => {
+    let orderId = intent.order_id;
+    if (!orderId) {
+      orderId = createPaidOrderForIntent(intent, program, productId, now);
+    }
+    if (intent.plan !== 'scholarship') {
+      grantEntitlement({
+        userId: intent.user_id,
+        resourceId: program.resource_id,
+        origin: 'purchase',
+        originRef: intent.reference,
+        startsAt: accessStartsAt,
+        endsAt: accessEndsAt,
+        grantedBy: `gateway_${processor}`,
+        metadata: {
+          source: 'paz-en-la-mesa',
+          plan: intent.plan,
+          method: intent.method,
+          intentId: intent.id,
+          reference: intent.reference,
+          processorTransactionId: processorTransactionId ? String(processorTransactionId) : null,
+        },
+      });
+      prepare(`
+        INSERT INTO enrollments
+          (id, user_id, product_id, resource_id, status, origin, order_id, starts_at, ends_at,
+           created_at, updated_at)
+        VALUES (?, ?, ?, ?, 'active', 'purchase', ?, ?, ?, ?, ?)
+      `).run(
+        `enr_${randomToken(16)}`,
+        intent.user_id,
+        productId,
+        program.resource_id,
+        orderId,
+        accessStartsAt,
+        accessEndsAt,
+        now,
+        now
+      );
+    }
+    prepare(`
+      UPDATE paz_payment_intents
+      SET status = 'approved', reviewed_by = NULL, reviewed_at = ?, review_note = ?,
+          order_id = ?, updated_at = ?
+      WHERE id = ? AND status = 'pending'
+    `).run(now, finalNote, orderId, now, intent.id);
+  });
+
+  const updated = prepare('SELECT * FROM paz_payment_intents WHERE id = ?').get(
+    intent.id
+  ) as PazPaymentIntentRow;
+
+  return {
+    intent: toPaymentView(updated),
+    user: { id: userRow.id, email: userRow.email, displayName: userRow.display_name },
+    program,
+  };
 }
 
 export interface PazChallengeDayView {

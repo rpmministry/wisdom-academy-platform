@@ -37,19 +37,18 @@ export function PazHomeHero() {
           <p className="paz-subtitle">{PAZ_BRAND.subtitle}</p>
 
           <div className="paz-actions">
-            <a
-              href={whatsapp || '/paz-en-la-mesa#comunidad'}
-              {...(whatsapp ? { target: '_blank', rel: 'noreferrer' } : {})}
+            <Link
+              href="/paz-en-la-mesa#comunidad"
               className="paz-btn paz-btn--olive"
               data-testid="paz-home-whatsapp"
             >
               <WisdomIcon name="users" size={16} />
               Unirme a la comunidad
-            </a>
+            </Link>
             <Link href="/paz-en-la-mesa#clases" className="paz-btn paz-btn--primary">
               <WisdomIcon name="book" size={16} /> Ver el temario completo
             </Link>
-            <Link href="/paz-en-la-mesa/inscripcion" className="paz-btn paz-btn--ghost">
+            <Link href="/paz-en-la-mesa#inscripcion" className="paz-btn paz-btn--ghost">
               <WisdomIcon name="credit-card" size={16} /> Reservar mi lugar
             </Link>
           </div>

@@ -1,5 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { existsSync } from 'node:fs';
+import path from 'node:path';
 import { prepare } from '../../src/server/db';
 import { nowIso } from '../../src/server/db/sqlite';
 import { createUser, actor } from '../platform/helpers';
@@ -14,11 +16,20 @@ import {
 } from '../../src/server/domain/coursePrograms';
 import { grantEntitlement } from '../../src/server/domain/access';
 import {
+  autoApprovePazPayment,
   createPazLead,
+  createPazPaymentIntent,
+  findPazPaymentIntentByReference,
   getPazChallengeProgress,
   reviewPazPaymentIntent,
   setPazChallengeDay,
 } from '../../src/server/domain/paz';
+import {
+  PAZ_BRAND,
+  PAZ_CLASSES,
+  PAZ_OFFICIAL_WHATSAPP_PHONE,
+} from '../../src/lib/paz-en-la-mesa/content';
+import { pazPublicConfig } from '../../src/lib/paz-en-la-mesa/config';
 
 const RELEASE_AT = '2099-12-08T17:00:00.000Z';
 
@@ -138,6 +149,41 @@ test('un pago aprobado activa derecho, orden pagada y matrícula', () => {
   assert.equal(enrollment?.status, 'active');
 });
 
+test('autoApprovePazPayment aprueba automáticamente con PayPhone y matricula al usuario', () => {
+  const { user } = pazStudent();
+  const program = getProgramRowBySlug('paz-en-la-mesa');
+  assert.ok(program);
+  const now = nowIso();
+  const intentId = `pazpay_payphone_${Date.now()}`;
+  const reference = `PAZ-PAYPHONE-${Date.now()}`;
+  prepare(`
+    INSERT INTO paz_payment_intents
+      (id, reference, user_id, plan, method, amount_cents, currency, status,
+       buyer_name, buyer_email, created_at, updated_at)
+    VALUES (?, ?, ?, 'presale', 'payphone', 2700, 'USD', 'pending',
+            'Comprador PayPhone', ?, ?, ?)
+  `).run(intentId, reference, user.id, user.email, now, now);
+
+  const found = findPazPaymentIntentByReference(reference);
+  assert.ok(found);
+  assert.equal(found.id, intentId);
+
+  const result = autoApprovePazPayment({
+    intentId,
+    processor: 'payphone',
+    processorTransactionId: 998877,
+    reviewNote: 'Aprobado vía PayPhone V2 SDK Test',
+  });
+
+  assert.equal(result.intent.status, 'approved');
+  assert.ok(result.intent.orderId);
+
+  const enrollment = prepare('SELECT * FROM enrollments WHERE order_id = ?').get(
+    result.intent.orderId
+  ) as { status: string } | undefined;
+  assert.equal(enrollment?.status, 'active');
+});
+
 test('el reto de 7 días guarda el checklist por alumno y el lead queda registrado', () => {
   const { user } = pazStudent();
   const program = getProgramRowBySlug('paz-en-la-mesa');
@@ -164,4 +210,59 @@ test('el reto de 7 días guarda el checklist por alumno y el lead queda registra
   assert.equal(updated[2].completed, true);
   assert.equal(updated[2].note, 'Consagramos el presupuesto familiar.');
 });
+
+test('identidad estricta sin títulos pastorales y número oficial de WhatsApp', () => {
+  assert.equal(PAZ_BRAND.hosts, 'Samuel y Gabby Palacio');
+  assert.equal(PAZ_BRAND.institution, 'Wisdom Academy');
+  assert.equal(PAZ_OFFICIAL_WHATSAPP_PHONE, '+593998755759');
+  assert.equal(pazPublicConfig.officialWhatsappPhone, '+593998755759');
+  assert.equal(/pastor|pastora|maim/i.test(PAZ_BRAND.hosts), false);
+  for (const c of PAZ_CLASSES) {
+    assert.equal(/pastor|pastora/i.test(c.leader), false);
+  }
+});
+
+test('un visitante sin sesión puede iniciar intención de pago con creación de cuenta automática', () => {
+  ensurePazProgram();
+  const guestEmail = `guest-paz-${Date.now()}@test.local`;
+  const result = createPazPaymentIntent(null, {
+    plan: 'scholarship',
+    method: 'bank_transfer',
+    buyerName: 'Familia Invitada',
+    buyerEmail: guestEmail,
+    buyerPhone: '+593998755759',
+    city: 'Quito',
+    consent: true,
+  });
+
+  assert.ok(result.intent);
+  assert.equal(result.created, true);
+  assert.match(result.intent.reference, /^PAZ-2026-/);
+  assert.equal(result.intent.buyerEmail, guestEmail);
+  assert.equal(result.intent.buyerName, 'Familia Invitada');
+
+  const userRow = prepare('SELECT * FROM users WHERE email = ?').get(guestEmail) as {
+    id: string;
+    display_name: string;
+  } | undefined;
+  assert.ok(userRow);
+  assert.equal(userRow.display_name, 'Familia Invitada');
+
+  const roleRow = prepare('SELECT * FROM user_roles WHERE user_id = ? AND role_code = ?').get(
+    userRow.id,
+    'student'
+  ) as { role_code: string } | undefined;
+  assert.ok(roleRow);
+});
+
+test('recursos multimedia del taller (tráiler, clase 1 y cuaderno pdf) configurados correctamente', () => {
+  assert.ok(pazPublicConfig.trailerVideoUrl.includes('OQUIbCicITA'));
+  assert.ok(pazPublicConfig.classVideos.class1.includes('OQUIbCicITA'));
+  assert.equal(pazPublicConfig.notebookUrl, '/docs/cuaderno-de-trabajo-paz-en-la-mesa.pdf');
+
+  const pdfDiskPath = path.join(process.cwd(), 'public', 'docs', 'cuaderno-de-trabajo-paz-en-la-mesa.pdf');
+  assert.equal(existsSync(pdfDiskPath), true, 'El archivo PDF del cuaderno debe existir en public/docs');
+});
+
+
 

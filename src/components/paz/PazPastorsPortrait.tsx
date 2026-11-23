@@ -45,7 +45,7 @@ export function PazPastorsPortrait({
       >
         <Image
           src={pazPublicConfig.pastorsImage}
-          alt="Pastores Samuel y Gabby Palacio, anfitriones del taller Paz en la mesa"
+          alt="Samuel y Gabby Palacio, anfitriones del taller Paz en la mesa, orden en el bolsillo y fuego en el corazón"
           fill
           priority={priority}
           unoptimized
@@ -55,8 +55,8 @@ export function PazPastorsPortrait({
       </div>
       <span className="paz-portrait-table-line" aria-hidden="true" />
       <figcaption className="paz-portrait-caption">
-        <span className="paz-portrait-kicker">Anfitriones · {PAZ_BRAND.institution}</span>
-        <strong>Pastores Samuel y Gabby Palacio</strong>
+        <span className="paz-portrait-kicker">Anfitriones · Wisdom Academy</span>
+        <strong>Samuel y Gabby Palacio</strong>
         <span>4 clases · Cuaderno 24 páginas · Reto de 7 días</span>
       </figcaption>
     </figure>

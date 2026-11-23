@@ -81,6 +81,45 @@ export default async function LessonPage({
   return (
     <main className="wa-lw">
       <div className="wa-lw-container">
+        {slug === 'paz-en-la-mesa' && (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '1rem',
+              padding: '0.85rem 1.25rem',
+              margin: '0 0 1.5rem',
+              borderRadius: '14px',
+              background: 'rgba(197,160,89,0.12)',
+              border: '1px solid rgba(197,160,89,0.35)',
+              fontSize: '0.9rem',
+              color: '#2b2927',
+              fontFamily: 'var(--paz-sans, sans-serif)',
+            }}
+          >
+            <span>
+              <strong>Taller Paz en la mesa:</strong> Esta sesión corresponde a la <strong>Clase {String(lesson.week || 1).padStart(2, '0')}</strong> · Bloque {lesson.sessionNumber || index + 1}.
+            </span>
+            <Link
+              href={`/cursos/${slug}`}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                padding: '0.4rem 0.9rem',
+                borderRadius: '8px',
+                background: '#8f4e38',
+                color: '#ffffff',
+                fontSize: '0.82rem',
+                fontWeight: 600,
+                textDecoration: 'none',
+              }}
+            >
+              Volver al Aula Unificada <WisdomIcon name="arrow-right" size={13} />
+            </Link>
+          </div>
+        )}
         <div className="wa-lw-breadcrumb">
           <Link href="/dashboard">Mi portal</Link>
           <WisdomIcon name="chevron-right" size={12} color="current" />
@@ -138,6 +177,8 @@ export default async function LessonPage({
                 fallbackImage={detail.program.coverImageUrl || weekImage}
                 videos={videos}
                 initialCompleted={lesson.progress?.status === 'completed'}
+                classNumber={lesson.week || 1}
+                blockNumber={lesson.sessionNumber || index + 1}
               />
             </section>
 
@@ -147,8 +188,85 @@ export default async function LessonPage({
                   <span className="wa-lw-kicker">Recursos de la sesión</span>
                   <h2>Materiales de clase</h2>
                 </div>
-                <span className="wa-lw-count">{lesson.materials.length}</span>
+                <span className="wa-lw-count">{slug === 'paz-en-la-mesa' ? 1 : lesson.materials.length}</span>
               </div>
+              {slug === 'paz-en-la-mesa' && (
+                <article
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '1rem',
+                    padding: '1.1rem 1.25rem',
+                    marginBottom: '1rem',
+                    borderRadius: '14px',
+                    background: 'linear-gradient(135deg, rgba(179,106,80,0.08), rgba(197,160,89,0.14))',
+                    border: '1px solid rgba(179,106,80,0.3)',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flex: '1 1 auto', minWidth: '240px' }}>
+                    <span
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '42px',
+                        height: '42px',
+                        borderRadius: '10px',
+                        background: '#b36a50',
+                        color: '#ffffff',
+                        flexShrink: 0,
+                      }}
+                    >
+                      <WisdomIcon name="file-text" size={22} />
+                    </span>
+                    <div>
+                      <span
+                        style={{
+                          display: 'block',
+                          fontSize: '0.74rem',
+                          fontWeight: 700,
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.06em',
+                          color: '#8f4e38',
+                        }}
+                      >
+                        Material Oficial · PDF 24 Páginas
+                      </span>
+                      <strong style={{ fontSize: '1rem', color: '#2b2927' }}>
+                        Cuaderno de Trabajo y Manual de Estudio
+                      </strong>
+                      <span style={{ display: 'block', fontSize: '0.82rem', color: '#6b665f', marginTop: '0.15rem' }}>
+                        Manual completo con las herramientas prácticas, preguntas de reflexión y el Reto de 7 Días.
+                      </span>
+                    </div>
+                  </div>
+
+                  <a
+                    href="/docs/cuaderno-de-trabajo-paz-en-la-mesa.pdf"
+                    download="Cuaderno_de_Trabajo_Paz_en_la_Mesa_24_paginas.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="wa-lw-btn wa-lw-btn-small"
+                    style={{
+                      background: '#b36a50',
+                      color: '#ffffff',
+                      border: 'none',
+                      fontWeight: 700,
+                      padding: '0.55rem 1.1rem',
+                      borderRadius: '8px',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.45rem',
+                      whiteSpace: 'nowrap',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <WisdomIcon name="download" size={15} /> Descargar Manual PDF
+                  </a>
+                </article>
+              )}
               {lesson.materials.length > 0 ? (
                 <div className="wa-lw-materials">
                   {lesson.materials.map((material) => {
@@ -178,7 +296,7 @@ export default async function LessonPage({
                     );
                   })}
                 </div>
-              ) : (
+              ) : slug !== 'paz-en-la-mesa' ? (
                 <div className="wa-lw-empty">
                   <WisdomIcon name="file-text" size={20} />
                   <div>
@@ -186,7 +304,7 @@ export default async function LessonPage({
                     <span>El docente puede añadir el texto o los recursos de esta sesión.</span>
                   </div>
                 </div>
-              )}
+              ) : null}
             </section>
 
             <nav className="wa-lw-pager" aria-label="Navegación entre clases">

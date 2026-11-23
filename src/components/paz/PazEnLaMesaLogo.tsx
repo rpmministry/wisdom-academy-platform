@@ -211,7 +211,7 @@ export const PazEnLaMesaLogo: React.FC<PazEnLaMesaLogoProps> = ({
         fontWeight="700"
         letterSpacing="2.1"
       >
-        MAIM CASA DE ORACIÓN · PASTORES SAMUEL Y GABBY PALACIO
+        WISDOM ACADEMY · SAMUEL Y GABBY PALACIO
       </text>
     </svg>
   );

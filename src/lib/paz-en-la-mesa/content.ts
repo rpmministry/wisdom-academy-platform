@@ -17,8 +17,8 @@ export const PAZ_BRAND = {
   title: 'Paz en la mesa, Orden en el bolsillo y fuego en el corazón',
   shortTitle: 'Paz en la mesa',
   subtitle: '4 clases para sanar tu mesa, ordenar tu economía, oír a Dios y encender tu hogar.',
-  hosts: 'Pastores Samuel y Gabby Palacio',
-  institution: 'MAIM Casa de Oración',
+  hosts: 'Samuel y Gabby Palacio',
+  institution: 'Wisdom Academy',
   foundation: 'Fundación Casa Main',
   agency: 'AlsizTech',
   eyebrow: 'NUEVO TALLER DE FIN DE AÑO · ESTRENO 8 DE DICIEMBRE',
@@ -88,12 +88,17 @@ export const PAZ_PRICING = {
   ],
 } as const;
 
+export const PAZ_OFFICIAL_WHATSAPP_PHONE = '+593998755759';
+export const PAZ_OFFICIAL_WHATSAPP_NUMBER_RAW = '593998755759';
+
 export const PAZ_PUBLIC_LINKS = {
-  whatsappFallback: '',
+  whatsappPhone: PAZ_OFFICIAL_WHATSAPP_PHONE,
+  whatsappFallback: `https://wa.me/${PAZ_OFFICIAL_WHATSAPP_NUMBER_RAW}?text=Hola%20Wisdom%20Academy%2C%20deseo%20m%C3%A1s%20informaci%C3%B3n%20sobre%20el%20taller%20Paz%20en%20la%20mesa.`,
   payphoneFallback: '',
 } as const;
 
 export type PazPhase = 'anticipation' | 'presale' | 'official' | 'closed';
+export type PazPlan = 'presale' | 'official' | 'scholarship';
 
 export const PAZ_LIVE_EVENTS = [
   {
@@ -220,8 +225,8 @@ export const PAZ_CLASSES: PazClass[] = [
       'Sanando heridas, matrimonio y dinámica familiar antes de cerrar el año',
     summary:
       'Un alto en el camino para cerrar el año con honestidad: entregar el ayer, atravesar duelos sin respuestas, recuperar la escucha en casa y agendar una conversación familiar antes del 31 de diciembre.',
-    leader: 'Pastora Gabby Palacio',
-    leaderDetail: 'Lidera 28 min · Intervención del Pastor Samuel: 12 min',
+    leader: 'Gabby Palacio',
+    leaderDetail: 'Lidera 28 min · Intervención de Samuel: 12 min',
     durationMinutes: 40,
     durationLabel: '40 min',
     pages: 'Págs. 03–07',
@@ -324,8 +329,8 @@ export const PAZ_CLASSES: PazClass[] = [
     headline: 'Finanzas dentro del plan eterno de Dios para el 2027',
     summary:
       'Una enseñanza que une lo espiritual y lo material: economía con consciencia, balanza de Espíritu y Verdad, alerta frente al espíritu de Mamón, altar de primicia y presupuesto familiar para el 2027.',
-    leader: 'Pastor Samuel Palacio',
-    leaderDetail: 'Lidera 25 min · Intervención de la Pastora Gabby: 10 min',
+    leader: 'Samuel Palacio',
+    leaderDetail: 'Lidera 25 min · Intervención de Gabby: 10 min',
     durationMinutes: 35,
     durationLabel: '35 min',
     pages: 'Págs. 08–12',
@@ -437,8 +442,8 @@ export const PAZ_CLASSES: PazClass[] = [
       'Cómo escuchar la voz de Dios y discernir tu mapa para el 2027',
     summary:
       'Una clase para afinar los cinco sentidos espirituales, reconocer los ocho medios por los que Dios habla, quitar los cinco bloqueadores y construir el mapa profético familiar del 2027.',
-    leader: 'Pastora Gabby Palacio',
-    leaderDetail: 'Lidera 25 min · Intervención del Pastor Samuel: 15 min',
+    leader: 'Gabby Palacio',
+    leaderDetail: 'Lidera 25 min · Intervención de Samuel: 15 min',
     durationMinutes: 40,
     durationLabel: '40 min',
     pages: 'Págs. 13–18',
@@ -557,8 +562,8 @@ export const PAZ_CLASSES: PazClass[] = [
     headline: 'Cómo levantar un altar familiar vivo en 15 minutos diarios',
     summary:
       'El cierre del taller: desmontar el mito del altar perfecto, asumir el rol insustituible de los padres y activar un altar familiar sencillo, constante y lleno de presencia.',
-    leader: 'Pastor Samuel Palacio',
-    leaderDetail: 'Lidera 20 min · Intervención de la Pastora Gabby: 15 min',
+    leader: 'Samuel Palacio',
+    leaderDetail: 'Lidera 20 min · Intervención de Gabby: 15 min',
     durationMinutes: 35,
     durationLabel: '35 min',
     pages: 'Págs. 19–24',

@@ -75,7 +75,7 @@ export async function authenticateWithPassword(
   };
 }
 
-function uniqueUsernameFromEmail(email: string): string {
+export function uniqueUsernameFromEmail(email: string): string {
   const base = email.split('@')[0].replace(/[^a-zA-Z0-9._-]/g, '').slice(0, 24) || 'usuario';
   let candidate = base;
   let suffix = 1;

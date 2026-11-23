@@ -1073,4 +1073,109 @@ export const MIGRATIONS: Migration[] = [
       VALUES ('paz.payments.manage', 'Validar pagos y becas del taller Paz en la mesa', 'pagos');
     `,
   },
+  {
+    version: 11,
+    name: 'taller_paz_en_la_mesa_codigos_seguros_analitica_y_sync',
+    sql: `
+      -- Códigos únicos seguros de 25 caracteres para transferencias bancarias
+      CREATE TABLE IF NOT EXISTS paz_access_codes (
+        id TEXT PRIMARY KEY,
+        code_hash TEXT NOT NULL UNIQUE,
+        code_preview TEXT NOT NULL,
+        intent_id TEXT REFERENCES paz_payment_intents(id) ON DELETE SET NULL,
+        email TEXT COLLATE NOCASE NOT NULL,
+        user_id TEXT REFERENCES users(id) ON DELETE SET NULL,
+        program_id TEXT NOT NULL REFERENCES course_programs(id) ON DELETE CASCADE,
+        status TEXT NOT NULL DEFAULT 'generated'
+          CHECK (status IN ('generated','sent','redeemed','revoked')),
+        generated_by TEXT REFERENCES users(id),
+        generated_at TEXT NOT NULL,
+        sent_at TEXT,
+        sent_by TEXT REFERENCES users(id),
+        expires_at TEXT,
+        redeemed_at TEXT,
+        redeemed_ip TEXT,
+        revoked_at TEXT,
+        revoked_by TEXT REFERENCES users(id),
+        revoke_reason TEXT,
+        attempts INTEGER NOT NULL DEFAULT 0,
+        is_test INTEGER NOT NULL DEFAULT 0,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS ix_paz_codes_hash ON paz_access_codes(code_hash);
+      CREATE INDEX IF NOT EXISTS ix_paz_codes_email ON paz_access_codes(email);
+      CREATE INDEX IF NOT EXISTS ix_paz_codes_status ON paz_access_codes(status);
+
+      -- Sesiones de estudiantes y tiempo de actividad real
+      CREATE TABLE IF NOT EXISTS paz_student_sessions (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        program_id TEXT NOT NULL REFERENCES course_programs(id) ON DELETE CASCADE,
+        started_at TEXT NOT NULL,
+        last_heartbeat_at TEXT NOT NULL,
+        ended_at TEXT,
+        active_seconds INTEGER NOT NULL DEFAULT 0,
+        idle_seconds INTEGER NOT NULL DEFAULT 0,
+        video_seconds INTEGER NOT NULL DEFAULT 0,
+        ip_address TEXT,
+        user_agent TEXT,
+        status TEXT NOT NULL DEFAULT 'active'
+          CHECK (status IN ('active','closed','timeout')),
+        is_test INTEGER NOT NULL DEFAULT 0,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS ix_paz_sessions_user
+        ON paz_student_sessions(user_id, program_id, started_at);
+
+      -- Actividad detallada por clase y bloque
+      CREATE TABLE IF NOT EXISTS paz_lesson_activity (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        program_id TEXT NOT NULL REFERENCES course_programs(id) ON DELETE CASCADE,
+        module_id TEXT NOT NULL REFERENCES course_modules(id) ON DELETE CASCADE,
+        lesson_id TEXT NOT NULL REFERENCES course_lessons(id) ON DELETE CASCADE,
+        class_number INTEGER NOT NULL,
+        block_number INTEGER NOT NULL,
+        active_seconds INTEGER NOT NULL DEFAULT 0,
+        video_seconds INTEGER NOT NULL DEFAULT 0,
+        play_count INTEGER NOT NULL DEFAULT 0,
+        completed INTEGER NOT NULL DEFAULT 0,
+        completed_at TEXT,
+        last_active_at TEXT NOT NULL,
+        is_test INTEGER NOT NULL DEFAULT 0,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        UNIQUE (user_id, lesson_id)
+      );
+      CREATE INDEX IF NOT EXISTS ix_paz_activity_user
+        ON paz_lesson_activity(user_id, program_id, class_number);
+
+      -- Cola de sincronización con Google Sheets (6 pestañas)
+      CREATE TABLE IF NOT EXISTS paz_sync_queue (
+        id TEXT PRIMARY KEY,
+        event_type TEXT NOT NULL,
+        entity_id TEXT NOT NULL,
+        tab_target TEXT NOT NULL
+          CHECK (tab_target IN ('INSCRITOS','PAGOS','CODIGOS_ACCESO','HISTORIAL_INGRESOS','ACTIVIDAD_TALLER','RESUMEN_GENERAL')),
+        payload_json TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'pending'
+          CHECK (status IN ('pending','synced','failed','skipped')),
+        attempts INTEGER NOT NULL DEFAULT 0,
+        last_error TEXT,
+        created_at TEXT NOT NULL,
+        synced_at TEXT
+      );
+      CREATE INDEX IF NOT EXISTS ix_paz_sync_status ON paz_sync_queue(status, created_at);
+
+      -- Marca de pruebas para excluir de analíticas comerciales
+      ALTER TABLE paz_payment_intents ADD COLUMN is_test INTEGER NOT NULL DEFAULT 0;
+
+      INSERT OR IGNORE INTO permissions (code, description, category)
+      VALUES
+        ('paz.codes.manage', 'Generar, enviar y revocar códigos de acceso de 25 caracteres', 'cursos'),
+        ('paz.analytics.view', 'Consultar analíticas y métricas de uso del taller Paz en la mesa', 'cursos');
+    `,
+  },
 ];

@@ -1,5 +1,7 @@
 import {
   PAZ_DATES,
+  PAZ_OFFICIAL_WHATSAPP_NUMBER_RAW,
+  PAZ_OFFICIAL_WHATSAPP_PHONE,
   PAZ_PRICING,
   PAZ_PUBLIC_LINKS,
   type PazPhase,
@@ -32,15 +34,51 @@ function envHref(value: string | undefined, fallback: string): string {
   return envUrl(candidate, '');
 }
 
+/**
+ * Enlace oficial de chat de WhatsApp con número internacional (+593998755759).
+ */
+export function buildOfficialWhatsappChatUrl(message?: string): string {
+  const base = `https://wa.me/${PAZ_OFFICIAL_WHATSAPP_NUMBER_RAW}`;
+  if (!message || !message.trim()) {
+    return `${base}?text=${encodeURIComponent(
+      'Hola Wisdom Academy, deseo más información sobre el taller Paz en la mesa, orden en el bolsillo y fuego en el corazón.'
+    )}`;
+  }
+  return `${base}?text=${encodeURIComponent(message.trim())}`;
+}
+
 export const pazPublicConfig = {
+  officialWhatsappPhone: PAZ_OFFICIAL_WHATSAPP_PHONE,
+  officialWhatsappRaw: PAZ_OFFICIAL_WHATSAPP_NUMBER_RAW,
   whatsappUrl: envUrl(process.env.NEXT_PUBLIC_PAZ_WHATSAPP_URL, PAZ_PUBLIC_LINKS.whatsappFallback),
+  whatsappGroupUrl: envUrl(process.env.NEXT_PUBLIC_PAZ_WHATSAPP_GROUP_URL, ''),
   payphoneUrl: envUrl(process.env.NEXT_PUBLIC_PAZ_PAYPHONE_URL, PAZ_PUBLIC_LINKS.payphoneFallback),
   pastorsImage:
     (process.env.NEXT_PUBLIC_PAZ_PASTORS_IMAGE || '').trim() ||
     '/brand/paz-en-la-mesa/pastores-samuel-gabby.jpg',
-  notebookUrl: envHref(process.env.NEXT_PUBLIC_PAZ_NOTEBOOK_URL, ''),
-  welcomeVideoUrl: envHref(process.env.NEXT_PUBLIC_PAZ_WELCOME_VIDEO_URL, ''),
+  trailerVideoUrl: envHref(
+    process.env.NEXT_PUBLIC_PAZ_TRAILER_URL ||
+      process.env.NEXT_PUBLIC_PAZ_WELCOME_VIDEO_URL,
+    'https://www.youtube.com/watch?v=OQUIbCicITA'
+  ),
+  notebookUrl: envHref(
+    process.env.NEXT_PUBLIC_PAZ_NOTEBOOK_URL,
+    '/docs/cuaderno-de-trabajo-paz-en-la-mesa.pdf'
+  ),
+  welcomeVideoUrl: envHref(
+    process.env.NEXT_PUBLIC_PAZ_WELCOME_VIDEO_URL,
+    'https://www.youtube.com/watch?v=OQUIbCicITA'
+  ),
   studentLiveUrl: envHref(process.env.NEXT_PUBLIC_PAZ_STUDENT_LIVE_URL, ''),
+  classVideos: {
+    class1: envHref(
+      process.env.NEXT_PUBLIC_PAZ_CLASS1_VIDEO_URL,
+      'https://www.youtube.com/watch?v=OQUIbCicITA'
+    ),
+    class2: envHref(process.env.NEXT_PUBLIC_PAZ_CLASS2_VIDEO_URL, ''),
+    class3: envHref(process.env.NEXT_PUBLIC_PAZ_CLASS3_VIDEO_URL, ''),
+    class4: envHref(process.env.NEXT_PUBLIC_PAZ_CLASS4_VIDEO_URL, ''),
+  },
   presaleStartsAt: envDate(process.env.NEXT_PUBLIC_PAZ_PRESALE_AT, PAZ_DATES.presaleStart).toISOString(),
   presaleEndsAt: envDate(process.env.NEXT_PUBLIC_PAZ_PRESALE_ENDS_AT, PAZ_DATES.presaleEnds).toISOString(),
   launchAt: envDate(process.env.NEXT_PUBLIC_PAZ_LAUNCH_AT, PAZ_DATES.launch).toISOString(),
@@ -58,6 +96,19 @@ export const pazPublicConfig = {
 } as const;
 
 export function pazPhaseAt(now: Date = new Date()): PazPhase {
+  const forced = (
+    process.env.PAZ_FORCE_PHASE ||
+    process.env.NEXT_PUBLIC_PAZ_FORCE_PHASE ||
+    ''
+  ).trim() as PazPhase;
+  if (
+    forced === 'anticipation' ||
+    forced === 'presale' ||
+    forced === 'official' ||
+    forced === 'closed'
+  ) {
+    return forced;
+  }
   const time = now.getTime();
   if (time < new Date(pazPublicConfig.presaleStartsAt).getTime()) return 'anticipation';
   if (time <= new Date(pazPublicConfig.presaleEndsAt).getTime()) return 'presale';
