@@ -26,7 +26,7 @@ interface CourseProgramWorkspaceProps {
   canManageMeetings: boolean;
 }
 
-type TabId = 'ruta' | 'materias' | 'faculty' | 'recursos' | 'evaluaciones' | 'progreso';
+type TabId = 'aula' | 'ruta' | 'materias' | 'faculty' | 'recursos' | 'evaluaciones' | 'progreso' | 'reto';
 
 const TABS: Array<{ id: TabId; label: string; icon: LmsIconName }> = [
   { id: 'ruta', label: 'Ruta semanal', icon: 'calendar' },
@@ -35,6 +35,12 @@ const TABS: Array<{ id: TabId; label: string; icon: LmsIconName }> = [
   { id: 'recursos', label: 'Recursos', icon: 'folder' },
   { id: 'evaluaciones', label: 'Evaluaciones', icon: 'award' },
   { id: 'progreso', label: 'Mi progreso', icon: 'target' },
+];
+
+const PAZ_TABS: Array<{ id: TabId; label: string; icon: LmsIconName }> = [
+  { id: 'aula', label: 'Aula virtual', icon: 'play' },
+  { id: 'recursos', label: 'Materiales y manual', icon: 'folder' },
+  { id: 'reto', label: 'Reto de 7 días', icon: 'spark' },
 ];
 
 const SUBJECT_PALETTE: Record<string, { ink: string; soft: string; label: string }> = {
@@ -107,13 +113,7 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
   const isN2n = /n2n/i.test(program.title) || /n2n/i.test(program.institution || '');
   const isPaz = program.slug === 'paz-en-la-mesa';
   const tabs = useMemo(
-    () =>
-      TABS.map((tab) => {
-        if (!isPaz) return tab;
-        if (tab.id === 'ruta') return { ...tab, label: 'Ruta de clases' };
-        if (tab.id === 'materias') return { ...tab, label: 'Clases' };
-        return tab;
-      }),
+    () => (isPaz ? PAZ_TABS : TABS),
     [isPaz]
   );
   const firstAvailable =
@@ -121,7 +121,7 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
     modules.find((module) => !module.locked) ||
     modules[0];
   const [activeModuleId, setActiveModuleId] = useState<string>(firstAvailable?.id || '');
-  const [activeTab, setActiveTab] = useState<TabId>('ruta');
+  const [activeTab, setActiveTab] = useState<TabId>(isPaz ? 'aula' : 'ruta');
   const [subjectFilter, setSubjectFilter] = useState<string>('all');
   const [openWeeks, setOpenWeeks] = useState<Set<number>>(new Set());
 
@@ -221,7 +221,7 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
   const certificateAvailable = Boolean(moduleProgress?.completed && !isStaff);
 
   return (
-    <main className="wa-lms">
+    <main className={`wa-lms ${isPaz ? 'is-paz' : ''}`}>
       {isPaz && <PazActivityTracker programSlug={slug} />}
       <div className="wa-lms-container">
         <nav className="wa-breadcrumbs" aria-label="Migas de pan">
@@ -250,7 +250,7 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
             confirmado y la sesión exclusiva en vivo se realizará el martes 22 de diciembre.
           </div>
         )}
-        <section className="wa-lms-hero">
+        <section className={`wa-lms-hero ${isPaz ? 'is-paz' : ''}`}>
           <div className="wa-lms-hero-media">
             {program.coverImageUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -266,66 +266,120 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
                   <img src={program.logoUrl} alt={program.institution || 'Institución'} />
                 )}
                 <span className="wa-lms-hero-brand-copy">
-                  <small>{isN2n ? 'Programa de Teología' : program.kind === 'workshop' ? 'Taller' : 'Curso'}</small>
+                  <small>{isN2n ? 'Programa de Teología' : isPaz ? 'Taller Intensivo' : program.kind === 'workshop' ? 'Taller' : 'Curso'}</small>
                   <strong>{program.institution || 'Wisdom Academy'}</strong>
                 </span>
               </div>
               <div className="wa-lms-eyebrow">
-                <LmsIcon name="spark" size={14} /> {isN2n ? 'Formación bíblica y ministerial' : program.kind === 'workshop' ? 'Experiencia intensiva' : 'Ruta de aprendizaje'}
+                <LmsIcon name="spark" size={14} />{' '}
+                {isN2n
+                  ? 'Formación bíblica y ministerial'
+                  : isPaz
+                    ? 'Taller de Fin de Año · Samuel y Gabby Palacio'
+                    : program.kind === 'workshop'
+                      ? 'Experiencia intensiva'
+                      : 'Ruta de aprendizaje'}
               </div>
               <h1>{program.title}</h1>
               {program.subtitle && <p className="wa-lms-hero-subtitle">{program.subtitle}</p>}
               <div className="wa-lms-hero-chips">
-                <span><LmsIcon name="layers" size={14} /> {program.moduleCount} {isPaz ? 'clases' : 'semestres'}</span>
-                <span><LmsIcon name="play" size={14} /> {program.lessonCount} {isPaz ? 'bloques' : 'sesiones cargadas'}</span>
-                <span><LmsIcon name="award" size={14} /> {program.credential || (isN2n ? 'Certificación ministerial' : 'Constancia del programa')}</span>
+                {isPaz ? (
+                  <>
+                    <span><LmsIcon name="layers" size={14} /> 4 clases magistrales</span>
+                    <span><LmsIcon name="file" size={14} /> Cuaderno de 24 págs</span>
+                    <span><LmsIcon name="spark" size={14} /> Sesión en vivo 22 dic</span>
+                  </>
+                ) : (
+                  <>
+                    <span><LmsIcon name="layers" size={14} /> {program.moduleCount} semestres</span>
+                    <span><LmsIcon name="play" size={14} /> {program.lessonCount} sesiones cargadas</span>
+                    <span><LmsIcon name="award" size={14} /> {program.credential || (isN2n ? 'Certificación ministerial' : 'Constancia del programa')}</span>
+                  </>
+                )}
               </div>
               <div className="wa-lms-hero-actions">
-                {nextLesson ? (
-                  <Link className="wa-lms-btn wa-lms-btn-primary" href={`/cursos/${slug}/clase/${nextLesson.id}`}>
-                    <LmsIcon name="play" size={16} />
-                    {progress.completedLessons > 0 ? 'Continuar aprendizaje' : 'Comenzar ahora'}
-                  </Link>
+                {isPaz ? (
+                  <>
+                    <a
+                      className="wa-lms-btn wa-lms-btn-primary"
+                      href="#aula-virtual"
+                      onClick={() => {
+                        setActiveTab('aula');
+                        const el = document.getElementById('aula-virtual');
+                        if (el) el.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                    >
+                      <LmsIcon name="play" size={16} /> Comenzar clase 01
+                    </a>
+                    <Link className="wa-lms-btn wa-lms-btn-glass" href={`/cursos/${slug}/reto`}>
+                      <LmsIcon name="target" size={16} /> Reto de 7 días
+                    </Link>
+                    <a
+                      className="wa-lms-btn wa-lms-btn-glass"
+                      href="/docs/cuaderno-de-trabajo-paz-en-la-mesa.pdf"
+                      download="Cuaderno_de_Trabajo_Paz_en_la_Mesa_24_paginas.pdf"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <LmsIcon name="download" size={16} /> Cuaderno de Trabajo (PDF)
+                    </a>
+                  </>
                 ) : (
-                  <Link className="wa-lms-btn wa-lms-btn-primary" href="#ruta">
-                    <LmsIcon name="book" size={16} /> Ver ruta completa
-                  </Link>
-                )}
-                <button
-                  type="button"
-                  className="wa-lms-btn wa-lms-btn-glass"
-                  onClick={() => setActiveTab('materias')}
-                >
-                  <LmsIcon name="book" size={16} /> {isPaz ? 'Explorar clases' : 'Explorar materias'}
-                </button>
-                {isPaz && (
-                  <Link className="wa-lms-btn wa-lms-btn-glass" href={`/cursos/${slug}/reto`}>
-                    <LmsIcon name="target" size={16} /> Reto de 7 días
-                  </Link>
+                  <>
+                    {nextLesson ? (
+                      <Link className="wa-lms-btn wa-lms-btn-primary" href={`/cursos/${slug}/clase/${nextLesson.id}`}>
+                        <LmsIcon name="play" size={16} />
+                        {progress.completedLessons > 0 ? 'Continuar aprendizaje' : 'Comenzar ahora'}
+                      </Link>
+                    ) : (
+                      <Link className="wa-lms-btn wa-lms-btn-primary" href="#ruta">
+                        <LmsIcon name="book" size={16} /> Ver ruta completa
+                      </Link>
+                    )}
+                    <button
+                      type="button"
+                      className="wa-lms-btn wa-lms-btn-glass"
+                      onClick={() => setActiveTab('materias')}
+                    >
+                      <LmsIcon name="book" size={16} /> Explorar materias
+                    </button>
+                  </>
                 )}
               </div>
             </div>
             <div className="wa-lms-hero-side">
               <div
                 className="wa-lms-ring"
-                style={{ ['--ring' as string]: `${Math.max(4, progress.percent)}%` }}
+                style={{ ['--ring' as string]: `${Math.max(4, isPaz ? 25 : progress.percent)}%` }}
                 role="img"
                 aria-label={`${progress.percent}% del contenido cargado completado`}
               >
                 <div className="wa-lms-ring-inner">
-                  <strong>{progress.percent}%</strong>
-                  <span>contenido</span>
+                  <strong>{isPaz ? '1/4' : `${progress.percent}%`}</strong>
+                  <span>{isPaz ? 'clase lista' : 'contenido'}</span>
                 </div>
               </div>
               <div className="wa-lms-hero-stats">
-                <div><strong>{progress.completedLessons}</strong><span>{isPaz ? 'bloques completados' : 'clases completadas'}</span></div>
-                <div><strong>{completedSemesters}</strong><span>{isPaz ? 'clases completadas' : 'semestres aprobados'}</span></div>
-                <div><strong>{results.length}</strong><span>evaluaciones rendidas</span></div>
+                {isPaz ? (
+                  <>
+                    <div><strong>4</strong><span>clases magistrales</span></div>
+                    <div><strong>24</strong><span>páginas de trabajo</span></div>
+                    <div><strong>22 Dic</strong><span>sesión en vivo</span></div>
+                  </>
+                ) : (
+                  <>
+                    <div><strong>{progress.completedLessons}</strong><span>clases completadas</span></div>
+                    <div><strong>{completedSemesters}</strong><span>semestres aprobados</span></div>
+                    <div><strong>{results.length}</strong><span>evaluaciones rendidas</span></div>
+                  </>
+                )}
               </div>
               <div className="wa-lms-hero-next">
-                <span className="wa-lms-hero-next-label">Siguiente</span>
-                <strong>{nextLesson?.title || 'Ruta completada'}</strong>
-                {nextUnitNumber ? (
+                <span className="wa-lms-hero-next-label">{isPaz ? 'Clase disponible' : 'Siguiente'}</span>
+                <strong>{isPaz ? '01. El Fundamento de la Paz' : (nextLesson?.title || 'Ruta completada')}</strong>
+                {isPaz ? (
+                  <span>Samuel y Gabby Palacio</span>
+                ) : nextUnitNumber ? (
                   <span>{nextUnitNoun} {String(nextUnitNumber).padStart(2, '0')}</span>
                 ) : null}
               </div>
@@ -348,13 +402,6 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
 
         <div className="wa-lms-layout">
           <main className="wa-lms-main">
-            {isPaz && (
-              <PazUnifiedClassroom
-                slug={slug}
-                detail={detail}
-                isStaff={isStaff}
-              />
-            )}
             <div className="wa-lms-tabs" role="tablist" aria-label="Secciones del programa">
               {tabs.map((tab) => (
                 <button
@@ -371,7 +418,25 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
               ))}
             </div>
 
-            {activeTab === 'ruta' && (
+            {isPaz ? (
+              <>
+                {activeTab === 'aula' && (
+                  <PazUnifiedClassroom
+                    slug={slug}
+                    detail={detail}
+                    isStaff={isStaff}
+                  />
+                )}
+                {activeTab === 'recursos' && (
+                  <PazResourcesTab slug={slug} materials={materials} />
+                )}
+                {activeTab === 'reto' && (
+                  <PazRetoTab slug={slug} />
+                )}
+              </>
+            ) : (
+              <>
+                {activeTab === 'ruta' && (
               <section className="wa-lms-panel" aria-label="Ruta semanal">
                 <div className="wa-lms-section-head">
                   <div>
@@ -648,10 +713,20 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
                 totalLessons={progress.totalLessons}
               />
             )}
+              </>
+            )}
           </main>
 
           <aside className="wa-lms-aside" aria-label="Resumen del programa">
-            <div className="wa-lms-aside-card wa-lms-continue">
+            {isPaz ? (
+              <PazAsideCard
+                slug={slug}
+                detail={detail}
+                onOpenClassroom={() => setActiveTab('aula')}
+              />
+            ) : (
+              <>
+                <div className="wa-lms-aside-card wa-lms-continue">
               <div className="wa-lms-aside-head">
                 <span className="wa-lms-kicker">Continuar</span>
                 <LmsIcon name="spark" size={16} />
@@ -776,6 +851,8 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
                 })}
               </div>
             </div>
+              </>
+            )}
           </aside>
         </div>
 
@@ -802,6 +879,296 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
 /* -------------------------------------------------------------------------- */
 /* Subcomponents                                                              */
 /* -------------------------------------------------------------------------- */
+
+const PazAsideCard: React.FC<{
+  slug: string;
+  detail: ProgramDetail;
+  onOpenClassroom: () => void;
+}> = ({ detail, onOpenClassroom }) => {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <div className="wa-lms-aside-card">
+        <div className="wa-lms-aside-head">
+          <span className="wa-lms-kicker">Clase en curso</span>
+          <LmsIcon name="play" size={16} />
+        </div>
+        <div
+          style={{
+            padding: '0.85rem',
+            borderRadius: '12px',
+            background: 'linear-gradient(135deg, rgba(179,106,80,0.1), rgba(197,160,89,0.15))',
+            border: '1px solid rgba(197,160,89,0.3)',
+            marginBottom: '0.75rem',
+          }}
+        >
+          <span
+            style={{
+              display: 'inline-block',
+              fontSize: '0.72rem',
+              fontWeight: 800,
+              textTransform: 'uppercase',
+              color: '#8f4e38',
+              marginBottom: '0.2rem',
+            }}
+          >
+            Clase 01 · Video Listo
+          </span>
+          <strong style={{ display: 'block', fontSize: '0.98rem', color: '#2b2927', lineHeight: 1.3 }}>
+            El Fundamento de la Paz
+          </strong>
+          <small style={{ display: 'block', color: '#6b665f', marginTop: '0.25rem', fontSize: '0.78rem' }}>
+            Samuel y Gabby Palacio · 1h 15m (4 bloques continuos)
+          </small>
+        </div>
+        <a
+          href="#aula-virtual"
+          onClick={(e) => {
+            e.preventDefault();
+            onOpenClassroom();
+            const el = document.getElementById('aula-virtual');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }}
+          className="wa-lms-btn wa-lms-btn-primary wa-lms-btn-block"
+        >
+          <LmsIcon name="play" size={15} /> Ver en el aula virtual
+        </a>
+      </div>
+
+      <div className="wa-lms-aside-card">
+        <div className="wa-lms-aside-head">
+          <span className="wa-lms-kicker">Material de estudio</span>
+          <LmsIcon name="file" size={16} />
+        </div>
+        <p style={{ margin: '0 0 0.75rem', fontSize: '0.84rem', color: '#6b665f', lineHeight: 1.5 }}>
+          Cuaderno de Trabajo de <strong>24 páginas</strong> con balance financiero familiar, mapa de discernimiento y el instructivo del Reto.
+        </p>
+        <a
+          href="/docs/cuaderno-de-trabajo-paz-en-la-mesa.pdf"
+          download="Cuaderno_de_Trabajo_Paz_en_la_Mesa_24_paginas.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="wa-lms-btn wa-lms-btn-secondary wa-lms-btn-block"
+        >
+          <LmsIcon name="download" size={15} /> Descargar Manual (PDF)
+        </a>
+      </div>
+
+      <div className="wa-lms-aside-card">
+        <div className="wa-lms-aside-head">
+          <span className="wa-lms-kicker">Agenda del taller</span>
+          <LmsIcon name="calendar" size={16} />
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.82rem', marginBottom: '0.85rem' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+            <span style={{ color: '#b36a50', marginTop: '2px' }}><LmsIcon name="spark" size={14} /></span>
+            <div>
+              <strong style={{ display: 'block', color: '#2b2927' }}>Martes 22 de diciembre · 20:00</strong>
+              <span style={{ color: '#6b665f' }}>Sesión exclusiva en vivo para alumnos</span>
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+            <span style={{ color: '#c5a059', marginTop: '2px' }}><LmsIcon name="target" size={14} /></span>
+            <div>
+              <strong style={{ display: 'block', color: '#2b2927' }}>23 al 30 de diciembre</strong>
+              <span style={{ color: '#6b665f' }}>Reto de 7 días de Altar Familiar</span>
+            </div>
+          </div>
+        </div>
+        <a
+          href={`https://wa.me/593998755759?text=${encodeURIComponent('Hola Wisdom Academy, tengo una consulta sobre el aula del taller Paz en la Mesa.')}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="wa-lms-btn wa-lms-btn-glass wa-lms-btn-block"
+          style={{
+            border: '1px solid rgba(138,131,121,0.3)',
+            color: '#2b2927',
+            background: '#faf8f5',
+          }}
+        >
+          <LmsIcon name="spark" size={14} /> Soporte por WhatsApp
+        </a>
+      </div>
+    </div>
+  );
+};
+
+const PazResourcesTab: React.FC<{
+  slug: string;
+  materials: MaterialView[];
+}> = ({ materials }) => {
+  return (
+    <section className="wa-lms-panel" aria-label="Materiales y recursos del taller">
+      <div className="wa-lms-section-head">
+        <div>
+          <span className="wa-lms-kicker">Herramientas y estudio</span>
+          <h2>Materiales oficiales de Paz en la Mesa</h2>
+          <p>
+            Descarga el Cuaderno de Trabajo completo y accede a los recursos complementarios del taller impartido por Samuel y Gabby Palacio.
+          </p>
+        </div>
+      </div>
+
+      <div
+        style={{
+          margin: '0 0 1.5rem',
+          padding: '1.75rem',
+          borderRadius: '18px',
+          background: 'linear-gradient(135deg, rgba(179,106,80,0.08), rgba(197,160,89,0.15))',
+          border: '1px solid rgba(197,160,89,0.35)',
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '1.25rem',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: '1 1 320px' }}>
+          <span
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '54px',
+              height: '54px',
+              borderRadius: '14px',
+              background: '#b36a50',
+              color: '#ffffff',
+              boxShadow: '0 8px 20px rgba(179,106,80,0.3)',
+              flexShrink: 0,
+            }}
+          >
+            <LmsIcon name="file" size={26} />
+          </span>
+          <div>
+            <span
+              style={{
+                display: 'inline-block',
+                fontSize: '0.74rem',
+                fontWeight: 800,
+                textTransform: 'uppercase',
+                letterSpacing: '0.06em',
+                color: '#8f4e38',
+              }}
+            >
+              Manual Principal · PDF 24 Páginas
+            </span>
+            <h3 style={{ margin: '0.2rem 0', fontSize: '1.2rem', color: '#2b2927', fontWeight: 800 }}>
+              Cuaderno de Trabajo Oficial de Paz en la Mesa
+            </h3>
+            <p style={{ margin: 0, fontSize: '0.86rem', color: '#55514b', lineHeight: 1.5 }}>
+              Incluye las 4 herramientas prácticas: Protocolo de conversación de cierre de año, Balance financiero familiar de 3 columnas, Mapa de discernimiento para el 2027 y Guía del Reto de 7 días.
+            </p>
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+          <a
+            href="/docs/cuaderno-de-trabajo-paz-en-la-mesa.pdf"
+            download="Cuaderno_de_Trabajo_Paz_en_la_Mesa_24_paginas.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="wa-lms-btn wa-lms-btn-primary"
+            style={{ padding: '0.7rem 1.4rem' }}
+          >
+            <LmsIcon name="download" size={16} /> Descargar Manual PDF
+          </a>
+          <a
+            href="/docs/cuaderno-de-trabajo-paz-en-la-mesa.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="wa-lms-btn wa-lms-btn-secondary"
+            style={{ border: '1px solid rgba(197,160,89,0.4)', color: '#2b2927' }}
+          >
+            <LmsIcon name="external" size={15} /> Ver en línea
+          </a>
+        </div>
+      </div>
+
+      <div className="wa-lms-resource-grid">
+        {materials.map((mat) => (
+          <article key={mat.id} className="wa-lms-resource-card" style={{ border: '1px solid rgba(197,160,89,0.25)' }}>
+            <div className="wa-lms-resource-icon" style={{ background: 'rgba(179,106,80,0.1)', color: '#8f4e38' }}>
+              <LmsIcon name={mat.url?.includes('.pdf') ? 'file' : mat.url?.includes('reto') ? 'target' : 'spark'} size={22} />
+            </div>
+            <div>
+              <span className="wa-lms-resource-kind" style={{ color: '#8f4e38' }}>Recurso del taller</span>
+              <h3 style={{ fontSize: '0.98rem' }}>{mat.title}</h3>
+              <small style={{ color: '#6b665f' }}>Acceso permanente para estudiantes inscritos</small>
+            </div>
+            {mat.url && (
+              <a
+                className="wa-lms-icon-btn"
+                href={mat.url}
+                target={mat.url.startsWith('http') || mat.url.endsWith('.pdf') ? '_blank' : '_self'}
+                rel="noopener noreferrer"
+                aria-label={`Abrir ${mat.title}`}
+                style={{ color: '#8f4e38' }}
+              >
+                <LmsIcon name={mat.url.endsWith('.pdf') ? 'download' : 'arrow'} size={17} />
+              </a>
+            )}
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+};
+
+const PazRetoTab: React.FC<{ slug: string }> = ({ slug }) => {
+  return (
+    <section className="wa-lms-panel" aria-label="Reto de 7 días">
+      <div className="wa-lms-section-head">
+        <div>
+          <span className="wa-lms-kicker">Altar Familiar</span>
+          <h2>Reto de 7 Días: Enciende tu Hogar</h2>
+          <p>
+            Una experiencia diaria de 15 minutos para restaurar el altar familiar, con preguntas de reflexión, oración guiada y checklist interactivo.
+          </p>
+        </div>
+      </div>
+
+      <div
+        style={{
+          padding: '2.5rem 2rem',
+          borderRadius: '18px',
+          background: 'linear-gradient(135deg, rgba(179,106,80,0.08), rgba(197,160,89,0.16))',
+          border: '1px solid rgba(197,160,89,0.35)',
+          textAlign: 'center',
+        }}
+      >
+        <span
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '64px',
+            height: '64px',
+            borderRadius: '50%',
+            background: '#b36a50',
+            color: '#ffffff',
+            boxShadow: '0 8px 24px rgba(179,106,80,0.4)',
+            marginBottom: '1rem',
+          }}
+        >
+          <LmsIcon name="target" size={32} />
+        </span>
+        <h3 style={{ fontSize: '1.4rem', color: '#2b2927', fontWeight: 800, margin: '0 0 0.5rem' }}>
+          Plataforma Interactiva del Reto de 7 Días
+        </h3>
+        <p style={{ maxWidth: '560px', margin: '0 auto 1.5rem', color: '#55514b', fontSize: '0.92rem', lineHeight: 1.6 }}>
+          Accede al checklist interactivo día por día, registra tu progreso familiar y sigue el instructivo oficial del 23 al 30 de diciembre.
+        </p>
+        <Link
+          href={`/cursos/${slug}/reto`}
+          className="wa-lms-btn wa-lms-btn-primary"
+          style={{ padding: '0.75rem 1.75rem', fontSize: '0.95rem' }}
+        >
+          <LmsIcon name="spark" size={17} /> Abrir plataforma del Reto <LmsIcon name="arrow" size={15} />
+        </Link>
+      </div>
+    </section>
+  );
+};
 
 const LessonRow: React.FC<{ slug: string; lesson: LessonView }> = ({ slug, lesson }) => {
   const completed = lesson.progress?.status === 'completed';

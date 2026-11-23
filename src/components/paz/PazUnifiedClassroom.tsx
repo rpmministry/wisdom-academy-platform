@@ -88,6 +88,7 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
 
   return (
     <div
+      id="aula-virtual"
       style={{
         margin: '0 0 2.5rem',
         padding: '2rem',
@@ -596,24 +597,29 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
                         {isCompleted ? 'Completado' : isSaving ? 'Guardando…' : 'Marcar completado'}
                       </button>
 
-                      <Link
-                        href={`/cursos/${slug}/clase/${matchingLesson.id}`}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsPlayingVideo(true);
+                          const el = document.getElementById('aula-virtual');
+                          if (el) el.scrollIntoView({ behavior: 'smooth' });
+                        }}
                         style={{
                           display: 'inline-flex',
                           alignItems: 'center',
-                          gap: '0.25rem',
+                          gap: '0.3rem',
                           padding: '0.35rem 0.75rem',
                           borderRadius: '8px',
                           background: '#faf8f5',
                           border: '1px solid rgba(197, 160, 89, 0.35)',
-                          color: '#6b665f',
+                          color: '#8f4e38',
                           fontSize: '0.8rem',
-                          fontWeight: 600,
-                          textDecoration: 'none',
+                          fontWeight: 700,
+                          cursor: 'pointer',
                         }}
                       >
-                        Ver detalle <WisdomIcon name="arrow-right" size={11} />
-                      </Link>
+                        <WisdomIcon name="play" size={11} /> Ver capítulo
+                      </button>
                     </div>
                   )}
                 </div>

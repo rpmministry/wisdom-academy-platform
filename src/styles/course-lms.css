@@ -3404,3 +3404,174 @@
     min-height: 0;
   }
 }
+
+/* ==============================================================================
+ * PAZ EN LA MESA · PALETA EDITORIAL CINEMA Y AULA UNIFICADA
+ * ============================================================================== */
+
+.wa-lms.is-paz {
+  --lms-bg: #faf8f5;
+  --lms-surface: #ffffff;
+  --lms-surface-2: #f7f3ed;
+  --lms-ink: #2b2927;
+  --lms-muted: #6b665f;
+  --lms-faint: #9c9489;
+  --lms-line: #e6dfd5;
+  --lms-terracotta: #b36a50;
+  --lms-terracotta-deep: #8f4e38;
+  --lms-gold: #c5a059;
+  --lms-cream: #faf8f5;
+  --lms-paper: #f2ede4;
+  --lms-charcoal: #2b2927;
+  background:
+    radial-gradient(900px 520px at 90% -10%, rgba(197, 160, 89, 0.12), transparent 70%),
+    radial-gradient(700px 420px at 5% 0%, rgba(179, 106, 80, 0.08), transparent 70%),
+    var(--lms-bg);
+  color: var(--lms-ink);
+}
+
+.wa-lms.is-paz .wa-breadcrumbs a:hover {
+  color: #8f4e38;
+}
+
+.wa-lms.is-paz .wa-lms-hero {
+  background: linear-gradient(135deg, #242220 0%, #1a1918 50%, #2d1e19 100%);
+  border: 1px solid rgba(197, 160, 89, 0.35);
+  box-shadow: 0 35px 80px -40px rgba(43, 41, 39, 0.65);
+}
+
+.wa-lms.is-paz .wa-lms-hero-shade {
+  background:
+    linear-gradient(100deg, rgba(26, 25, 24, 0.96) 0%, rgba(35, 30, 28, 0.82) 48%, rgba(43, 41, 39, 0.4) 100%),
+    linear-gradient(0deg, rgba(26, 25, 24, 0.85), transparent 45%);
+}
+
+.wa-lms.is-paz .wa-lms-eyebrow {
+  color: #d8a47f;
+}
+
+.wa-lms.is-paz .wa-lms-hero-brand {
+  background: rgba(255, 255, 255, 0.96);
+  color: #2b2927;
+}
+
+.wa-lms.is-paz .wa-lms-hero-chips span {
+  border-color: rgba(197, 160, 89, 0.35);
+  background: rgba(255, 255, 255, 0.08);
+  color: #faf8f5;
+}
+
+.wa-lms.is-paz .wa-lms-btn-primary {
+  background: linear-gradient(145deg, #b36a50, #8f4e38);
+  color: #ffffff;
+  box-shadow: 0 12px 24px -10px rgba(179, 106, 80, 0.7);
+}
+
+.wa-lms.is-paz .wa-lms-btn-primary:hover {
+  box-shadow: 0 16px 30px -10px rgba(179, 106, 80, 0.85);
+  transform: translateY(-1px);
+}
+
+.wa-lms.is-paz .wa-lms-btn-secondary {
+  border-color: rgba(197, 160, 89, 0.4);
+  color: #8f4e38;
+  background: rgba(197, 160, 89, 0.08);
+}
+
+.wa-lms.is-paz .wa-lms-btn-secondary:hover {
+  background: rgba(197, 160, 89, 0.16);
+  border-color: rgba(197, 160, 89, 0.6);
+}
+
+.wa-lms.is-paz .wa-lms-btn-glass {
+  background: rgba(255, 255, 255, 0.1);
+  color: #faf8f5;
+  border-color: rgba(197, 160, 89, 0.4);
+}
+
+.wa-lms.is-paz .wa-lms-btn-glass:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(197, 160, 89, 0.6);
+}
+
+.wa-lms.is-paz .wa-lms-ring {
+  background: conic-gradient(#c5a059 var(--ring), rgba(255, 255, 255, 0.14) 0);
+  box-shadow: 0 20px 40px -24px rgba(0, 0, 0, 0.75);
+}
+
+.wa-lms.is-paz .wa-lms-ring-inner {
+  background: #1f1d1c;
+  border: 1px solid rgba(197, 160, 89, 0.25);
+  color: #faf8f5;
+}
+
+.wa-lms.is-paz .wa-lms-ring-inner strong {
+  color: #faf8f5;
+}
+
+.wa-lms.is-paz .wa-lms-ring-inner span {
+  color: #c5a059;
+}
+
+.wa-lms.is-paz .wa-lms-hero-stats div {
+  border-color: rgba(197, 160, 89, 0.2);
+}
+
+.wa-lms.is-paz .wa-lms-hero-stats strong {
+  color: #faf8f5;
+}
+
+.wa-lms.is-paz .wa-lms-hero-stats span {
+  color: #d4cdc5;
+}
+
+.wa-lms.is-paz .wa-lms-hero-next {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(197, 160, 89, 0.3);
+}
+
+.wa-lms.is-paz .wa-lms-hero-next-label {
+  color: #d8a47f;
+}
+
+.wa-lms.is-paz .wa-lms-hero-next strong {
+  color: #faf8f5;
+}
+
+.wa-lms.is-paz .wa-lms-hero-next > span:last-child {
+  color: #c5a059;
+}
+
+.wa-lms.is-paz .wa-lms-tabs {
+  border-bottom-color: rgba(197, 160, 89, 0.25);
+}
+
+.wa-lms.is-paz .wa-lms-tab {
+  color: #6b665f;
+  border-color: rgba(197, 160, 89, 0.3);
+  background: #ffffff;
+}
+
+.wa-lms.is-paz .wa-lms-tab:hover {
+  color: #8f4e38;
+  border-color: #b36a50;
+  background: #faf8f5;
+}
+
+.wa-lms.is-paz .wa-lms-tab.is-active {
+  background: #b36a50;
+  color: #ffffff;
+  border-color: #b36a50;
+  box-shadow: 0 4px 14px rgba(179, 106, 80, 0.35);
+}
+
+.wa-lms.is-paz .wa-lms-aside-card {
+  border-color: rgba(197, 160, 89, 0.3);
+  background: #ffffff;
+  box-shadow: 0 4px 18px rgba(43, 41, 39, 0.05);
+}
+
+.wa-lms.is-paz .wa-lms-aside-head .wa-lms-kicker {
+  color: #8f4e38;
+}
+
