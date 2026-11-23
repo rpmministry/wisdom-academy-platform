@@ -48,9 +48,9 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
   const activeLessons: LessonView[] = activeModule?.lessons || [];
 
   // Video de la clase seleccionada
-  // Si es la clase 1, el video es OQUIbCicITA; para otras clases, buscamos en los bloques
+  // Si es la clase 1, el video es Fiv6IQ-omIs; para otras clases, buscamos en los bloques
   const classVideoId = useMemo(() => {
-    if (selectedClassNum === 1) return 'OQUIbCicITA';
+    if (selectedClassNum === 1) return 'Fiv6IQ-omIs';
     for (const lesson of activeLessons) {
       if (lesson.videoIds && lesson.videoIds.length > 0) {
         return lesson.videoIds[0];
@@ -93,9 +93,10 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
         margin: '0 0 2.5rem',
         padding: '2rem',
         borderRadius: '24px',
-        background: '#ffffff',
-        border: '1px solid rgba(197, 160, 89, 0.35)',
-        boxShadow: '0 16px 40px rgba(43, 41, 39, 0.06)',
+        background: 'var(--lms-surface, #ffffff)',
+        border: '1px solid var(--lms-border, rgba(197, 160, 89, 0.35))',
+        boxShadow: '0 16px 40px rgba(0, 0, 0, 0.08)',
+        color: 'var(--lms-ink, #2b2927)',
         fontFamily: 'var(--paz-sans, sans-serif)',
       }}
     >
@@ -115,7 +116,7 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
           gap: '1rem',
           marginBottom: '1.75rem',
           paddingBottom: '1.25rem',
-          borderBottom: '1px solid rgba(197, 160, 89, 0.2)',
+          borderBottom: '1px solid var(--lms-line, rgba(197, 160, 89, 0.2))',
         }}
       >
         <div>
@@ -126,7 +127,7 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
               fontWeight: 700,
               textTransform: 'uppercase',
               letterSpacing: '0.08em',
-              color: '#8f4e38',
+              color: 'var(--lms-terracotta, #8f4e38)',
               marginBottom: '0.25rem',
             }}
           >
@@ -137,15 +138,15 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
               margin: 0,
               fontSize: '1.6rem',
               fontWeight: 800,
-              color: '#2b2927',
+              color: 'var(--lms-ink, #2b2927)',
               fontFamily: 'var(--paz-serif, serif)',
               lineHeight: 1.25,
             }}
           >
             Paz en la mesa, Orden en el bolsillo y fuego en el corazón
           </h2>
-          <p style={{ margin: '0.25rem 0 0', fontSize: '0.9rem', color: '#6b665f' }}>
-            Impartido por <strong>Samuel y Gabby Palacio</strong> · Wisdom Academy
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.9rem', color: 'var(--lms-muted, #6b665f)' }}>
+            Impartido por <strong style={{ color: 'var(--lms-ink, #2b2927)' }}>Samuel y Gabby Palacio</strong> · Wisdom Academy
           </p>
         </div>
 
@@ -162,9 +163,9 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
               gap: '0.45rem',
               padding: '0.6rem 1rem',
               borderRadius: '10px',
-              background: 'rgba(197, 160, 89, 0.15)',
-              border: '1px solid rgba(197, 160, 89, 0.4)',
-              color: '#8f6820',
+              background: 'var(--lms-gold-soft, rgba(197, 160, 89, 0.15))',
+              border: '1px solid var(--lms-border, rgba(197, 160, 89, 0.4))',
+              color: 'var(--lms-gold, #8f6820)',
               fontWeight: 700,
               fontSize: '0.86rem',
               textDecoration: 'none',
@@ -203,7 +204,7 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
             fontWeight: 700,
             textTransform: 'uppercase',
             letterSpacing: '0.06em',
-            color: '#6b665f',
+            color: 'var(--lms-muted, #6b665f)',
             marginBottom: '0.6rem',
           }}
         >
@@ -233,10 +234,12 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
                   alignItems: 'flex-start',
                   padding: '1rem',
                   borderRadius: '14px',
-                  background: isSelected ? 'rgba(179, 106, 80, 0.1)' : '#faf8f5',
+                  background: isSelected
+                    ? 'var(--lms-terracotta-soft, rgba(179, 106, 80, 0.12))'
+                    : 'var(--lms-surface-inner, #faf8f5)',
                   border: isSelected
-                    ? '2px solid #b36a50'
-                    : '1px solid rgba(197, 160, 89, 0.25)',
+                    ? '2px solid var(--lms-terracotta, #b36a50)'
+                    : '1px solid var(--lms-border, rgba(197, 160, 89, 0.25))',
                   cursor: 'pointer',
                   textAlign: 'left',
                   transition: 'all 0.15s ease',
@@ -256,7 +259,9 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
                     style={{
                       fontSize: '0.76rem',
                       fontWeight: 800,
-                      color: isSelected ? '#8f4e38' : '#8a8379',
+                      color: isSelected
+                        ? 'var(--lms-terracotta, #8f4e38)'
+                        : 'var(--lms-muted, #8a8379)',
                       textTransform: 'uppercase',
                     }}
                   >
@@ -269,9 +274,11 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
                       padding: '0.15rem 0.5rem',
                       borderRadius: '999px',
                       background: isAvailable
-                        ? 'rgba(23, 96, 58, 0.15)'
-                        : 'rgba(138, 131, 121, 0.15)',
-                      color: isAvailable ? '#17603a' : '#6b665f',
+                        ? 'var(--lms-badge-available-bg, rgba(23, 96, 58, 0.15))'
+                        : 'var(--lms-badge-upcoming-bg, rgba(138, 131, 121, 0.15))',
+                      color: isAvailable
+                        ? 'var(--lms-badge-available-text, #17603a)'
+                        : 'var(--lms-badge-upcoming-text, #6b665f)',
                     }}
                   >
                     {isAvailable ? 'Video Listo' : 'Próximamente'}
@@ -280,7 +287,7 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
                 <strong
                   style={{
                     fontSize: '0.98rem',
-                    color: '#2b2927',
+                    color: 'var(--lms-ink, #2b2927)',
                     fontFamily: 'var(--paz-serif, serif)',
                     lineHeight: 1.25,
                     marginBottom: '0.25rem',
@@ -288,7 +295,7 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
                 >
                   {cls.title}
                 </strong>
-                <span style={{ fontSize: '0.78rem', color: '#6b665f' }}>
+                <span style={{ fontSize: '0.78rem', color: 'var(--lms-muted, #6b665f)' }}>
                   {cls.leader} · {cls.durationLabel}
                 </span>
               </button>
@@ -489,13 +496,13 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
                 margin: 0,
                 fontSize: '1.25rem',
                 fontWeight: 800,
-                color: '#2b2927',
+                color: 'var(--lms-ink, #2b2927)',
                 fontFamily: 'var(--paz-serif, serif)',
               }}
             >
               Bloques Temáticos de la Clase 0{activeClassConfig.number}
             </h3>
-            <p style={{ margin: '0.2rem 0 0', fontSize: '0.85rem', color: '#6b665f' }}>
+            <p style={{ margin: '0.2rem 0 0', fontSize: '0.85rem', color: 'var(--lms-muted, #6b665f)' }}>
               Los 4 bloques se desarrollan de forma continua en el video principal de esta clase.
             </p>
           </div>
@@ -505,8 +512,8 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
               fontWeight: 700,
               padding: '0.3rem 0.75rem',
               borderRadius: '999px',
-              background: 'rgba(197, 160, 89, 0.15)',
-              color: '#8f6820',
+              background: 'var(--lms-gold-soft, rgba(197, 160, 89, 0.15))',
+              color: 'var(--lms-gold, #8f6820)',
             }}
           >
             {completedInActiveClass} de {totalClassBlocks} bloques completados
@@ -526,10 +533,10 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
                 style={{
                   padding: '1.25rem',
                   borderRadius: '16px',
-                  background: isCompleted ? 'rgba(23, 96, 58, 0.05)' : '#faf8f5',
+                  background: isCompleted ? 'rgba(23, 96, 58, 0.08)' : 'var(--lms-surface-inner, #faf8f5)',
                   border: isCompleted
-                    ? '1px solid rgba(23, 96, 58, 0.25)'
-                    : '1px solid rgba(197, 160, 89, 0.2)',
+                    ? '1px solid rgba(23, 96, 58, 0.35)'
+                    : '1px solid var(--lms-line, rgba(197, 160, 89, 0.2))',
                   transition: 'all 0.15s ease',
                 }}
               >
@@ -548,7 +555,7 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
                       style={{
                         padding: '0.2rem 0.55rem',
                         borderRadius: '6px',
-                        background: '#b36a50',
+                        background: 'var(--lms-terracotta, #b36a50)',
                         color: '#ffffff',
                         fontSize: '0.75rem',
                         fontWeight: 800,
@@ -560,15 +567,15 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
                       style={{
                         fontSize: '0.78rem',
                         fontWeight: 700,
-                        color: '#8f4e38',
-                        background: 'rgba(179, 106, 80, 0.12)',
+                        color: 'var(--lms-terracotta, #8f4e38)',
+                        background: 'var(--lms-terracotta-soft, rgba(179, 106, 80, 0.12))',
                         padding: '0.2rem 0.5rem',
                         borderRadius: '6px',
                       }}
                     >
                       {block.timeRange}
                     </span>
-                    <strong style={{ fontSize: '1.05rem', color: '#2b2927' }}>
+                    <strong style={{ fontSize: '1.05rem', color: 'var(--lms-ink, #2b2927)' }}>
                       {block.title}
                     </strong>
                   </div>
@@ -585,9 +592,9 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
                           gap: '0.35rem',
                           padding: '0.35rem 0.75rem',
                           borderRadius: '8px',
-                          border: isCompleted ? '1px solid #17603a' : '1px solid rgba(138, 131, 121, 0.4)',
-                          background: isCompleted ? '#17603a' : '#ffffff',
-                          color: isCompleted ? '#ffffff' : '#2b2927',
+                          border: isCompleted ? '1px solid #17603a' : '1px solid var(--lms-line, rgba(138, 131, 121, 0.4))',
+                          background: isCompleted ? '#17603a' : 'var(--lms-surface, #ffffff)',
+                          color: isCompleted ? '#ffffff' : 'var(--lms-ink, #2b2927)',
                           fontSize: '0.8rem',
                           fontWeight: 700,
                           cursor: 'pointer',
@@ -610,9 +617,9 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
                           gap: '0.3rem',
                           padding: '0.35rem 0.75rem',
                           borderRadius: '8px',
-                          background: '#faf8f5',
-                          border: '1px solid rgba(197, 160, 89, 0.35)',
-                          color: '#8f4e38',
+                          background: 'var(--lms-surface-inner, #faf8f5)',
+                          border: '1px solid var(--lms-line, rgba(197, 160, 89, 0.35))',
+                          color: 'var(--lms-terracotta, #8f4e38)',
                           fontSize: '0.8rem',
                           fontWeight: 700,
                           cursor: 'pointer',
@@ -624,7 +631,7 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
                   )}
                 </div>
 
-                <p style={{ margin: '0 0 0.75rem', fontSize: '0.88rem', color: '#4a4641', lineHeight: 1.55 }}>
+                <p style={{ margin: '0 0 0.75rem', fontSize: '0.88rem', color: 'var(--lms-muted, #4a4641)', lineHeight: 1.55 }}>
                   {block.summary}
                 </p>
 
@@ -636,16 +643,16 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
                     gap: '0.75rem',
                     padding: '0.75rem 1rem',
                     borderRadius: '10px',
-                    background: '#ffffff',
-                    border: '1px solid rgba(197, 160, 89, 0.15)',
+                    background: 'var(--lms-surface, #ffffff)',
+                    border: '1px solid var(--lms-line, rgba(197, 160, 89, 0.15))',
                     fontSize: '0.82rem',
                   }}
                 >
                   <div>
-                    <strong style={{ color: '#8f4e38', display: 'block', marginBottom: '0.35rem' }}>
+                    <strong style={{ color: 'var(--lms-terracotta, #8f4e38)', display: 'block', marginBottom: '0.35rem' }}>
                       Claves y principios prácticos:
                     </strong>
-                    <ul style={{ margin: 0, paddingLeft: '1.2rem', color: '#55514b' }}>
+                    <ul style={{ margin: 0, paddingLeft: '1.2rem', color: 'var(--lms-ink, #55514b)' }}>
                       {block.points.slice(0, 2).map((pt, i) => (
                         <li key={i} style={{ marginBottom: '0.25rem' }}>
                           {pt}
@@ -655,7 +662,7 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
                   </div>
 
                   <div>
-                    <strong style={{ color: '#8f4e38', display: 'block', marginBottom: '0.35rem' }}>
+                    <strong style={{ color: 'var(--lms-terracotta, #8f4e38)', display: 'block', marginBottom: '0.35rem' }}>
                       Fundamento bíblico:
                     </strong>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
@@ -665,8 +672,8 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
                           style={{
                             padding: '0.15rem 0.45rem',
                             borderRadius: '4px',
-                            background: 'rgba(197, 160, 89, 0.12)',
-                            color: '#7a5a1f',
+                            background: 'var(--lms-gold-soft, rgba(197, 160, 89, 0.12))',
+                            color: 'var(--lms-gold, #7a5a1f)',
                             fontSize: '0.75rem',
                             fontWeight: 700,
                           }}
@@ -689,8 +696,8 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
           marginTop: '2.5rem',
           padding: '1.75rem',
           borderRadius: '18px',
-          background: 'linear-gradient(135deg, rgba(179,106,80,0.06), rgba(197,160,89,0.12))',
-          border: '1px solid rgba(197,160,89,0.35)',
+          background: 'linear-gradient(135deg, rgba(179,106,80,0.08), rgba(197,160,89,0.14))',
+          border: '1px solid var(--lms-line, rgba(197,160,89,0.35))',
         }}
       >
         <div
@@ -711,7 +718,7 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
                 fontWeight: 700,
                 textTransform: 'uppercase',
                 letterSpacing: '0.06em',
-                color: '#8f4e38',
+                color: 'var(--lms-terracotta, #8f4e38)',
               }}
             >
               Recursos de estudio
@@ -721,7 +728,7 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
                 margin: '0.2rem 0 0',
                 fontSize: '1.3rem',
                 fontWeight: 800,
-                color: '#2b2927',
+                color: 'var(--lms-ink, #2b2927)',
                 fontFamily: 'var(--paz-serif, serif)',
               }}
             >
@@ -734,8 +741,8 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
               fontWeight: 700,
               padding: '0.25rem 0.65rem',
               borderRadius: '999px',
-              background: 'rgba(197, 160, 89, 0.2)',
-              color: '#8f6820',
+              background: 'var(--lms-gold-soft, rgba(197, 160, 89, 0.2))',
+              color: 'var(--lms-gold, #8f6820)',
             }}
           >
             PDF Imprimible e Interactivo
@@ -752,9 +759,9 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
             gap: '1.25rem',
             padding: '1.25rem',
             borderRadius: '14px',
-            background: '#ffffff',
-            border: '1px solid rgba(179,106,80,0.25)',
-            boxShadow: '0 4px 16px rgba(43,41,39,0.04)',
+            background: 'var(--lms-surface, #ffffff)',
+            border: '1px solid var(--lms-line, rgba(179,106,80,0.25))',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.06)',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', minWidth: '280px', flex: '1 1 auto' }}>
@@ -766,7 +773,7 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
                 width: '48px',
                 height: '48px',
                 borderRadius: '12px',
-                background: '#b36a50',
+                background: 'var(--lms-terracotta, #b36a50)',
                 color: '#ffffff',
                 flexShrink: 0,
               }}
@@ -774,10 +781,10 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
               <WisdomIcon name="file-text" size={24} />
             </span>
             <div>
-              <strong style={{ fontSize: '1.05rem', color: '#2b2927', display: 'block' }}>
+              <strong style={{ fontSize: '1.05rem', color: 'var(--lms-ink, #2b2927)', display: 'block' }}>
                 Cuaderno de Trabajo y Manual de Estudio (24 páginas)
               </strong>
-              <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: '#6b665f', lineHeight: 1.45 }}>
+              <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'var(--lms-muted, #6b665f)', lineHeight: 1.45 }}>
                 Herramienta oficial de la Clase 0{activeClassConfig.number}: <strong>{activeClassConfig.tool}</strong> ({activeClassConfig.toolPages}).
                 Incluye preguntas de reflexión familiar, balance financiero, mapa de discernimiento y el Reto de 7 Días.
               </p>
@@ -796,7 +803,7 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
                 gap: '0.45rem',
                 padding: '0.65rem 1.25rem',
                 borderRadius: '10px',
-                background: '#b36a50',
+                background: 'var(--lms-terracotta, #b36a50)',
                 color: '#ffffff',
                 fontWeight: 700,
                 fontSize: '0.88rem',
@@ -818,9 +825,9 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
                 gap: '0.35rem',
                 padding: '0.65rem 1rem',
                 borderRadius: '10px',
-                background: '#faf8f5',
-                border: '1px solid rgba(197, 160, 89, 0.35)',
-                color: '#6b665f',
+                background: 'var(--lms-surface-inner, #faf8f5)',
+                border: '1px solid var(--lms-line, rgba(197, 160, 89, 0.35))',
+                color: 'var(--lms-ink, #6b665f)',
                 fontWeight: 600,
                 fontSize: '0.85rem',
                 textDecoration: 'none',

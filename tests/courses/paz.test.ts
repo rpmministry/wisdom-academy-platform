@@ -257,7 +257,7 @@ test('un visitante sin sesión puede iniciar intención de pago con creación de
 
 test('recursos multimedia del taller (tráiler, clase 1 y cuaderno pdf) configurados correctamente', () => {
   assert.ok(pazPublicConfig.trailerVideoUrl.includes('OQUIbCicITA'));
-  assert.ok(pazPublicConfig.classVideos.class1.includes('OQUIbCicITA'));
+  assert.ok(pazPublicConfig.classVideos.class1.includes('Fiv6IQ-omIs'));
   assert.equal(pazPublicConfig.notebookUrl, '/docs/cuaderno-de-trabajo-paz-en-la-mesa.pdf');
 
   const pdfDiskPath = path.join(process.cwd(), 'public', 'docs', 'cuaderno-de-trabajo-paz-en-la-mesa.pdf');

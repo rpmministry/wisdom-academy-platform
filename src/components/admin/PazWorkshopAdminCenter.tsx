@@ -768,7 +768,7 @@ export function PazWorkshopAdminCenter() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <strong>Clase 01: La Mesa — Limpiar el plato antes de pedir postre</strong>
                   <span style={{ padding: '0.2rem 0.6rem', borderRadius: '999px', background: '#eef6ee', color: '#1b5e20', fontSize: '0.75rem', fontWeight: 700 }}>
-                    Video editado disponible (ID: OQUIbCicITA)
+                    Video editado disponible (ID: Fiv6IQ-omIs)
                   </span>
                 </div>
                 <small style={{ color: '#666', display: 'block', marginTop: '0.3rem' }}>

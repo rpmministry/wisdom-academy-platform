@@ -897,7 +897,7 @@ const PazAsideCard: React.FC<{
             padding: '0.85rem',
             borderRadius: '12px',
             background: 'linear-gradient(135deg, rgba(179,106,80,0.1), rgba(197,160,89,0.15))',
-            border: '1px solid rgba(197,160,89,0.3)',
+            border: '1px solid var(--lms-line, rgba(197,160,89,0.3))',
             marginBottom: '0.75rem',
           }}
         >
@@ -907,16 +907,16 @@ const PazAsideCard: React.FC<{
               fontSize: '0.72rem',
               fontWeight: 800,
               textTransform: 'uppercase',
-              color: '#8f4e38',
+              color: 'var(--lms-terracotta, #8f4e38)',
               marginBottom: '0.2rem',
             }}
           >
             Clase 01 · Video Listo
           </span>
-          <strong style={{ display: 'block', fontSize: '0.98rem', color: '#2b2927', lineHeight: 1.3 }}>
+          <strong style={{ display: 'block', fontSize: '0.98rem', color: 'var(--lms-ink, #2b2927)', lineHeight: 1.3 }}>
             El Fundamento de la Paz
           </strong>
-          <small style={{ display: 'block', color: '#6b665f', marginTop: '0.25rem', fontSize: '0.78rem' }}>
+          <small style={{ display: 'block', color: 'var(--lms-muted, #6b665f)', marginTop: '0.25rem', fontSize: '0.78rem' }}>
             Samuel y Gabby Palacio · 1h 15m (4 bloques continuos)
           </small>
         </div>
@@ -939,7 +939,7 @@ const PazAsideCard: React.FC<{
           <span className="wa-lms-kicker">Material de estudio</span>
           <LmsIcon name="file" size={16} />
         </div>
-        <p style={{ margin: '0 0 0.75rem', fontSize: '0.84rem', color: '#6b665f', lineHeight: 1.5 }}>
+        <p style={{ margin: '0 0 0.75rem', fontSize: '0.84rem', color: 'var(--lms-muted, #6b665f)', lineHeight: 1.5 }}>
           Cuaderno de Trabajo de <strong>24 páginas</strong> con balance financiero familiar, mapa de discernimiento y el instructivo del Reto.
         </p>
         <a
@@ -960,17 +960,17 @@ const PazAsideCard: React.FC<{
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.82rem', marginBottom: '0.85rem' }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
-            <span style={{ color: '#b36a50', marginTop: '2px' }}><LmsIcon name="spark" size={14} /></span>
+            <span style={{ color: 'var(--lms-terracotta, #b36a50)', marginTop: '2px' }}><LmsIcon name="spark" size={14} /></span>
             <div>
-              <strong style={{ display: 'block', color: '#2b2927' }}>Martes 22 de diciembre · 20:00</strong>
-              <span style={{ color: '#6b665f' }}>Sesión exclusiva en vivo para alumnos</span>
+              <strong style={{ display: 'block', color: 'var(--lms-ink, #2b2927)' }}>Martes 22 de diciembre · 20:00</strong>
+              <span style={{ color: 'var(--lms-muted, #6b665f)' }}>Sesión exclusiva en vivo para alumnos</span>
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
-            <span style={{ color: '#c5a059', marginTop: '2px' }}><LmsIcon name="target" size={14} /></span>
+            <span style={{ color: 'var(--lms-gold, #c5a059)', marginTop: '2px' }}><LmsIcon name="target" size={14} /></span>
             <div>
-              <strong style={{ display: 'block', color: '#2b2927' }}>23 al 30 de diciembre</strong>
-              <span style={{ color: '#6b665f' }}>Reto de 7 días de Altar Familiar</span>
+              <strong style={{ display: 'block', color: 'var(--lms-ink, #2b2927)' }}>23 al 30 de diciembre</strong>
+              <span style={{ color: 'var(--lms-muted, #6b665f)' }}>Reto de 7 días de Altar Familiar</span>
             </div>
           </div>
         </div>
@@ -980,9 +980,9 @@ const PazAsideCard: React.FC<{
           rel="noopener noreferrer"
           className="wa-lms-btn wa-lms-btn-glass wa-lms-btn-block"
           style={{
-            border: '1px solid rgba(138,131,121,0.3)',
-            color: '#2b2927',
-            background: '#faf8f5',
+            border: '1px solid var(--lms-line, rgba(138,131,121,0.3))',
+            color: 'var(--lms-ink, #2b2927)',
+            background: 'var(--lms-surface-inner, #faf8f5)',
           }}
         >
           <LmsIcon name="spark" size={14} /> Soporte por WhatsApp
@@ -1047,15 +1047,15 @@ const PazResourcesTab: React.FC<{
                 fontWeight: 800,
                 textTransform: 'uppercase',
                 letterSpacing: '0.06em',
-                color: '#8f4e38',
+                color: 'var(--lms-terracotta, #8f4e38)',
               }}
             >
               Manual Principal · PDF 24 Páginas
             </span>
-            <h3 style={{ margin: '0.2rem 0', fontSize: '1.2rem', color: '#2b2927', fontWeight: 800 }}>
+            <h3 style={{ margin: '0.2rem 0', fontSize: '1.2rem', color: 'var(--lms-ink, #2b2927)', fontWeight: 800 }}>
               Cuaderno de Trabajo Oficial de Paz en la Mesa
             </h3>
-            <p style={{ margin: 0, fontSize: '0.86rem', color: '#55514b', lineHeight: 1.5 }}>
+            <p style={{ margin: 0, fontSize: '0.86rem', color: 'var(--lms-muted, #55514b)', lineHeight: 1.5 }}>
               Incluye las 4 herramientas prácticas: Protocolo de conversación de cierre de año, Balance financiero familiar de 3 columnas, Mapa de discernimiento para el 2027 y Guía del Reto de 7 días.
             </p>
           </div>
@@ -1077,7 +1077,7 @@ const PazResourcesTab: React.FC<{
             target="_blank"
             rel="noopener noreferrer"
             className="wa-lms-btn wa-lms-btn-secondary"
-            style={{ border: '1px solid rgba(197,160,89,0.4)', color: '#2b2927' }}
+            style={{ border: '1px solid var(--lms-line, rgba(197,160,89,0.4))', color: 'var(--lms-ink, #2b2927)', background: 'var(--lms-surface-inner, #faf8f5)' }}
           >
             <LmsIcon name="external" size={15} /> Ver en línea
           </a>
@@ -1086,14 +1086,14 @@ const PazResourcesTab: React.FC<{
 
       <div className="wa-lms-resource-grid">
         {materials.map((mat) => (
-          <article key={mat.id} className="wa-lms-resource-card" style={{ border: '1px solid rgba(197,160,89,0.25)' }}>
-            <div className="wa-lms-resource-icon" style={{ background: 'rgba(179,106,80,0.1)', color: '#8f4e38' }}>
+          <article key={mat.id} className="wa-lms-resource-card" style={{ border: '1px solid var(--lms-line, rgba(197,160,89,0.25))' }}>
+            <div className="wa-lms-resource-icon" style={{ background: 'var(--lms-terracotta-soft, rgba(179,106,80,0.1))', color: 'var(--lms-terracotta, #8f4e38)' }}>
               <LmsIcon name={mat.url?.includes('.pdf') ? 'file' : mat.url?.includes('reto') ? 'target' : 'spark'} size={22} />
             </div>
             <div>
-              <span className="wa-lms-resource-kind" style={{ color: '#8f4e38' }}>Recurso del taller</span>
+              <span className="wa-lms-resource-kind" style={{ color: 'var(--lms-terracotta, #8f4e38)' }}>Recurso del taller</span>
               <h3 style={{ fontSize: '0.98rem' }}>{mat.title}</h3>
-              <small style={{ color: '#6b665f' }}>Acceso permanente para estudiantes inscritos</small>
+              <small style={{ color: 'var(--lms-muted, #6b665f)' }}>Acceso permanente para estudiantes inscritos</small>
             </div>
             {mat.url && (
               <a
@@ -1102,7 +1102,7 @@ const PazResourcesTab: React.FC<{
                 target={mat.url.startsWith('http') || mat.url.endsWith('.pdf') ? '_blank' : '_self'}
                 rel="noopener noreferrer"
                 aria-label={`Abrir ${mat.title}`}
-                style={{ color: '#8f4e38' }}
+                style={{ color: 'var(--lms-terracotta, #8f4e38)' }}
               >
                 <LmsIcon name={mat.url.endsWith('.pdf') ? 'download' : 'arrow'} size={17} />
               </a>
@@ -1132,7 +1132,7 @@ const PazRetoTab: React.FC<{ slug: string }> = ({ slug }) => {
           padding: '2.5rem 2rem',
           borderRadius: '18px',
           background: 'linear-gradient(135deg, rgba(179,106,80,0.08), rgba(197,160,89,0.16))',
-          border: '1px solid rgba(197,160,89,0.35)',
+          border: '1px solid var(--lms-line, rgba(197,160,89,0.35))',
           textAlign: 'center',
         }}
       >
@@ -1144,7 +1144,7 @@ const PazRetoTab: React.FC<{ slug: string }> = ({ slug }) => {
             width: '64px',
             height: '64px',
             borderRadius: '50%',
-            background: '#b36a50',
+            background: 'var(--lms-terracotta, #b36a50)',
             color: '#ffffff',
             boxShadow: '0 8px 24px rgba(179,106,80,0.4)',
             marginBottom: '1rem',
@@ -1152,10 +1152,10 @@ const PazRetoTab: React.FC<{ slug: string }> = ({ slug }) => {
         >
           <LmsIcon name="target" size={32} />
         </span>
-        <h3 style={{ fontSize: '1.4rem', color: '#2b2927', fontWeight: 800, margin: '0 0 0.5rem' }}>
+        <h3 style={{ fontSize: '1.4rem', color: 'var(--lms-ink, #2b2927)', fontWeight: 800, margin: '0 0 0.5rem' }}>
           Plataforma Interactiva del Reto de 7 Días
         </h3>
-        <p style={{ maxWidth: '560px', margin: '0 auto 1.5rem', color: '#55514b', fontSize: '0.92rem', lineHeight: 1.6 }}>
+        <p style={{ maxWidth: '560px', margin: '0 auto 1.5rem', color: 'var(--lms-muted, #55514b)', fontSize: '0.92rem', lineHeight: 1.6 }}>
           Accede al checklist interactivo día por día, registra tu progreso familiar y sigue el instructivo oficial del 23 al 30 de diciembre.
         </p>
         <Link

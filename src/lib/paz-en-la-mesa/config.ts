@@ -73,7 +73,7 @@ export const pazPublicConfig = {
   classVideos: {
     class1: envHref(
       process.env.NEXT_PUBLIC_PAZ_CLASS1_VIDEO_URL,
-      'https://www.youtube.com/watch?v=OQUIbCicITA'
+      'https://youtu.be/Fiv6IQ-omIs'
     ),
     class2: envHref(process.env.NEXT_PUBLIC_PAZ_CLASS2_VIDEO_URL, ''),
     class3: envHref(process.env.NEXT_PUBLIC_PAZ_CLASS3_VIDEO_URL, ''),
