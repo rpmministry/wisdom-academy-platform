@@ -255,9 +255,10 @@ test('un visitante sin sesión puede iniciar intención de pago con creación de
   assert.ok(roleRow);
 });
 
-test('recursos multimedia del taller (tráiler, clase 1 y cuaderno pdf) configurados correctamente', () => {
+test('recursos multimedia del taller (tráiler, clase 1, clase 2 y cuaderno pdf) configurados correctamente', () => {
   assert.ok(pazPublicConfig.trailerVideoUrl.includes('OQUIbCicITA'));
   assert.ok(pazPublicConfig.classVideos.class1.includes('Fiv6IQ-omIs'));
+  assert.ok(pazPublicConfig.classVideos.class2.includes('2QsNl6rIEzA'));
   assert.equal(pazPublicConfig.notebookUrl, '/docs/cuaderno-de-trabajo-paz-en-la-mesa.pdf');
 
   const pdfDiskPath = path.join(process.cwd(), 'public', 'docs', 'cuaderno-de-trabajo-paz-en-la-mesa.pdf');

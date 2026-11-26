@@ -4,7 +4,8 @@ import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import type { ProgramDetail, LessonView } from '@/server/domain/coursePrograms';
 import { PAZ_CLASSES } from '@/lib/paz-en-la-mesa/content';
-import { buildYouTubeEmbedUrl, buildYouTubeWatchUrl } from '@/lib/courses/youtube';
+import { pazPublicConfig } from '@/lib/paz-en-la-mesa/config';
+import { buildYouTubeEmbedUrl, buildYouTubeWatchUrl, extractYouTubeVideoId } from '@/lib/courses/youtube';
 import { WisdomIcon } from '@/components/ui/WisdomIcon';
 import { PazActivityTracker } from './PazActivityTracker';
 import { apiFetch } from '@/lib/api/client';
@@ -48,9 +49,14 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
   const activeLessons: LessonView[] = activeModule?.lessons || [];
 
   // Video de la clase seleccionada
-  // Si es la clase 1, el video es Fiv6IQ-omIs; para otras clases, buscamos en los bloques
+  // Si es la clase 1 o 2, usamos los videos oficiales configurados; para otras clases, buscamos en los bloques
   const classVideoId = useMemo(() => {
-    if (selectedClassNum === 1) return 'Fiv6IQ-omIs';
+    if (selectedClassNum === 1) {
+      return extractYouTubeVideoId(pazPublicConfig.classVideos.class1) || 'Fiv6IQ-omIs';
+    }
+    if (selectedClassNum === 2) {
+      return extractYouTubeVideoId(pazPublicConfig.classVideos.class2) || '2QsNl6rIEzA';
+    }
     for (const lesson of activeLessons) {
       if (lesson.videoIds && lesson.videoIds.length > 0) {
         return lesson.videoIds[0];
@@ -219,7 +225,7 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
         >
           {PAZ_CLASSES.map((cls) => {
             const isSelected = cls.number === selectedClassNum;
-            const isAvailable = cls.number === 1;
+            const isAvailable = cls.number === 1 || cls.number === 2;
             return (
               <button
                 key={cls.number}

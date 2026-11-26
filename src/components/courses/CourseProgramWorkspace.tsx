@@ -911,7 +911,7 @@ const PazAsideCard: React.FC<{
               marginBottom: '0.2rem',
             }}
           >
-            Clase 01 · Video Listo
+            Clase 01 y 02 · Video Listo
           </span>
           <strong style={{ display: 'block', fontSize: '0.98rem', color: 'var(--lms-ink, #2b2927)', lineHeight: 1.3 }}>
             El Fundamento de la Paz

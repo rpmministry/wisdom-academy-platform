@@ -776,8 +776,19 @@ export function PazWorkshopAdminCenter() {
                 </small>
               </div>
 
+              <div style={{ padding: '1rem', borderRadius: '12px', background: '#faf8f5', border: '1px solid #e4dacb' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <strong>Clase 02: El Bolsillo — Matriz de asignación y presupuesto 2027</strong>
+                  <span style={{ padding: '0.2rem 0.6rem', borderRadius: '999px', background: '#eef6ee', color: '#1b5e20', fontSize: '0.75rem', fontWeight: 700 }}>
+                    Video editado disponible (ID: 2QsNl6rIEzA)
+                  </span>
+                </div>
+                <small style={{ color: '#666', display: 'block', marginTop: '0.3rem' }}>
+                  4 bloques pedagógicos cargados · Matriz de asignación y presupuesto 2027
+                </small>
+              </div>
+
               {[
-                { num: 2, title: 'El Bolsillo — Matriz de asignación y presupuesto 2027' },
                 { num: 3, title: 'El Corazón — Bitácora de discernimiento y mapa profético' },
                 { num: 4, title: 'El Altar — Reto de 7 días de altar familiar' },
               ].map((c) => (
