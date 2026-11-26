@@ -149,8 +149,8 @@ function ensureModules(programId: string): Map<number, string> {
         outcomes: item.outcomes,
         accent: item.accent,
         soft: item.soft,
-        contentStatus: item.number === 1 ? 'available' : 'coming_soon',
-        releaseAt: item.number === 1 ? null : RELEASE_AT,
+        contentStatus: item.number === 1 || item.number === 2 ? 'available' : 'coming_soon',
+        releaseAt: item.number === 1 || item.number === 2 ? null : RELEASE_AT,
       }),
       nowIso(),
       moduleId
@@ -179,14 +179,21 @@ function ensureLessons(programId: string, modules: Map<number, string>): number 
       const title = `Bloque ${block.number} · ${block.title}`;
       const description = `${block.summary} · Clase ${item.number}: ${item.title} · ${block.timeRange}`;
       const isClass1 = item.number === 1;
+      const isClass2 = item.number === 2;
+      const isAvailableClass = isClass1 || isClass2;
+      const videoIds = isClass1
+        ? ['Fiv6IQ-omIs']
+        : isClass2
+          ? ['2QsNl6rIEzA']
+          : ([] as string[]);
       const base = {
         title,
         description,
         position: block.number,
-        videoIds: isClass1 ? ['OQUIbCicITA'] : ([] as string[]),
+        videoIds,
         pagesLabel: `${item.pages} · ${block.timeRange}`,
         durationLabel: block.timeRange,
-        releaseAt: item.number === 1 ? null : RELEASE_AT,
+        releaseAt: isAvailableClass ? null : RELEASE_AT,
       };
       let lessonId = byKey.get(key) || null;
       if (lessonId) {
@@ -220,8 +227,8 @@ function ensureLessons(programId: string, modules: Map<number, string>): number 
           subjectCode: `PAZ-${String(item.number).padStart(2, '0')}`,
           sessionNumber: block.number,
           week: item.number,
-          releaseAt: item.number === 1 ? null : RELEASE_AT,
-          videoStatus: isClass1 ? 'available' : 'coming_soon',
+          releaseAt: isAvailableClass ? null : RELEASE_AT,
+          videoStatus: isAvailableClass ? 'available' : 'coming_soon',
         }),
         nowIso(),
         lessonId
