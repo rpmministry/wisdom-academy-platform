@@ -14,6 +14,7 @@ import { WeeklyMeetingCard } from './WeeklyMeetingCard';
 import { FacultyPanel } from './FacultyPanel';
 import { PazActivityTracker } from '@/components/paz/PazActivityTracker';
 import { PazUnifiedClassroom } from '@/components/paz/PazUnifiedClassroom';
+import { PazAdminNavigation } from '@/components/paz/PazAdminNavigation';
 
 type CourseAttemptResult = AttemptResult & { assessmentTitle: string; assessmentKind: string };
 
@@ -24,6 +25,7 @@ interface CourseProgramWorkspaceProps {
   isStaff: boolean;
   meetings: WeeklyMeetingView[];
   canManageMeetings: boolean;
+  showPazAdminNav?: boolean;
 }
 
 type TabId = 'aula' | 'ruta' | 'materias' | 'faculty' | 'recursos' | 'evaluaciones' | 'progreso' | 'reto';
@@ -108,6 +110,7 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
   isStaff,
   meetings,
   canManageMeetings,
+  showPazAdminNav,
 }) => {
   const { program, modules, reviews, assessments, materials, progress } = detail;
   const isN2n = /n2n/i.test(program.title) || /n2n/i.test(program.institution || '');
@@ -223,6 +226,7 @@ export const CourseProgramWorkspace: React.FC<CourseProgramWorkspaceProps> = ({
   return (
     <main className={`wa-lms ${isPaz ? 'is-paz' : ''}`}>
       {isPaz && <PazActivityTracker programSlug={slug} />}
+      {isPaz && showPazAdminNav && <PazAdminNavigation variant="floating" current="workspace" />}
       <div className="wa-lms-container">
         <nav className="wa-breadcrumbs" aria-label="Migas de pan">
           <Link href="/dashboard">Mi portal</Link>

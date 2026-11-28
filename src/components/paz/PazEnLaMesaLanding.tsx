@@ -11,6 +11,7 @@ import { PazLeadForm } from '@/components/paz/PazLeadForm';
 import { PazPastorsPortrait } from '@/components/paz/PazPastorsPortrait';
 import { PazTrailerPlayer } from '@/components/paz/PazTrailerPlayer';
 import { PazClassesShowcase } from '@/components/paz/PazClassesShowcase';
+import { PazAdminNavigation } from '@/components/paz/PazAdminNavigation';
 import { PazHeroCheckout } from '@/components/paz/PazHeroCheckout';
 import { PazBankTransferSection } from '@/components/paz/PazBankTransferSection';
 import {
@@ -39,7 +40,11 @@ function ResourceIcon({ type }: { type: string }) {
   return <WisdomIcon name={name} size={18} />;
 }
 
-export function PazEnLaMesaLanding() {
+interface PazEnLaMesaLandingProps {
+  showAdminNav?: boolean;
+}
+
+export function PazEnLaMesaLanding({ showAdminNav = false }: PazEnLaMesaLandingProps) {
   const now = new Date();
   const phase = pazPhaseAt(now);
   const milestone = pazNextMilestone(now);
@@ -128,6 +133,7 @@ export function PazEnLaMesaLanding() {
 
   return (
     <main className="paz-world paz-landing">
+      {showAdminNav && <PazAdminNavigation variant="floating" current="landing" />}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(courseJsonLd) }}

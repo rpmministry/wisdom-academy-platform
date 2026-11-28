@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { PazEnLaMesaLanding } from '@/components/paz/PazEnLaMesaLanding';
 import { PAZ_BRAND } from '@/lib/paz-en-la-mesa/content';
+import { getPageUser } from '@/server/auth/pageAuth';
+import { hasPermission } from '@/server/auth/authorization';
 
 export const metadata: Metadata = {
   title: 'Paz en la mesa, Orden en el bolsillo y fuego en el corazón | Wisdom Academy',
@@ -16,6 +18,8 @@ export const metadata: Metadata = {
 
 export const dynamic = 'force-dynamic';
 
-export default function PazEnLaMesaPage() {
-  return <PazEnLaMesaLanding />;
+export default async function PazEnLaMesaPage() {
+  const user = await getPageUser();
+  const showAdminNav = Boolean(user && hasPermission(user, 'orders.manage'));
+  return <PazEnLaMesaLanding showAdminNav={showAdminNav} />;
 }

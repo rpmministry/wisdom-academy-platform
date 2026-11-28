@@ -1,9 +1,11 @@
 import { notFound } from 'next/navigation';
 import { requirePageUser } from '@/server/auth/pageAuth';
+import { hasPermission } from '@/server/auth/authorization';
 import {
   canManageCourses,
   getProgramDetail,
   getProgramRowBySlug,
+  getProgramSlug,
   userCanViewProgram,
 } from '@/server/domain/coursePrograms';
 import { listStudentAssessmentResults } from '@/server/domain/courseAssessments';
@@ -27,6 +29,8 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
     includeUnpublished: manageMeetings,
     includeHost: manageMeetings,
   });
+  const programSlug = getProgramSlug(program);
+  const showPazAdminNav = programSlug === 'paz-en-la-mesa' && hasPermission(user, 'orders.manage');
 
   return (
     <CourseProgramWorkspace
@@ -36,6 +40,7 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
       isStaff={isStaff}
       meetings={meetings}
       canManageMeetings={manageMeetings}
+      showPazAdminNav={showPazAdminNav}
     />
   );
 }

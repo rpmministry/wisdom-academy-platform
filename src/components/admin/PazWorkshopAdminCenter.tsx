@@ -9,6 +9,7 @@ import type { PazGeneralKpis, PazStudentDetailView } from '@/server/domain/pazAn
 import type { PazAccessCodeView } from '@/server/domain/pazAccessCodes';
 import type { PazPaymentIntentView } from '@/server/domain/paz';
 import type { PazTestAccountInfo } from '@/server/domain/pazSeedAccounts';
+import { PazAdminNavigation } from '@/components/paz/PazAdminNavigation';
 
 type AdminTab =
   | 'resumen'
@@ -465,6 +466,8 @@ export function PazWorkshopAdminCenter() {
           </button>
         </div>
       </div>
+
+      <PazAdminNavigation variant="admin" />
 
       {message && (
         <div

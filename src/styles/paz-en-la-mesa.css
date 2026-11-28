@@ -2903,6 +2903,213 @@
   }
 }
 
+/* ==============================================================================
+ * NAVEGACIÓN RÁPIDA PARA ADMINISTRADORES DEL TALLER
+ * Banners en el panel administrativo y barra flotante en aula/landing.
+ * ============================================================================== */
+
+.paz-admin-banner-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 0.85rem;
+  margin: 0 0 1.25rem;
+}
+
+.paz-admin-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1rem 1.1rem;
+  border-radius: 16px;
+  border: 1px solid var(--paz-card-border, #e4dacb);
+  background: var(--paz-card-bg, #ffffff);
+  color: var(--paz-ink, #2b2927);
+  text-decoration: none;
+  box-shadow: 0 6px 18px rgba(43, 41, 39, 0.05);
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.paz-admin-banner:hover {
+  transform: translateY(-2px);
+  border-color: rgba(179, 106, 80, 0.45);
+  box-shadow: 0 12px 28px rgba(43, 41, 39, 0.1);
+}
+
+.paz-admin-banner:focus-visible {
+  outline: 2px solid #b36a50;
+  outline-offset: 3px;
+}
+
+.paz-admin-banner--primary {
+  background: linear-gradient(135deg, #f7ece6, #fbf5e7);
+  border-color: rgba(179, 106, 80, 0.35);
+}
+
+.paz-admin-banner-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: #b36a50;
+  color: #fffdf9;
+}
+
+.paz-admin-banner-icon--soft {
+  background: rgba(92, 88, 71, 0.12);
+  color: #5c5847;
+}
+
+.paz-admin-banner-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.paz-admin-banner-copy strong {
+  display: block;
+  font-size: 0.98rem;
+  line-height: 1.3;
+}
+
+.paz-admin-banner-copy small {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--paz-muted, #6b665f);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.paz-admin-banner-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-shrink: 0;
+  color: var(--paz-accent-text, #8f4e38);
+  font-size: 0.78rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.paz-admin-floating-nav {
+  position: fixed;
+  left: 50%;
+  bottom: max(0.9rem, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  max-width: min(94vw, 640px);
+  padding: 0.55rem 0.6rem 0.55rem 0.95rem;
+  border-radius: 999px;
+  background: rgba(43, 41, 39, 0.95);
+  color: #faf8f5;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+}
+
+.paz-admin-floating-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #e6c78c;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.paz-admin-floating-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.paz-admin-floating-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  color: #faf8f5 !important;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 160ms ease, border-color 160ms ease;
+}
+
+.paz-admin-floating-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.paz-admin-floating-link:focus-visible {
+  outline: 2px solid #e6c78c;
+  outline-offset: 2px;
+}
+
+.paz-admin-floating-link--primary {
+  background: #b36a50;
+  border-color: #b36a50;
+}
+
+.paz-admin-floating-link--primary:hover {
+  background: #9e5942;
+}
+
+[data-theme='dark'] .paz-admin-banner {
+  background: var(--paz-card-bg, #2a2823);
+  border-color: var(--paz-card-border, rgba(228, 218, 203, 0.18));
+  color: var(--paz-ink, #f2ede4);
+}
+
+[data-theme='dark'] .paz-admin-banner--primary {
+  background: linear-gradient(135deg, rgba(179, 106, 80, 0.22), rgba(197, 160, 89, 0.14));
+}
+
+@media (max-width: 640px) {
+  .paz-admin-banner {
+    flex-wrap: wrap;
+  }
+
+  .paz-admin-banner-cta {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .paz-admin-floating-nav {
+    left: 0.6rem;
+    right: 0.6rem;
+    bottom: max(0.6rem, env(safe-area-inset-bottom));
+    width: auto;
+    max-width: none;
+    transform: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.45rem;
+    padding: 0.55rem;
+    border-radius: 16px;
+  }
+
+  .paz-admin-floating-text {
+    justify-content: center;
+  }
+
+  .paz-admin-floating-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    gap: 0.35rem;
+  }
+
+  .paz-admin-floating-link {
+    padding: 0.45rem 0.5rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .paz-world *,
   .paz-banner * {
