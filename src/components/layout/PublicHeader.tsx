@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth/authContext';
 import { WisdomIcon } from '@/components/ui/WisdomIcon';
-import { Button } from '@/components/ui/Button';
+import { ButtonLink } from '@/components/ui/Button';
 import { CartWidget } from '@/components/cart/CartWidget';
 import { AccountMenu } from '@/components/layout/AccountMenu';
 
@@ -125,11 +125,9 @@ export const PublicHeader: React.FC<PublicHeaderProps> = ({
         ) : (
           showLogin && (
             <>
-              <Link href="/login" className="wa-public-login">
-                <Button variant="primary-gold" size="sm">
-                  Iniciar sesión
-                </Button>
-              </Link>
+              <ButtonLink href="/login" variant="primary-gold" size="sm" className="wa-public-login">
+                Iniciar sesión
+              </ButtonLink>
               <Link
                 href="/login"
                 className="wa-public-login-compact"
@@ -182,9 +180,14 @@ export const PublicHeader: React.FC<PublicHeaderProps> = ({
               {temaOscuro ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
             </button>
             {!usuario && showLogin && (
-              <Link href="/login" onClick={() => setMenuOpen(false)}>
-                <Button variant="primary-gold" size="sm">Iniciar sesión</Button>
-              </Link>
+              <ButtonLink
+                href="/login"
+                variant="primary-gold"
+                size="sm"
+                onClick={() => setMenuOpen(false)}
+              >
+                Iniciar sesión
+              </ButtonLink>
             )}
           </div>
         </div>

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import * as Dialog from '@radix-ui/react-dialog';
 import * as Tabs from '@radix-ui/react-tabs';
 import { PERFILES_CURRICULARES } from '@/data/curriculum';
-import { Button } from '@/components/ui/Button';
+import { Button, ButtonLink } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { WisdomIcon } from '@/components/ui/WisdomIcon';
 
@@ -142,11 +142,13 @@ export function SchoolPortalModal({
                   </div>
 
                   <div className="wa-school-actions">
-                    <Link href={isAuthenticated ? '/dashboard' : '/login'} onClick={() => onOpenChange(false)}>
-                      <Button variant="primary-gold">
-                        {isAuthenticated ? 'Abrir mi portal escolar' : 'Entrar al portal escolar'}
-                      </Button>
-                    </Link>
+                    <ButtonLink
+                      href={isAuthenticated ? '/dashboard' : '/login'}
+                      variant="primary-gold"
+                      onClick={() => onOpenChange(false)}
+                    >
+                      {isAuthenticated ? 'Abrir mi portal escolar' : 'Entrar al portal escolar'}
+                    </ButtonLink>
                     <Button
                       variant="secondary"
                       onClick={() => {

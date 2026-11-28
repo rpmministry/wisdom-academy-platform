@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth/authContext';
 import { apiFetch, errorMessage } from '@/lib/api/client';
-import { Button } from '@/components/ui/Button';
+import { Button, ButtonLink } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { WisdomIcon } from '@/components/ui/WisdomIcon';
 import { PublicHeader } from '@/components/layout/PublicHeader';
@@ -360,19 +360,15 @@ export function CatalogExperience({ home = false }: { home?: boolean }) {
           </p>
           {home && (
             <div className="wa-home-hero-actions">
-              <a href="#cursos-talleres" style={{ textDecoration: 'none' }}>
-                <Button variant="primary-gold" size="lg">
-                  <WisdomIcon name="sparkles" size={16} /> Explorar Cursos y Talleres
-                </Button>
-              </a>
-              <a href="#portal-escolar" style={{ textDecoration: 'none' }}>
-                <Button variant="secondary" size="lg">
-                  <WisdomIcon name="graduation-cap" size={16} /> Conocer Portal Escolar
-                </Button>
-              </a>
-              <Link href="/login" style={{ textDecoration: 'none' }}>
-                <Button variant="secondary" size="lg">Ingresar al portal</Button>
-              </Link>
+              <ButtonLink href="#cursos-talleres" variant="primary-gold" size="lg">
+                <WisdomIcon name="sparkles" size={16} /> Explorar Cursos y Talleres
+              </ButtonLink>
+              <ButtonLink href="#portal-escolar" variant="secondary" size="lg">
+                <WisdomIcon name="graduation-cap" size={16} /> Conocer Portal Escolar
+              </ButtonLink>
+              <ButtonLink href="/login" variant="secondary" size="lg">
+                Ingresar al portal
+              </ButtonLink>
             </div>
           )}
           <div className="wa-catalog-search">
@@ -739,26 +735,24 @@ export function CatalogExperience({ home = false }: { home?: boolean }) {
                         )}
                       </div>
                       {guia ? (
-                        <Link
+                        <ButtonLink
                           href={producto.guideUrl || '#'}
-                          style={{ textDecoration: 'none' }}
+                          variant="primary-gold"
+                          size="sm"
                           data-testid="guide-open-link"
                         >
-                          <Button variant="primary-gold" size="sm">
-                            <WisdomIcon name="book" size={15} />
-                            Abrir guía
-                          </Button>
-                        </Link>
+                          <WisdomIcon name="book" size={15} />
+                          Abrir guía
+                        </ButtonLink>
                       ) : esTallerPaz ? (
-                        <Link
+                        <ButtonLink
                           href={producto.metadata.landingPath || '/paz-en-la-mesa'}
-                          style={{ textDecoration: 'none' }}
+                          variant="primary-gold"
+                          size="sm"
                           data-testid="paz-catalog-open"
                         >
-                          <Button variant="primary-gold" size="sm">
-                            <WisdomIcon name="sparkles" size={15} /> Ver taller
-                          </Button>
-                        </Link>
+                          <WisdomIcon name="sparkles" size={15} /> Ver taller
+                        </ButtonLink>
                       ) : precioPendiente ? (
                         <span className="wa-course-unavailable">
                           <WisdomIcon name="clock" size={15} />
@@ -770,9 +764,9 @@ export function CatalogExperience({ home = false }: { home?: boolean }) {
                           PrÃƒÂ³ximamente disponible
                         </span>
                       ) : producto.accessible ? (
-                        <Link href={`/recurso/${producto.resources[0]?.slug || ''}`} style={{ textDecoration: 'none' }}>
-                          <Button variant="primary-gold" size="sm">Acceder</Button>
-                        </Link>
+                        <ButtonLink href={`/recurso/${producto.resources[0]?.slug || ''}`} variant="primary-gold" size="sm">
+                          Acceder
+                        </ButtonLink>
                       ) : (
                         <div className="wa-course-buy-actions">
                           <Button variant="primary-navy" size="sm" onClick={() => abrirCompra(producto)}>

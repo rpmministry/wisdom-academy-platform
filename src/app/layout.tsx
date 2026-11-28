@@ -14,6 +14,7 @@
  * ==============================================================================
  */
 
+import React, { Suspense } from 'react';
 import type { Metadata, Viewport } from 'next';
 import '@/styles/tokens.css';
 import '@/styles/carbon-grid.css';
@@ -33,6 +34,7 @@ import '@/styles/storefront.css';
 import '@/styles/paz-en-la-mesa.css';
 import { AuthProvider } from '@/lib/auth/authContext';
 import { CartProvider } from '@/lib/cart/cartContext';
+import { NavigationProgress } from '@/components/ui/NavigationProgress';
 
 /**
  * Evita que una compilación local con APP_URL=http://localhost:3000 publique
@@ -140,6 +142,9 @@ export default function RootLayout({
         />
       </head>
       <body>
+        <Suspense fallback={null}>
+          <NavigationProgress />
+        </Suspense>
         <CartProvider>
           <AuthProvider>{children}</AuthProvider>
         </CartProvider>
