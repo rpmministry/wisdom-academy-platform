@@ -16,12 +16,7 @@ export function PazClassesShowcase({ className = '' }: PazClassesShowcaseProps) 
     <div className={`paz-classes-showcase ${className}`.trim()}>
       {/* Selector de pestañas de las 4 clases */}
       <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-          gap: '0.75rem',
-          marginBottom: '1.75rem',
-        }}
+        className="paz-classes-tabs"
         role="tablist"
         aria-label="Clases del taller"
       >
@@ -34,61 +29,22 @@ export function PazClassesShowcase({ className = '' }: PazClassesShowcaseProps) 
               aria-selected={isSelected}
               type="button"
               onClick={() => setSelectedClassNum(item.number)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.85rem',
-                padding: '0.9rem 1.1rem',
-                borderRadius: '16px',
-                border: isSelected
-                  ? `2px solid ${item.accent}`
-                  : '1px solid rgba(228,218,203,0.85)',
-                background: isSelected ? item.soft : '#faf8f5',
-                color: 'var(--paz-ink, #2b2927)',
-                cursor: 'pointer',
-                textAlign: 'left',
-                transition: 'all 160ms ease',
-                boxShadow: isSelected ? '0 8px 24px rgba(43,41,39,0.08)' : 'none',
-              }}
+              className={`paz-class-tab${isSelected ? ' is-selected' : ''}`}
+              style={
+                {
+                  '--tab-accent': item.accent,
+                  '--tab-soft': item.soft,
+                } as React.CSSProperties
+              }
             >
-              <span
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: '38px',
-                  height: '38px',
-                  borderRadius: '10px',
-                  background: item.accent,
-                  color: '#faf8f5',
-                  fontWeight: 800,
-                  fontSize: '0.95rem',
-                  fontFamily: 'var(--paz-serif)',
-                  flexShrink: 0,
-                }}
-              >
+              <span className="paz-class-tab-num">
                 0{item.number}
               </span>
-              <div style={{ minWidth: 0, flex: 1 }}>
-                <strong
-                  style={{
-                    display: 'block',
-                    fontSize: '0.92rem',
-                    lineHeight: 1.25,
-                    color: 'var(--paz-ink, #2b2927)',
-                  }}
-                >
+              <div className="paz-class-tab-body">
+                <strong className="paz-class-tab-title">
                   {item.title}
                 </strong>
-                <span
-                  style={{
-                    display: 'block',
-                    fontSize: '0.74rem',
-                    color: 'var(--paz-muted, #7a7256)',
-                    fontWeight: 500,
-                    marginTop: '0.2rem',
-                  }}
-                >
+                <span className="paz-class-tab-meta">
                   {item.durationLabel} · {item.leader}
                 </span>
               </div>
@@ -157,7 +113,7 @@ export function PazClassesShowcase({ className = '' }: PazClassesShowcaseProps) 
                 padding: '0.35rem 0.75rem',
                 borderRadius: '999px',
                 background: selectedClass.soft,
-                color: 'var(--paz-ink, #2b2927)',
+                color: '#2b2927',
                 fontSize: '0.8rem',
                 fontWeight: 600,
               }}
@@ -212,7 +168,7 @@ export function PazClassesShowcase({ className = '' }: PazClassesShowcaseProps) 
         <div
           style={{
             fontSize: '0.88rem',
-            color: '#5c5847',
+            color: 'var(--paz-ink-soft, #5c5847)',
             padding: '0.85rem 1.15rem',
             borderRadius: '12px',
             background: 'var(--paz-paper, #f2ede4)',
@@ -281,7 +237,7 @@ export function PazClassesShowcase({ className = '' }: PazClassesShowcaseProps) 
                       borderRadius: '6px',
                       background: 'var(--paz-card-bg, #ffffff)',
                       border: '1px solid var(--paz-card-border, #e4dacb)',
-                      color: '#5c5847',
+                      color: 'var(--paz-ink-soft, #5c5847)',
                     }}
                   >
                     {s}

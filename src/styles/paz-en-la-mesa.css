@@ -614,6 +614,15 @@
   color: #faf8f5;
 }
 
+.paz-section--olive .paz-btn--ghost {
+  color: #faf8f5 !important;
+  border-color: rgba(250, 248, 245, 0.35) !important;
+}
+
+.paz-section--olive .paz-btn--ghost:hover {
+  background: rgba(250, 248, 245, 0.08);
+}
+
 .paz-section-head {
   max-width: 760px;
   margin: 0 auto clamp(1.6rem, 3vw, 2.6rem);
@@ -2390,30 +2399,36 @@
   color: #d8cfbf;
 }
 
-[data-theme='dark'] .paz-btn--ghost {
+[data-theme='dark'] .paz-btn--ghost,
+.dark .paz-btn--ghost {
   color: #e4dacb !important;
   border-color: rgba(228, 218, 203, 0.35);
 }
 
-[data-theme='dark'] .paz-btn--ghost:hover {
+[data-theme='dark'] .paz-btn--ghost:hover,
+.dark .paz-btn--ghost:hover {
   background: rgba(228, 218, 203, 0.08);
 }
 
-[data-theme='dark'] .paz-btn--olive {
+[data-theme='dark'] .paz-btn--olive,
+.dark .paz-btn--olive {
   background: #6b6652;
   border-color: #7d7862;
 }
 
-[data-theme='dark'] .paz-btn--olive:hover {
+[data-theme='dark'] .paz-btn--olive:hover,
+.dark .paz-btn--olive:hover {
   background: #79735d;
 }
 
-[data-theme='dark'] .paz-btn--primary {
+[data-theme='dark'] .paz-btn--primary,
+.dark .paz-btn--primary {
   background: #9d573f;
   border-color: #8a4a35;
 }
 
-[data-theme='dark'] .paz-btn--primary:hover {
+[data-theme='dark'] .paz-btn--primary:hover,
+.dark .paz-btn--primary:hover {
   background: #8a4a35;
 }
 
@@ -3373,6 +3388,111 @@
   .paz-admin-floating-link {
     padding: 0.45rem 0.5rem;
   }
+}
+
+/* Selector de clases en la landing del taller */
+.paz-classes-tabs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.75rem;
+}
+
+.paz-class-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  width: 100%;
+  padding: 0.9rem 1.1rem;
+  border-radius: 16px;
+  border: 1px solid var(--paz-card-border, rgba(228, 218, 203, 0.85));
+  background: var(--paz-card-bg, #faf8f5);
+  color: var(--paz-ink, #2b2927);
+  cursor: pointer;
+  text-align: left;
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+
+.paz-class-tab:hover {
+  transform: translateY(-1px);
+  border-color: var(--tab-accent, #b36a50);
+  box-shadow: 0 6px 18px rgba(43, 41, 39, 0.08);
+}
+
+.paz-class-tab:focus-visible {
+  outline: 2px solid var(--tab-accent, #b36a50);
+  outline-offset: 2px;
+}
+
+.paz-class-tab.is-selected {
+  border: 2px solid var(--tab-accent, #b36a50);
+  background: var(--tab-soft, #f5e7e0);
+  box-shadow: 0 8px 24px rgba(43, 41, 39, 0.08);
+}
+
+.paz-class-tab-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--tab-accent, #b36a50);
+  color: #faf8f5;
+  font-weight: 800;
+  font-size: 0.95rem;
+  font-family: var(--paz-serif);
+  flex-shrink: 0;
+}
+
+.paz-class-tab-body {
+  min-width: 0;
+  flex: 1;
+}
+
+.paz-class-tab-title {
+  display: block;
+  font-size: 0.92rem;
+  line-height: 1.25;
+  color: var(--paz-ink, #2b2927);
+}
+
+.paz-class-tab-meta {
+  display: block;
+  font-size: 0.74rem;
+  color: var(--paz-muted, #7a7256);
+  font-weight: 500;
+  margin-top: 0.2rem;
+}
+
+[data-theme='dark'] .paz-class-tab,
+.dark .paz-class-tab {
+  background: var(--paz-card-bg, #2a2823);
+  border-color: var(--paz-card-border, rgba(228, 218, 203, 0.16));
+  color: var(--paz-ink, #f2ede4);
+}
+
+[data-theme='dark'] .paz-class-tab:hover,
+.dark .paz-class-tab:hover {
+  border-color: var(--tab-accent, #b36a50);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+}
+
+[data-theme='dark'] .paz-class-tab.is-selected,
+.dark .paz-class-tab.is-selected {
+  border: 2px solid var(--tab-accent, #b36a50);
+  background: color-mix(in srgb, var(--tab-accent, #b36a50) 18%, var(--paz-card-bg, #2a2823));
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.32);
+}
+
+[data-theme='dark'] .paz-class-tab-title,
+.dark .paz-class-tab-title {
+  color: var(--paz-ink, #f2ede4);
+}
+
+[data-theme='dark'] .paz-class-tab-meta,
+.dark .paz-class-tab-meta {
+  color: var(--paz-muted, #b9b0a2);
 }
 
 @media (prefers-reduced-motion: reduce) {
