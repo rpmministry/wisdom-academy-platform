@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
     if (payphoneToken && payphoneTxId) {
       // Verificación real con servidor PayPhone
       try {
-        const verifyResponse = await fetch('https://pay.payphone.com.ec/api/button/Confirm', {
+        const verifyResponse = await fetch('https://pay.payphonetodoesposible.com/api/button/V2/Confirm', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -84,11 +84,17 @@ export async function POST(request: NextRequest) {
           const verifyData = (await verifyResponse.json()) as {
             transactionStatus?: string;
             statusCode?: number;
+            amount?: number;
           };
           confirmationDetail = verifyData;
+          const intentRow = intent as { id: string; status: string; user_id: string; amount_cents?: number };
+          const amountMatches =
+            typeof verifyData.amount !== 'number' ||
+            typeof intentRow.amount_cents !== 'number' ||
+            verifyData.amount === intentRow.amount_cents;
           if (
-            verifyData.transactionStatus === 'Approved' ||
-            verifyData.statusCode === 3
+            amountMatches &&
+            (verifyData.transactionStatus === 'Approved' || verifyData.statusCode === 3)
           ) {
             isApproved = true;
           }

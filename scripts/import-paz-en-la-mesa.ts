@@ -39,6 +39,13 @@ import {
 
 const RELEASE_AT = new Date(PAZ_DATES.launch).toISOString();
 
+const CLASS_VIDEO_IDS: Record<number, string[]> = {
+  1: ['Fiv6IQ-omIs'],
+  2: ['2QsNl6rIEzA'],
+  3: ['r0jVCPHmYZ0'],
+  4: ['AB6t2eO0SWk'],
+};
+
 function parseMetadata(value: string): Record<string, unknown> {
   try {
     const parsed = JSON.parse(value);
@@ -112,6 +119,7 @@ function ensureModules(programId: string): Map<number, string> {
   for (const item of PAZ_CLASSES) {
     const title = `Clase ${String(item.number).padStart(2, '0')} · ${item.title}`;
     const description = `${item.headline}. ${item.summary}`;
+    const isAvailableClass = Boolean(CLASS_VIDEO_IDS[item.number]);
     let moduleId = byClass.get(item.number);
     if (!moduleId) {
       const created = addModule(programId, {
@@ -149,8 +157,8 @@ function ensureModules(programId: string): Map<number, string> {
         outcomes: item.outcomes,
         accent: item.accent,
         soft: item.soft,
-        contentStatus: item.number === 1 || item.number === 2 ? 'available' : 'coming_soon',
-        releaseAt: item.number === 1 || item.number === 2 ? null : RELEASE_AT,
+        contentStatus: isAvailableClass ? 'available' : 'coming_soon',
+        releaseAt: isAvailableClass ? null : RELEASE_AT,
       }),
       nowIso(),
       moduleId
@@ -178,14 +186,8 @@ function ensureLessons(programId: string, modules: Map<number, string>): number 
       const key = `${item.key}-bloque-${block.number}`;
       const title = `Bloque ${block.number} · ${block.title}`;
       const description = `${block.summary} · Clase ${item.number}: ${item.title} · ${block.timeRange}`;
-      const isClass1 = item.number === 1;
-      const isClass2 = item.number === 2;
-      const isAvailableClass = isClass1 || isClass2;
-      const videoIds = isClass1
-        ? ['Fiv6IQ-omIs']
-        : isClass2
-          ? ['2QsNl6rIEzA']
-          : ([] as string[]);
+      const isAvailableClass = Boolean(CLASS_VIDEO_IDS[item.number]);
+      const videoIds = CLASS_VIDEO_IDS[item.number] || ([] as string[]);
       const base = {
         title,
         description,

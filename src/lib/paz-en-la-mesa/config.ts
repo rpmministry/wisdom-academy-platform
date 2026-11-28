@@ -79,8 +79,14 @@ export const pazPublicConfig = {
       process.env.NEXT_PUBLIC_PAZ_CLASS2_VIDEO_URL,
       'https://youtu.be/2QsNl6rIEzA'
     ),
-    class3: envHref(process.env.NEXT_PUBLIC_PAZ_CLASS3_VIDEO_URL, ''),
-    class4: envHref(process.env.NEXT_PUBLIC_PAZ_CLASS4_VIDEO_URL, ''),
+    class3: envHref(
+      process.env.NEXT_PUBLIC_PAZ_CLASS3_VIDEO_URL,
+      'https://youtu.be/r0jVCPHmYZ0'
+    ),
+    class4: envHref(
+      process.env.NEXT_PUBLIC_PAZ_CLASS4_VIDEO_URL,
+      'https://youtu.be/AB6t2eO0SWk'
+    ),
   },
   presaleStartsAt: envDate(process.env.NEXT_PUBLIC_PAZ_PRESALE_AT, PAZ_DATES.presaleStart).toISOString(),
   presaleEndsAt: envDate(process.env.NEXT_PUBLIC_PAZ_PRESALE_ENDS_AT, PAZ_DATES.presaleEnds).toISOString(),

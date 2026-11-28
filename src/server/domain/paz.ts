@@ -71,6 +71,13 @@ export interface PazPaymentIntentView {
   reviewedBy: string | null;
   reviewedAt: string | null;
   reviewNote: string | null;
+  receiptFilename: string | null;
+  receiptMime: string | null;
+  hasReceipt: boolean;
+  adminNotes: string | null;
+  hasAccessCode?: boolean;
+  accessCodeStatus?: string | null;
+  hasActiveAccess?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -95,12 +102,18 @@ interface PazPaymentIntentRow {
   reviewed_by: string | null;
   reviewed_at: string | null;
   review_note: string | null;
+  receipt_filename?: string | null;
+  receipt_mime?: string | null;
+  receipt_path?: string | null;
+  admin_notes?: string | null;
   created_at: string;
   updated_at: string;
 }
 
 interface PazPaymentIntentAdminRow extends PazPaymentIntentRow {
   user_email: string | null;
+  access_code_status?: string | null;
+  has_active_access?: number;
 }
 
 interface PazChallengeRow {
@@ -153,6 +166,13 @@ function toPaymentView(row: PazPaymentIntentRow | PazPaymentIntentAdminRow): Paz
     reviewedBy: row.reviewed_by,
     reviewedAt: row.reviewed_at,
     reviewNote: row.review_note,
+    receiptFilename: row.receipt_filename || null,
+    receiptMime: row.receipt_mime || null,
+    hasReceipt: Boolean(row.receipt_path),
+    adminNotes: row.admin_notes || null,
+    hasAccessCode: 'access_code_status' in row ? Boolean(row.access_code_status) : undefined,
+    accessCodeStatus: 'access_code_status' in row ? row.access_code_status || null : undefined,
+    hasActiveAccess: 'has_active_access' in row ? Boolean(row.has_active_access) : undefined,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -431,23 +451,39 @@ export function createPazPaymentIntent(
 }
 
 export function listPazPaymentIntents(status?: PazPaymentStatus): PazPaymentIntentView[] {
+  const program = getProgramRowBySlug(PAZ_PROGRAM_SLUG);
+  const resourceId = program?.resource_id || '';
   const rows = (
     status
       ? prepare(`
-          SELECT p.*, u.email AS user_email
+          SELECT p.*, u.email AS user_email,
+            (SELECT ac.status FROM paz_access_codes ac
+             WHERE (ac.intent_id = p.id OR LOWER(ac.email) = LOWER(p.buyer_email))
+             ORDER BY ac.created_at DESC LIMIT 1) AS access_code_status,
+            EXISTS(
+              SELECT 1 FROM entitlements e
+              WHERE e.user_id = p.user_id AND e.resource_id = ? AND e.status = 'active'
+            ) AS has_active_access
           FROM paz_payment_intents p
           LEFT JOIN users u ON u.id = p.user_id
           WHERE p.status = ?
           ORDER BY p.created_at DESC
           LIMIT 500
-        `).all(status)
+        `).all(resourceId, status)
       : prepare(`
-          SELECT p.*, u.email AS user_email
+          SELECT p.*, u.email AS user_email,
+            (SELECT ac.status FROM paz_access_codes ac
+             WHERE (ac.intent_id = p.id OR LOWER(ac.email) = LOWER(p.buyer_email))
+             ORDER BY ac.created_at DESC LIMIT 1) AS access_code_status,
+            EXISTS(
+              SELECT 1 FROM entitlements e
+              WHERE e.user_id = p.user_id AND e.resource_id = ? AND e.status = 'active'
+            ) AS has_active_access
           FROM paz_payment_intents p
           LEFT JOIN users u ON u.id = p.user_id
           ORDER BY p.created_at DESC
           LIMIT 500
-        `).all()
+        `).all(resourceId)
   ) as PazPaymentIntentAdminRow[];
   return rows.map(toPaymentView);
 }
@@ -810,4 +846,84 @@ export function setPazChallengeDay(
     after: { day: input.day, completed: input.completed },
   });
   return getPazChallengeProgress(user.id, program.id);
+}
+
+export function attachPazPaymentReceipt(
+  intentId: string,
+  receipt: { filename: string; mime: string; storagePath: string }
+): PazPaymentIntentView {
+  const now = nowIso();
+  prepare(`
+    UPDATE paz_payment_intents
+    SET receipt_filename = ?, receipt_mime = ?, receipt_path = ?, updated_at = ?
+    WHERE id = ?
+  `).run(
+    cleanText(receipt.filename, 180),
+    cleanText(receipt.mime, 100),
+    receipt.storagePath,
+    now,
+    intentId
+  );
+  const row = prepare('SELECT * FROM paz_payment_intents WHERE id = ?').get(
+    intentId
+  ) as PazPaymentIntentRow;
+  return toPaymentView(row);
+}
+
+export function updatePazPaymentAdminInfo(
+  actor: AuthUser,
+  intentId: string,
+  input: {
+    buyerName?: string | null;
+    buyerPhone?: string | null;
+    transferReference?: string | null;
+    adminNotes?: string | null;
+  }
+): PazPaymentIntentView {
+  const existing = prepare('SELECT * FROM paz_payment_intents WHERE id = ?').get(
+    intentId
+  ) as PazPaymentIntentRow | undefined;
+  if (!existing) {
+    throw new ApiError(404, 'PAZ_PAYMENT_NOT_FOUND', 'La inscripción no existe.');
+  }
+  const nextName = cleanText(input.buyerName, 160) || existing.buyer_name;
+  const nextPhone =
+    input.buyerPhone !== undefined ? normalizePhone(input.buyerPhone) : existing.buyer_phone;
+  const nextTransferRef =
+    input.transferReference !== undefined
+      ? cleanText(input.transferReference, 120)
+      : existing.transfer_reference;
+  const nextAdminNotes =
+    input.adminNotes !== undefined ? cleanText(input.adminNotes, 1200) : existing.admin_notes || null;
+  const now = nowIso();
+
+  prepare(`
+    UPDATE paz_payment_intents
+    SET buyer_name = ?, buyer_phone = ?, transfer_reference = ?, admin_notes = ?, updated_at = ?
+    WHERE id = ?
+  `).run(nextName, nextPhone, nextTransferRef, nextAdminNotes, now, intentId);
+
+  writeAudit({
+    actor,
+    action: 'paz.payment_intent.updated',
+    entityType: 'paz_payment_intent',
+    entityId: intentId,
+    before: {
+      buyerName: existing.buyer_name,
+      buyerPhone: existing.buyer_phone,
+      transferReference: existing.transfer_reference,
+      adminNotes: existing.admin_notes || null,
+    },
+    after: {
+      buyerName: nextName,
+      buyerPhone: nextPhone,
+      transferReference: nextTransferRef,
+      adminNotes: nextAdminNotes,
+    },
+  });
+
+  const updated = prepare('SELECT * FROM paz_payment_intents WHERE id = ?').get(
+    intentId
+  ) as PazPaymentIntentRow;
+  return toPaymentView(updated);
 }

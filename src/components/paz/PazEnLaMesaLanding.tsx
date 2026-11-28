@@ -11,7 +11,8 @@ import { PazLeadForm } from '@/components/paz/PazLeadForm';
 import { PazPastorsPortrait } from '@/components/paz/PazPastorsPortrait';
 import { PazTrailerPlayer } from '@/components/paz/PazTrailerPlayer';
 import { PazClassesShowcase } from '@/components/paz/PazClassesShowcase';
-import { PazUnifiedEnrollment } from '@/components/paz/PazUnifiedEnrollment';
+import { PazHeroCheckout } from '@/components/paz/PazHeroCheckout';
+import { PazBankTransferSection } from '@/components/paz/PazBankTransferSection';
 import {
   PAZ_BRAND,
   PAZ_CHALLENGE_DAYS,
@@ -110,9 +111,18 @@ export function PazEnLaMesaLanding() {
 
   const scrollToEnrollment = (planToSelect?: 'presale' | 'official' | 'scholarship') => {
     if (planToSelect) setSelectedPlan(planToSelect);
-    const element = document.getElementById('inscripcion');
+    const element =
+      document.getElementById('hero-checkout') ||
+      document.getElementById('transferencia-bancaria');
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
+
+  const scrollToTransfer = () => {
+    const element = document.getElementById('transferencia-bancaria');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
 
@@ -196,11 +206,17 @@ export function PazEnLaMesaLanding() {
             </div>
           </div>
 
-          <PazPastorsPortrait priority />
+          <div id="hero-checkout">
+            <PazHeroCheckout
+              phase={phase}
+              initialPlan={selectedPlan}
+              onSwitchToTransfer={scrollToTransfer}
+            />
+          </div>
         </div>
       </section>
 
-      {/* SECCIÓN DEL TRÁILER OFICIAL */}
+      {/* SECCIÓN DEL TRÁILER OFICIAL Y ANFITRIONES */}
       <section className="paz-section" style={{ paddingTop: '1rem', paddingBottom: '3rem' }}>
         <div className="paz-container">
           <div className="paz-section-head" style={{ marginBottom: '1.75rem' }}>
@@ -211,10 +227,13 @@ export function PazEnLaMesaLanding() {
               Conoce la propuesta de <em>La Mesa Real</em>
             </h2>
             <p className="paz-lead">
-              Reproduce el video oficial de presentación y descubre el camino pedagógico y espiritual que recorreremos juntos.
+              Reproduce el video oficial de presentación con Samuel y Gabby Palacio y descubre el camino pedagógico y espiritual que recorreremos juntos.
             </p>
           </div>
-          <PazTrailerPlayer />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))', gap: '1.5rem', alignItems: 'center' }}>
+            <PazTrailerPlayer />
+            <PazPastorsPortrait priority />
+          </div>
         </div>
       </section>
 
@@ -476,103 +495,12 @@ export function PazEnLaMesaLanding() {
         </div>
       </section>
 
-      {/* SECCIÓN PRINCIPAL DE INSCRIPCIÓN Y PAGO UNIFICADO */}
-      <section className="paz-section" id="inscripcion" aria-labelledby="paz-unified-title">
-        <div className="paz-container paz-container--narrow">
-          <PazUnifiedEnrollment
-            initialPlan={selectedPlan}
-            bank={bank}
-          />
-        </div>
-      </section>
-
-      {/* SECCIÓN: MÉTODOS DE PAGO Y TRANSPARENCIA */}
-      <section className="paz-section paz-section--paper" id="pagos" aria-labelledby="paz-payments-title">
-        <div className="paz-container">
-          <div className="paz-section-head">
-            <span className="paz-kicker">
-              <WisdomIcon name="credit-card" size={13} /> Información de pagos
-            </span>
-            <h2 className="paz-h2" id="paz-payments-title">
-              Dos formas seguras <em>de procesar tu inscripción</em>
-            </h2>
-            <p className="paz-lead">
-              Puedes transferir directamente a la cuenta de Fundación Casa Main (0% comisión) o pagar en línea con tarjeta de crédito/débito a través de PayPhone.
-            </p>
-          </div>
-          <div className="paz-payments">
-            <article className="paz-payment">
-              <h3>Transferencia o depósito bancario · 0% comisión</h3>
-              <p>
-                Beneficiario: <strong>{bank.beneficiary}</strong>. RUC: {bank.ruc}. Realiza la transferencia y envía tu comprobante con el código de inscripción generado arriba.
-              </p>
-              <dl>
-                <div>
-                  <dt>Banco</dt>
-                  <dd>{bank.bankName}</dd>
-                </div>
-                <div>
-                  <dt>Tipo de cuenta</dt>
-                  <dd>{bank.accountType}</dd>
-                </div>
-                <div>
-                  <dt>Número de cuenta</dt>
-                  <dd>{bank.accountNumber}</dd>
-                </div>
-                <div>
-                  <dt>Titular</dt>
-                  <dd>{bank.accountHolder}</dd>
-                </div>
-                <div>
-                  <dt>RUC</dt>
-                  <dd>{bank.ruc}</dd>
-                </div>
-              </dl>
-              <button
-                type="button"
-                onClick={() => scrollToEnrollment('presale')}
-                className="paz-btn paz-btn--olive paz-btn--small"
-                style={{ marginTop: '0.75rem' }}
-              >
-                Generar código de transferencia
-              </button>
-            </article>
-
-            <article className="paz-payment">
-              <h3>Tarjeta con PayPhone (Ecuador e internacional)</h3>
-              <p>
-                Pago seguro en línea con tarjetas Visa, Mastercard, Diners, Discover o saldo PayPhone. Procesamiento verificado por PayPhone Ecuador.
-              </p>
-              <dl>
-                <div>
-                  <dt>Procesador</dt>
-                  <dd>PayPhone (Ecuador)</dd>
-                </div>
-                <div>
-                  <dt>Tarjetas admitidas</dt>
-                  <dd>Crédito y Débito nacionales e internacionales</dd>
-                </div>
-                <div>
-                  <dt>Confirmación</dt>
-                  <dd>Inmediata y validada en plataforma</dd>
-                </div>
-                <div>
-                  <dt>Soporte oficial</dt>
-                  <dd>{pazPublicConfig.officialWhatsappPhone}</dd>
-                </div>
-              </dl>
-              <button
-                type="button"
-                onClick={() => scrollToEnrollment('presale')}
-                className="paz-btn paz-btn--primary paz-btn--small"
-                style={{ marginTop: '0.75rem' }}
-              >
-                Inscribirme con tarjeta PayPhone
-              </button>
-            </article>
-          </div>
-        </div>
-      </section>
+      {/* SEGUNDA OPCIÓN DE PAGO: TRANSFERENCIA BANCARIA */}
+      <PazBankTransferSection
+        bank={bank}
+        phase={phase}
+        initialPlan={selectedPlan}
+      />
 
       {/* CALENDARIO OFICIAL */}
       <section className="paz-section" aria-labelledby="paz-lives-title">

@@ -19,6 +19,15 @@
   --paz-white: #fffdf9;
   --paz-danger: #9f3e35;
   --paz-success: #4f6b4a;
+  --paz-card-bg: #ffffff;
+  --paz-card-alt: #faf8f5;
+  --paz-card-border: #e4dacb;
+  --paz-ink: #2b2927;
+  --paz-ink-soft: #4a463a;
+  --paz-muted: #66615b;
+  --paz-input-bg: #faf8f5;
+  --paz-input-border: #d9cebe;
+  --paz-accent-text: #8f4e38;
   --paz-serif: 'Lora', 'Playfair Display', Georgia, 'Times New Roman', serif;
   --paz-sans: 'Plus Jakarta Sans', 'Inter', 'Schibsted Grotesk', 'Segoe UI', sans-serif;
   --paz-radius-sm: 10px;
@@ -2024,7 +2033,10 @@
 /* Dark theme                                                                     */
 /* ------------------------------------------------------------------------------ */
 
-[data-theme='dark'] .paz-world {
+[data-theme='dark'] .paz-world,
+[data-theme='dark'] .paz-admin-crm,
+.dark .paz-world,
+.dark .paz-admin-crm {
   --paz-cream: #1f1e1a;
   --paz-paper: #2a2823;
   --paz-paper-deep: #332f29;
@@ -2032,8 +2044,202 @@
   --paz-stone: #b9b0a2;
   --paz-line: #454037;
   --paz-white: #2a2823;
+  --paz-card-bg: #2a2823;
+  --paz-card-alt: #23211c;
+  --paz-card-border: #454037;
+  --paz-ink: #f4ede1;
+  --paz-ink-soft: #d8cfbf;
+  --paz-muted: #b9b0a2;
+  --paz-input-bg: #1f1e1a;
+  --paz-input-border: #4a453b;
+  --paz-accent-text: #e8b9a3;
   background: #1f1e1a;
   color: #f4ede1;
+}
+
+.paz-admin-crm {
+  --paz-card-bg: #ffffff;
+  --paz-card-alt: #faf8f5;
+  --paz-card-border: #e4dacb;
+  --paz-ink: #2b2927;
+  --paz-ink-soft: #4a463a;
+  --paz-muted: #66615b;
+  --paz-input-bg: #faf8f5;
+  --paz-input-border: #d9cebe;
+  --paz-accent-text: #8f4e38;
+}
+
+/* ==============================================================================
+ * CRM ADMINISTRATIVO MOBILE-FIRST (.paz-crm-*)
+ * ============================================================================== */
+
+.paz-crm-shell {
+  max-width: 1260px;
+  margin: 0 auto;
+  padding: 1rem 1rem 3.5rem;
+  font-family: var(--paz-sans, sans-serif);
+  color: var(--paz-ink, #2b2927);
+}
+
+.paz-crm-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.15rem 1.25rem;
+  border-radius: 18px;
+  background: var(--paz-card-bg);
+  border: 1px solid var(--paz-card-border);
+  box-shadow: 0 8px 28px rgba(43, 41, 39, 0.05);
+  margin-bottom: 1rem;
+}
+
+.paz-crm-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  align-items: center;
+}
+
+.paz-crm-tabs {
+  display: flex;
+  gap: 0.45rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 0.35rem 0.1rem 0.65rem;
+  margin-bottom: 1rem;
+}
+
+.paz-crm-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.paz-crm-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+  flex: 0 0 auto;
+  min-height: 40px;
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--paz-card-border);
+  background: var(--paz-card-bg);
+  color: var(--paz-ink-soft);
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.paz-crm-tab.is-active {
+  background: #8f4e38;
+  border-color: #8f4e38;
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 6px 16px rgba(143, 78, 56, 0.25);
+}
+
+.paz-crm-kpis {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+
+.paz-crm-kpi {
+  padding: 1rem 1.1rem;
+  border-radius: 16px;
+  background: var(--paz-card-bg);
+  border: 1px solid var(--paz-card-border);
+  box-shadow: 0 6px 20px rgba(43, 41, 39, 0.04);
+}
+
+.paz-crm-kpi--highlight {
+  background: rgba(245, 158, 11, 0.09);
+  border-color: rgba(217, 119, 6, 0.45);
+}
+
+.paz-crm-filters {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 0.65rem;
+  margin-bottom: 1rem;
+}
+
+.paz-crm-input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.6rem 0.85rem;
+  border-radius: 12px;
+  border: 1px solid var(--paz-input-border);
+  background: var(--paz-input-bg);
+  color: var(--paz-ink);
+  font-size: 16px;
+}
+
+.paz-crm-table-wrap {
+  overflow-x: auto;
+  background: var(--paz-card-bg);
+  border-radius: 16px;
+  border: 1px solid var(--paz-card-border);
+}
+
+.paz-crm-mobile-list {
+  display: none;
+  gap: 0.75rem;
+}
+
+.paz-crm-mobile-card {
+  background: var(--paz-card-bg);
+  border: 1px solid var(--paz-card-border);
+  border-radius: 16px;
+  padding: 1rem;
+  display: grid;
+  gap: 0.65rem;
+}
+
+@media (max-width: 768px) {
+  .paz-crm-shell {
+    padding: 0.65rem 0.75rem 3rem;
+  }
+
+  .paz-crm-header {
+    padding: 1rem;
+    border-radius: 16px;
+  }
+
+  .paz-crm-header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .paz-crm-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+  }
+
+  .paz-crm-kpi {
+    padding: 0.85rem;
+  }
+
+  .paz-crm-filters {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .paz-crm-filters > :first-child {
+    grid-column: 1 / -1;
+  }
+
+  .paz-crm-table-wrap {
+    display: none;
+  }
+
+  .paz-crm-mobile-list {
+    display: grid;
+  }
 }
 
 [data-theme='dark'] .paz-home-hero,

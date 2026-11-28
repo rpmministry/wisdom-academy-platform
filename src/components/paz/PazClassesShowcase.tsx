@@ -44,7 +44,7 @@ export function PazClassesShowcase({ className = '' }: PazClassesShowcaseProps) 
                   ? `2px solid ${item.accent}`
                   : '1px solid rgba(228,218,203,0.85)',
                 background: isSelected ? item.soft : '#faf8f5',
-                color: '#2b2927',
+                color: 'var(--paz-ink, #2b2927)',
                 cursor: 'pointer',
                 textAlign: 'left',
                 transition: 'all 160ms ease',
@@ -75,7 +75,7 @@ export function PazClassesShowcase({ className = '' }: PazClassesShowcaseProps) 
                     display: 'block',
                     fontSize: '0.92rem',
                     lineHeight: 1.25,
-                    color: '#2b2927',
+                    color: 'var(--paz-ink, #2b2927)',
                   }}
                 >
                   {item.title}
@@ -84,7 +84,7 @@ export function PazClassesShowcase({ className = '' }: PazClassesShowcaseProps) 
                   style={{
                     display: 'block',
                     fontSize: '0.74rem',
-                    color: '#7a7256',
+                    color: 'var(--paz-muted, #7a7256)',
                     fontWeight: 500,
                     marginTop: '0.2rem',
                   }}
@@ -100,7 +100,7 @@ export function PazClassesShowcase({ className = '' }: PazClassesShowcaseProps) 
       {/* Detalle de la clase seleccionada */}
       <article
         style={{
-          background: '#ffffff',
+          background: 'var(--paz-card-bg, #ffffff)',
           borderRadius: '24px',
           border: `1px solid ${selectedClass.accent}33`,
           padding: 'clamp(1.5rem, 3.5vw, 2.5rem)',
@@ -114,7 +114,7 @@ export function PazClassesShowcase({ className = '' }: PazClassesShowcaseProps) 
             alignItems: 'center',
             justifyContent: 'space-between',
             gap: '1rem',
-            borderBottom: '1px solid #e4dacb',
+            borderBottom: '1px solid var(--paz-card-border, #e4dacb)',
             paddingBottom: '1.25rem',
             marginBottom: '1.5rem',
           }}
@@ -140,7 +140,7 @@ export function PazClassesShowcase({ className = '' }: PazClassesShowcaseProps) 
                 fontFamily: 'var(--paz-serif)',
                 fontSize: 'clamp(1.35rem, 3vw, 1.85rem)',
                 margin: 0,
-                color: '#2b2927',
+                color: 'var(--paz-ink, #2b2927)',
                 lineHeight: 1.25,
               }}
             >
@@ -157,7 +157,7 @@ export function PazClassesShowcase({ className = '' }: PazClassesShowcaseProps) 
                 padding: '0.35rem 0.75rem',
                 borderRadius: '999px',
                 background: selectedClass.soft,
-                color: '#2b2927',
+                color: 'var(--paz-ink, #2b2927)',
                 fontSize: '0.8rem',
                 fontWeight: 600,
               }}
@@ -171,8 +171,8 @@ export function PazClassesShowcase({ className = '' }: PazClassesShowcaseProps) 
                 gap: '0.35rem',
                 padding: '0.35rem 0.75rem',
                 borderRadius: '999px',
-                background: '#f2ede4',
-                color: '#2b2927',
+                background: 'var(--paz-paper, #f2ede4)',
+                color: 'var(--paz-ink, #2b2927)',
                 fontSize: '0.8rem',
                 fontWeight: 600,
               }}
@@ -186,8 +186,8 @@ export function PazClassesShowcase({ className = '' }: PazClassesShowcaseProps) 
                 gap: '0.35rem',
                 padding: '0.35rem 0.75rem',
                 borderRadius: '999px',
-                background: '#f2ede4',
-                color: '#2b2927',
+                background: 'var(--paz-paper, #f2ede4)',
+                color: 'var(--paz-ink, #2b2927)',
                 fontSize: '0.8rem',
                 fontWeight: 600,
               }}
@@ -201,7 +201,7 @@ export function PazClassesShowcase({ className = '' }: PazClassesShowcaseProps) 
           style={{
             fontSize: '1.05rem',
             lineHeight: 1.6,
-            color: '#4a463a',
+            color: 'var(--paz-ink-soft, #4a463a)',
             margin: '0 0 1.5rem 0',
           }}
         >
@@ -215,7 +215,7 @@ export function PazClassesShowcase({ className = '' }: PazClassesShowcaseProps) 
             color: '#5c5847',
             padding: '0.85rem 1.15rem',
             borderRadius: '12px',
-            background: '#f2ede4',
+            background: 'var(--paz-paper, #f2ede4)',
             marginBottom: '1.75rem',
             lineHeight: 1.5,
             borderLeft: `4px solid ${selectedClass.accent}`,
@@ -231,7 +231,7 @@ export function PazClassesShowcase({ className = '' }: PazClassesShowcaseProps) 
             fontWeight: 800,
             letterSpacing: '0.04em',
             textTransform: 'uppercase',
-            color: '#2b2927',
+            color: 'var(--paz-ink, #2b2927)',
             margin: '0 0 1rem 0',
           }}
         >
@@ -251,8 +251,8 @@ export function PazClassesShowcase({ className = '' }: PazClassesShowcaseProps) 
               style={{
                 padding: '1rem',
                 borderRadius: '12px',
-                background: '#faf8f5',
-                border: '1px solid #e4dacb',
+                background: 'var(--paz-card-alt, #faf8f5)',
+                border: '1px solid var(--paz-card-border, #e4dacb)',
               }}
             >
               <div
@@ -263,12 +263,12 @@ export function PazClassesShowcase({ className = '' }: PazClassesShowcaseProps) 
                   marginBottom: '0.35rem',
                 }}
               >
-                <strong style={{ fontSize: '0.86rem', color: '#2b2927' }}>
+                <strong style={{ fontSize: '0.86rem', color: 'var(--paz-ink, #2b2927)' }}>
                   Bloque {block.number}: {block.title}
                 </strong>
-                <small style={{ color: '#7a7256', fontWeight: 600 }}>{block.timeRange}</small>
+                <small style={{ color: 'var(--paz-muted, #7a7256)', fontWeight: 600 }}>{block.timeRange}</small>
               </div>
-              <p style={{ fontSize: '0.82rem', color: '#66615b', margin: '0 0 0.5rem 0', lineHeight: 1.45 }}>
+              <p style={{ fontSize: '0.82rem', color: 'var(--paz-muted, #66615b)', margin: '0 0 0.5rem 0', lineHeight: 1.45 }}>
                 {block.summary}
               </p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
@@ -279,8 +279,8 @@ export function PazClassesShowcase({ className = '' }: PazClassesShowcaseProps) 
                       fontSize: '0.72rem',
                       padding: '0.15rem 0.45rem',
                       borderRadius: '6px',
-                      background: '#ffffff',
-                      border: '1px solid #e4dacb',
+                      background: 'var(--paz-card-bg, #ffffff)',
+                      border: '1px solid var(--paz-card-border, #e4dacb)',
                       color: '#5c5847',
                     }}
                   >
@@ -294,7 +294,7 @@ export function PazClassesShowcase({ className = '' }: PazClassesShowcaseProps) 
 
         {/* Resultados esperados */}
         <div>
-          <strong style={{ display: 'block', fontSize: '0.88rem', color: '#2b2927', marginBottom: '0.5rem' }}>
+          <strong style={{ display: 'block', fontSize: '0.88rem', color: 'var(--paz-ink, #2b2927)', marginBottom: '0.5rem' }}>
             Resultados que obtendrás en esta clase:
           </strong>
           <ul
@@ -304,7 +304,7 @@ export function PazClassesShowcase({ className = '' }: PazClassesShowcaseProps) 
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
               gap: '0.4rem',
-              color: '#4a463a',
+              color: 'var(--paz-ink-soft, #4a463a)',
               fontSize: '0.88rem',
             }}
           >

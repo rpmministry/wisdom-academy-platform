@@ -49,13 +49,19 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
   const activeLessons: LessonView[] = activeModule?.lessons || [];
 
   // Video de la clase seleccionada
-  // Si es la clase 1 o 2, usamos los videos oficiales configurados; para otras clases, buscamos en los bloques
+  // Si es la clase 1, 2, 3 o 4, usamos los videos oficiales configurados; para otras clases, buscamos en los bloques
   const classVideoId = useMemo(() => {
     if (selectedClassNum === 1) {
       return extractYouTubeVideoId(pazPublicConfig.classVideos.class1) || 'Fiv6IQ-omIs';
     }
     if (selectedClassNum === 2) {
       return extractYouTubeVideoId(pazPublicConfig.classVideos.class2) || '2QsNl6rIEzA';
+    }
+    if (selectedClassNum === 3) {
+      return extractYouTubeVideoId(pazPublicConfig.classVideos.class3) || 'r0jVCPHmYZ0';
+    }
+    if (selectedClassNum === 4) {
+      return extractYouTubeVideoId(pazPublicConfig.classVideos.class4) || 'AB6t2eO0SWk';
     }
     for (const lesson of activeLessons) {
       if (lesson.videoIds && lesson.videoIds.length > 0) {
@@ -225,7 +231,8 @@ export function PazUnifiedClassroom({ slug, detail }: PazUnifiedClassroomProps) 
         >
           {PAZ_CLASSES.map((cls) => {
             const isSelected = cls.number === selectedClassNum;
-            const isAvailable = cls.number === 1 || cls.number === 2;
+            const isAvailable =
+              cls.number === 1 || cls.number === 2 || cls.number === 3 || cls.number === 4;
             return (
               <button
                 key={cls.number}

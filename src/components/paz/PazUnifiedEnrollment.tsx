@@ -65,10 +65,10 @@ const DEFAULT_BANK: PazBankInfo = {
   beneficiary: 'Fundación Casa Main',
   ruc: '1793193764001',
   bankName: 'Banco Pichincha',
-  accountType: 'Cuenta Corriente',
-  accountNumber: 'Se comparte al confirmar inscripción',
+  accountType: 'Cuenta corriente',
+  accountNumber: '2100264280',
   accountHolder: 'Fundación Casa Main',
-  email: 'pagos@wisdomacademy.alsiztech.com',
+  email: 'fundacioncasamain@gmail.com',
   referenceHint: 'Escribe tu nombre y el código de inscripción en el comprobante.',
   configured: true,
 };

@@ -20,19 +20,19 @@ export interface PazBankDetails {
  * datos oficiales del manual del taller.
  */
 export function pazBankDetails(): PazBankDetails {
-  const accountNumber = (process.env.PAZ_BANK_ACCOUNT_NUMBER || '').trim();
-  const bankName = (process.env.PAZ_BANK_NAME || '').trim();
-  const accountType = (process.env.PAZ_BANK_ACCOUNT_TYPE || '').trim();
+  const accountNumber = (process.env.PAZ_BANK_ACCOUNT_NUMBER || '').trim() || '2100264280';
+  const bankName = (process.env.PAZ_BANK_NAME || '').trim() || 'Banco Pichincha';
+  const accountType = (process.env.PAZ_BANK_ACCOUNT_TYPE || '').trim() || 'Cuenta corriente';
   const accountHolder =
     (process.env.PAZ_BANK_ACCOUNT_HOLDER || '').trim() || PAZ_BRAND.foundation;
   return {
     beneficiary: PAZ_BRAND.foundation,
     ruc: (process.env.PAZ_BANK_RUC || '1793193764001').trim(),
-    bankName: bankName || 'Datos bancarios en la comunidad oficial',
-    accountType: accountType || 'Cuenta de la fundación',
-    accountNumber: accountNumber || 'Se comparte al iniciar la preventa',
+    bankName,
+    accountType,
+    accountNumber,
     accountHolder,
-    email: (process.env.PAZ_PAYMENTS_EMAIL || 'pagos@wisdomacademy.alsiztech.com').trim(),
+    email: (process.env.PAZ_PAYMENTS_EMAIL || 'fundacioncasamain@gmail.com').trim(),
     referenceHint: 'Escribe tu nombre y el código de inscripción en el comprobante.',
     configured: Boolean(accountNumber && bankName),
   };

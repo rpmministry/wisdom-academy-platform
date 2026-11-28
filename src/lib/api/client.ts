@@ -21,7 +21,7 @@ export class ApiClientError extends Error {
 }
 
 /** Tiempo máximo por defecto para una solicitud de la interfaz. */
-const DEFAULT_TIMEOUT_MS = 20_000;
+const DEFAULT_TIMEOUT_MS = 45_000;
 
 /**
  * Cliente JSON de la plataforma. Añade el token CSRF de la sesión a toda

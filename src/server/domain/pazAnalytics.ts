@@ -36,6 +36,10 @@ export interface PazHeartbeatInput {
 }
 
 export interface PazGeneralKpis {
+  totalRegistrations: number;
+  confirmedPayments: number;
+  pendingBankTransfers: number;
+  pendingRegistrations: number;
   totalEnrolled: number;
   gatewayEnrolled: number;
   transferEnrolled: number;
@@ -229,10 +233,19 @@ export function getPazGeneralKpis(options: { includeTest?: boolean } = {}): PazG
       COUNT(*) AS total,
       SUM(CASE WHEN method = 'payphone' AND status = 'approved' THEN 1 ELSE 0 END) AS gateway,
       SUM(CASE WHEN method = 'bank_transfer' AND status = 'approved' THEN 1 ELSE 0 END) AS transfer,
+      SUM(CASE WHEN method = 'bank_transfer' AND status = 'pending' THEN 1 ELSE 0 END) AS pending_transfer,
+      SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) AS total_pending,
       SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END) AS total_approved
     FROM paz_payment_intents
     WHERE 1=1 ${testFilter}
-  `).get() as { total: number; gateway: number; transfer: number; total_approved: number };
+  `).get() as {
+    total: number;
+    gateway: number;
+    transfer: number;
+    pending_transfer: number;
+    total_pending: number;
+    total_approved: number;
+  };
 
   // Total de alumnos con derecho vigente
   const entitlementsRow = prepare(`
@@ -318,6 +331,10 @@ export function getPazGeneralKpis(options: { includeTest?: boolean } = {}): PazG
     loggedInAtLeastOnce > 0 ? Math.round((totalActiveSeconds / loggedInAtLeastOnce / 60)) : 0;
 
   return {
+    totalRegistrations: Number(totalIntents?.total || 0),
+    confirmedPayments: Number(totalIntents?.total_approved || 0),
+    pendingBankTransfers: Number(totalIntents?.pending_transfer || 0),
+    pendingRegistrations: Number(totalIntents?.total_pending || 0),
     totalEnrolled,
     gatewayEnrolled: Number(totalIntents?.gateway || 0),
     transferEnrolled: Number(totalIntents?.transfer || 0),

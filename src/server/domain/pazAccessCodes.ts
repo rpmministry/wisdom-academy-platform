@@ -169,17 +169,40 @@ export function generatePazAccessCode(
       now
     );
 
-    // Si viene vinculado a una intención de pago, actualizamos su estado y trazabilidad
+    // Si viene vinculado a una intención de pago, validamos y actualizamos estado de forma atómica
     if (options.intentId) {
-      prepare(`
-        UPDATE paz_payment_intents
-        SET status = 'approved',
-            reviewed_by = ?,
-            reviewed_at = ?,
-            review_note = COALESCE(review_note, 'Transferencia verificada. Código de acceso generado.'),
-            updated_at = ?
-        WHERE id = ?
-      `).run(admin.id, now, now, options.intentId);
+      const intentRow = prepare('SELECT id, status, method FROM paz_payment_intents WHERE id = ?').get(
+        options.intentId
+      ) as { id: string; status: string; method: string } | undefined;
+
+      if (!intentRow) {
+        throw new ApiError(404, 'PAZ_PAYMENT_NOT_FOUND', 'La inscripción vinculada no existe.');
+      }
+      if (intentRow.status === 'rejected' || intentRow.status === 'cancelled') {
+        throw new ApiError(
+          409,
+          'PAZ_PAYMENT_REJECTED',
+          'No se puede generar un código para un pago rechazado o cancelado.'
+        );
+      }
+      if (intentRow.status === 'pending') {
+        const updateRes = prepare(`
+          UPDATE paz_payment_intents
+          SET status = 'approved',
+              reviewed_by = ?,
+              reviewed_at = ?,
+              review_note = COALESCE(review_note, 'Transferencia verificada. Código de acceso generado.'),
+              updated_at = ?
+          WHERE id = ? AND status = 'pending'
+        `).run(admin.id, now, now, options.intentId);
+        if (updateRes.changes === 0) {
+          throw new ApiError(
+            409,
+            'PAZ_PAYMENT_ALREADY_APPROVED',
+            'Este pago ya fue aprobado simultáneamente por otro administrador.'
+          );
+        }
+      }
     }
 
     writeAudit({
@@ -602,4 +625,60 @@ export function listPazAccessCodes(filters: {
     createdAt: String(r.created_at),
     updatedAt: String(r.updated_at),
   }));
+}
+
+/**
+ * Regenera un código de acceso conservando el historial anterior (revoca el previo y emite uno nuevo).
+ */
+export function regeneratePazAccessCode(
+  admin: AuthUser,
+  previousCodeId: string
+): GeneratePazCodeResult {
+  const existing = prepare('SELECT * FROM paz_access_codes WHERE id = ?').get(previousCodeId) as
+    | {
+        id: string;
+        email: string;
+        intent_id: string | null;
+        status: string;
+        is_test: number;
+      }
+    | undefined;
+
+  if (!existing) {
+    throw new ApiError(404, 'CODE_NOT_FOUND', 'El código anterior no existe.');
+  }
+  if (existing.status === 'redeemed') {
+    throw new ApiError(
+      409,
+      'CODE_ALREADY_REDEEMED',
+      'No se puede regenerar un código que ya fue canjeado por el participante.'
+    );
+  }
+
+  const now = nowIso();
+  if (existing.status !== 'revoked') {
+    prepare(`
+      UPDATE paz_access_codes
+      SET status = 'revoked',
+          revoked_at = ?,
+          revoked_by = ?,
+          revoke_reason = 'Regenerado por administrador',
+          updated_at = ?
+      WHERE id = ?
+    `).run(now, admin.id, now, existing.id);
+
+    writeAudit({
+      actor: admin,
+      action: 'paz.code.revoked',
+      entityType: 'paz_access_code',
+      entityId: existing.id,
+      after: { reason: 'Regenerado por administrador' },
+    });
+  }
+
+  return generatePazAccessCode(admin, {
+    email: existing.email,
+    intentId: existing.intent_id,
+    isTest: Boolean(existing.is_test),
+  });
 }

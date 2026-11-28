@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { requirePagePermission } from '@/server/auth/pageAuth';
 import { PazWorkshopAdminCenter } from '@/components/admin/PazWorkshopAdminCenter';
+import '@/styles/paz-en-la-mesa.css';
 
 export const metadata: Metadata = {
   title: 'Paz en la mesa · Administración y Analítica | Wisdom Academy',

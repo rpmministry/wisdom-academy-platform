@@ -6,7 +6,10 @@ import {
   readJsonBody,
   requireSession,
 } from '@/server/http/api';
-import { reviewPazPaymentIntent } from '@/server/domain/paz';
+import {
+  reviewPazPaymentIntent,
+  updatePazPaymentAdminInfo,
+} from '@/server/domain/paz';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -32,6 +35,36 @@ export async function POST(
       action,
       typeof body.note === 'string' ? body.note : null
     );
+    return jsonOk({ pago });
+  } catch (error) {
+    return handleRouteError(error);
+  }
+}
+
+export async function PATCH(
+  request: NextRequest,
+  context: { params: Promise<{ intentId: string }> }
+) {
+  try {
+    const { user } = requireSession(request, {
+      permission: 'orders.manage',
+      mutation: true,
+    });
+    const { intentId } = await context.params;
+    const body = await readJsonBody<{
+      buyerName?: unknown;
+      buyerPhone?: unknown;
+      transferReference?: unknown;
+      adminNotes?: unknown;
+    }>(request, 8 * 1024);
+
+    const pago = updatePazPaymentAdminInfo(user, intentId, {
+      buyerName: typeof body.buyerName === 'string' ? body.buyerName : undefined,
+      buyerPhone: typeof body.buyerPhone === 'string' ? body.buyerPhone : undefined,
+      transferReference:
+        typeof body.transferReference === 'string' ? body.transferReference : undefined,
+      adminNotes: typeof body.adminNotes === 'string' ? body.adminNotes : undefined,
+    });
     return jsonOk({ pago });
   } catch (error) {
     return handleRouteError(error);

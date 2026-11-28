@@ -124,6 +124,17 @@ export async function POST(request: NextRequest) {
         const data = (await confirmResponse.json()) as Record<string, unknown>;
         transactionData = data;
         payphoneStatus = String(data.transactionStatus || data.status || '');
+        const confirmedAmount =
+          typeof data.amount === 'number' || typeof data.amount === 'string'
+            ? Number(data.amount)
+            : null;
+        if (confirmedAmount !== null && !Number.isNaN(confirmedAmount) && confirmedAmount !== intent.amount_cents) {
+          throw new ApiError(
+            400,
+            'PAYPHONE_AMOUNT_MISMATCH',
+            'El monto confirmado por PayPhone no coincide con el valor de la inscripción.'
+          );
+        }
         // PayPhone aprueba cuando transactionStatus === 'Approved' o statusCode === 3
         isApproved = payphoneStatus === 'Approved' || Number(data.statusCode) === 3;
       } catch (err: unknown) {

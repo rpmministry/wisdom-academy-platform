@@ -1178,4 +1178,14 @@ export const MIGRATIONS: Migration[] = [
         ('paz.analytics.view', 'Consultar analíticas y métricas de uso del taller Paz en la mesa', 'cursos');
     `,
   },
+  {
+    version: 12,
+    name: 'taller_paz_en_la_mesa_comprobantes_y_crm',
+    sql: `
+      ALTER TABLE paz_payment_intents ADD COLUMN receipt_filename TEXT;
+      ALTER TABLE paz_payment_intents ADD COLUMN receipt_mime TEXT;
+      ALTER TABLE paz_payment_intents ADD COLUMN receipt_path TEXT;
+      ALTER TABLE paz_payment_intents ADD COLUMN admin_notes TEXT;
+    `,
+  },
 ];

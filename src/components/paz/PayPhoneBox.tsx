@@ -238,7 +238,7 @@ export function PayPhoneBox({
     <div
       style={{
         borderRadius: '18px',
-        background: '#ffffff',
+        background: 'var(--paz-card-bg, #ffffff)',
         border: '1px solid rgba(197, 160, 89, 0.4)',
         boxShadow: '0 12px 36px rgba(43, 41, 39, 0.08)',
         padding: '1.75rem',
@@ -272,7 +272,7 @@ export function PayPhoneBox({
             <WisdomIcon name="credit-card" size={20} />
           </span>
           <div>
-            <strong style={{ fontSize: '1.05rem', color: '#2b2927', display: 'block' }}>
+            <strong style={{ fontSize: '1.05rem', color: 'var(--paz-ink, #2b2927)', display: 'block' }}>
               Cajita de Pagos PayPhone
             </strong>
             <span style={{ fontSize: '0.8rem', color: '#6b665f' }}>
@@ -283,7 +283,7 @@ export function PayPhoneBox({
 
         <div style={{ textAlign: 'right' }}>
           <span style={{ fontSize: '0.78rem', color: '#8a8379', display: 'block' }}>Total a pagar</span>
-          <strong style={{ fontSize: '1.25rem', color: '#8f4e38' }}>USD {formattedAmount}</strong>
+          <strong style={{ fontSize: '1.25rem', color: 'var(--paz-accent-text, #8f4e38)' }}>USD {formattedAmount}</strong>
         </div>
       </div>
 
@@ -317,7 +317,7 @@ export function PayPhoneBox({
             style={{
               margin: '0 0 0.4rem',
               fontSize: '1.1rem',
-              color: '#2b2927',
+              color: 'var(--paz-ink, #2b2927)',
               fontFamily: 'var(--paz-serif, serif)',
             }}
           >
@@ -345,20 +345,20 @@ export function PayPhoneBox({
               textAlign: 'left',
               padding: '0.85rem 1.25rem',
               borderRadius: '10px',
-              background: '#ffffff',
+              background: 'var(--paz-card-bg, #ffffff)',
               border: '1px solid rgba(197,160,89,0.3)',
               fontSize: '0.82rem',
               marginBottom: '1rem',
             }}
           >
             <div>
-              <code style={{ background: '#f5efe6', padding: '0.15rem 0.4rem', borderRadius: '4px', color: '#8f4e38' }}>
+              <code style={{ background: '#f5efe6', padding: '0.15rem 0.4rem', borderRadius: '4px', color: 'var(--paz-accent-text, #8f4e38)' }}>
                 PAYPHONE_TOKEN
               </code>{' '}
               <span style={{ color: '#8a8379' }}>(Token de aplicación Web en developers.payphone.app)</span>
             </div>
             <div>
-              <code style={{ background: '#f5efe6', padding: '0.15rem 0.4rem', borderRadius: '4px', color: '#8f4e38' }}>
+              <code style={{ background: '#f5efe6', padding: '0.15rem 0.4rem', borderRadius: '4px', color: 'var(--paz-accent-text, #8f4e38)' }}>
                 PAYPHONE_STORE_ID
               </code>{' '}
               <span style={{ color: '#8a8379' }}>(Identificador de sucursal / StoreID si aplica)</span>
